@@ -1,0 +1,259 @@
+/* MAIN PAGE */
+.main-page-container {
+     position: relative;
+}
+
+.add-button {
+     position: absolute;
+     top: 17px;
+     right: 240px;
+     padding: 9px;
+     background-color: #007bff;
+     color: #fff;
+     border: none;
+     border-radius: 5px;
+     font-size: 16px;
+     cursor: pointer;
+     transition: background-color 0.3s;
+     z-index: 1000;
+}
+
+.add-button:hover {
+     background-color: #0056b3;
+}
+
+.add-button:focus {
+     outline: none;
+     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* BOOKS TABLE CSS */
+.books-container {
+     margin-top: 50px;
+     margin: 30px;
+}
+
+.header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 10px;
+}
+
+.table-wrapper {
+     padding: 20px;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     border-radius: 10px;
+     background-color: #fff;
+}
+
+.table-title {
+     font-size: 24px;
+     font-weight: 600;
+     color: #333;
+}
+
+.search-input {
+     padding: 10px;
+     border: 1px solid #ddd;
+     border-radius: 5px;
+}
+
+.table {
+     width: 100%;
+     border-collapse: collapse;
+}
+
+.table thead {
+     background-color: #f7f7f7;
+}
+
+.table thead th {
+     padding: 12px;
+     border-bottom: 1px solid #ddd;
+     text-align: left;
+     font-weight: 600;
+     cursor: pointer;
+}
+
+.table thead th span {
+     margin-left: 14px;
+     display: inline-block;
+     width: 1px;
+     height: 1px;
+     border: solid 4px transparent;
+     border-top-color: #000;
+}
+
+.table thead th span.ascending {
+     transform: rotate(180deg);
+}
+
+.table tbody tr {
+     border-bottom: 1px solid #eee;
+}
+
+.table tbody tr:hover {
+     background-color: #f1f1f1;
+}
+
+.table tbody td {
+     padding: 12px;
+}
+
+.btn {
+     padding: 5px 10px;
+     border: none;
+     border-radius: 5px;
+     cursor: pointer;
+}
+
+.edit-button {
+     background-color: #007bff;
+     color: #fff;
+     margin: 10px;
+}
+
+.edit-button:hover {
+     background-color: #0056b3;
+}
+
+.delete-button {
+     background-color: #dc3545;
+     color: #fff;
+     margin: 10px;
+}
+
+.delete-button:hover {
+     background-color: #c82333;
+}
+
+.text-center {
+     text-align: center;
+}
+
+/* ADDEDIT PAGE CSS */
+.add-edit-book-container {
+     max-width: 600px;
+     margin: 50px auto;
+     padding: 20px;
+     border-radius: 10px;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     background-color: #fff;
+}
+
+.add-edit-book-container h2 {
+     text-align: center;
+     margin-bottom: 20px;
+     font-size: 24px;
+     color: #333;
+}
+
+.mandatory {
+     color: red;
+     font-weight: bold;
+     margin-left: 5px;
+}
+
+.back-button {
+     display: inline-block;
+     margin-bottom: 20px;
+     padding: 10px;
+     border: none;
+     border-radius: 5px;
+     background-color: #6c757d;
+     color: #fff;
+     font-size: 16px;
+     cursor: pointer;
+     transition: background-color 0.3s;
+}
+
+.back-button:hover {
+     background-color: #5a6268;
+}
+
+.form-group {
+     margin-bottom: 15px;
+}
+
+.form-group label {
+     display: block;
+     font-weight: 600;
+     margin-bottom: 5px;
+}
+
+.form-control {
+     width: 95%;
+     padding: 10px;
+     border: 1px solid #ddd;
+     border-radius: 5px;
+     font-size: 16px;
+}
+
+.form-control:focus {
+     border-color: #007bff;
+     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+     outline: none;
+}
+
+textarea.form-control {
+     resize: vertical;
+     min-height: 100px;
+}
+
+.button-container {
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+}
+
+.add-edit-button {
+     display: block;
+     width: 30%;
+     padding: 10px;
+     background-color: #007bff;
+     color: #fff;
+     border: none;
+     border-radius: 5px;
+     font-size: 16px;
+     cursor: pointer;
+     transition: background-color 0.3s;
+}
+
+.add-edit-button:hover {
+     background-color: #0056b3;
+}
+
+.add-edit-button:focus {
+     outline: none;
+     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.reset-button {
+     display: block;
+     width: 30%;
+     padding: 10px;
+     background-color: #ec4545;
+     color: #fff;
+     border: none;
+     border-radius: 5px;
+     font-size: 16px;
+     cursor: pointer;
+     transition: background-color 0.3s;
+}
+
+.reset-button:hover {
+     background-color: #990000;
+}
+
+.reset-button:focus {
+     outline: none;
+     box-shadow: 0 0 5px rgba(255, 0, 0, 0.61);
+}
+
+.error-message {
+     color: red;
+     font-size: 13px;
+     margin: 3px;
+     font-weight: 500;
+}
