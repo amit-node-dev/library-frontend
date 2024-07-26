@@ -31,7 +31,7 @@ const Navbar = () => {
             <Link className="nav-link" to="/books">
               Books
             </Link>
-            <Link className="nav-link" to="/author">
+            <Link className="nav-link" to="/authors">
               Author
             </Link>
             <Link className="nav-link" to="/about">

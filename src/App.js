@@ -7,13 +7,15 @@ import {
 } from "react-router-dom";
 
 // CUSTOM COMPONENTS
-import LoginPage from "./components/auth/LoginPage";
+import Layout from "./components/LayoutPage";
+import PrivateRoute from "./PrivateRoutes";
 import RegisterPage from "./components/auth/RegisterPage";
+import LoginPage from "./components/auth/LoginPage";
 import Dashboard from "./components/dashboard/Dashboard";
 import MainPage from "./components/books/MainPage";
 import AddEditBooks from "./components/books/AddEditBooks";
-import PrivateRoute from "./PrivateRoutes";
-import Layout from "./components/LayoutPage";
+import AuthorMainPage from "./components/authors/MainPage";
+import AddEditAuthors from "./components/authors/AddEditAuthors";
 
 function App() {
   return (
@@ -58,6 +60,36 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <AddEditBooks />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/authors"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AuthorMainPage />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/authors/add_authors"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AddEditAuthors />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/authors/:authorId"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AddEditAuthors />
               </Layout>
             </PrivateRoute>
           }
