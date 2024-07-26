@@ -28,6 +28,13 @@
 }
 
 /* BOOKS TABLE CSS */
+.spinner-container {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100px;
+}
+
 .authors-container {
      margin-top: 50px;
      margin: 30px;

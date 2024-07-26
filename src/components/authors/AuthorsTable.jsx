@@ -6,6 +6,7 @@ import {
   deleteAuthors,
 } from "../../features/author_module/authorActions";
 import "./authors.css";
+import { ClipLoader } from "react-spinners";
 
 const AuthorsTable = () => {
   const { authors, loading, error } = useSelector((state) => state.authors);
@@ -90,7 +91,9 @@ const AuthorsTable = () => {
         />
       </div>
       {loading ? (
-        <p>Loading...</p>
+        <div className="spinner-container">
+          <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        </div>
       ) : error ? (
         <p>Error: {error}</p>
       ) : (
@@ -138,7 +141,7 @@ const AuthorsTable = () => {
             <tbody>
               {filteredAuthors?.length > 0 ? (
                 filteredAuthors.map((author, index) => (
-                  <tr key={author._id}>
+                  <tr key={author.id}>
                     <th scope="row">{index + 1}</th>
                     <td>{author.firstname}</td>
                     <td>{author.lastname}</td>

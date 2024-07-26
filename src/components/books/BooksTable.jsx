@@ -6,6 +6,7 @@ import {
   deleteBooks,
 } from "../../features/book_module/bookActions";
 import "./books.css";
+import { ClipLoader } from "react-spinners";
 
 const BooksTable = () => {
   const { books, loading, error } = useSelector((state) => state.books);
@@ -25,7 +26,9 @@ const BooksTable = () => {
       }
     };
 
-    fetchBookList();
+    setTimeout(() => {
+      fetchBookList();
+    }, 1000);
   }, [dispatch]);
 
   useEffect(() => {
@@ -93,7 +96,9 @@ const BooksTable = () => {
         />
       </div>
       {loading ? (
-        <p>Loading...</p>
+        <div className="spinner-container">
+          <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        </div>
       ) : error ? (
         <p>Error: {error}</p>
       ) : (
@@ -136,7 +141,7 @@ const BooksTable = () => {
             <tbody>
               {filteredBooks?.length > 0 ? (
                 filteredBooks.map((book, index) => (
-                  <tr key={book._id}>
+                  <tr key={book.id}>
                     <th scope="row">{index + 1}</th>
                     <td>{book.bookname}</td>
                     <td>{book.description}</td>
