@@ -5,31 +5,28 @@ import {
   getAllBooksList,
   deleteBooks,
 } from "../../features/book_module/bookActions";
-import "./books.css";
+import { DataGrid } from "@mui/x-data-grid";
+import { Box, IconButton, Typography, Pagination } from "@mui/material";
 import { ClipLoader } from "react-spinners";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { setPage, setPageSize } from "../../features/book_module/bookSlice";
+import "./books.css";
 
 const BooksTable = () => {
-  const { books, loading, error } = useSelector((state) => state.books);
+  const { books, loading, error, total, page, pageSize } = useSelector(
+    (state) => state.books
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredBooks, setFilteredBooks] = useState([]);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+  const [sortModel, setSortModel] = useState([]);
 
   useEffect(() => {
-    const fetchBookList = async () => {
-      try {
-        await dispatch(getAllBooksList()).unwrap();
-      } catch (error) {
-        console.log("ERROR IN GET ALL BOOKS LIST ::: ", error);
-      }
-    };
-
-    setTimeout(() => {
-      fetchBookList();
-    }, 1000);
-  }, [dispatch]);
+    dispatch(getAllBooksList({ page, pageSize }));
+  }, [dispatch, page, pageSize]);
 
   useEffect(() => {
     let filtered = books;
@@ -40,22 +37,20 @@ const BooksTable = () => {
           .includes(searchQuery.toLowerCase())
       );
     }
-    if (sortConfig.key) {
-      console.log("FILTERED ", filtered);
-      console.log("KEY ", sortConfig.kry);
-
-      filtered?.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
     setFilteredBooks(filtered);
-  }, [searchQuery, books, sortConfig]);
+  }, [searchQuery, books]);
+
+  const handlePageChange = (event, newPage) => {
+    dispatch(setPage(newPage));
+    dispatch(getAllBooksList({ page: newPage, pageSize }));
+  };
+
+  const handlePageSizeChange = (event) => {
+    const newSize = parseInt(event.target.value, 10);
+    dispatch(setPageSize(newSize));
+    dispatch(setPage(1));
+    dispatch(getAllBooksList({ page: 1, pageSize: newSize }));
+  };
 
   const handleEdit = (bookId) => {
     navigate(`/books/${bookId}`);
@@ -64,29 +59,81 @@ const BooksTable = () => {
   const handleDelete = async (bookId) => {
     try {
       await dispatch(deleteBooks(bookId)).unwrap();
-      await dispatch(getAllBooksList()).unwrap();
+      await dispatch(getAllBooksList({ page, pageSize })).unwrap();
     } catch (error) {
       console.log("ERROR IN DELETE USER ::: ", error);
     }
   };
 
-  const requestSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending";
-    }
-    setSortConfig({ key, direction });
+  // Custom date formatting function
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
   };
 
-  const getClassNamesFor = (name) => {
-    if (!sortConfig) return;
-    return sortConfig.key === name ? sortConfig.direction : undefined;
-  };
+  // Custom renderer for actions
+  const ActionRenderer = (params) => (
+    <div>
+      <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
+        <EditIcon />
+      </IconButton>
+      <IconButton
+        color="error"
+        onClick={() => handleDelete(params.row.id)}
+        style={{ marginLeft: 10 }}
+      >
+        <DeleteIcon />
+      </IconButton>
+    </div>
+  );
+
+  // Define columns with custom renderers
+  const columns = [
+    { field: "id", headerName: "Book Id", width: 110 },
+    {
+      field: "bookname",
+      headerName: "Book Name",
+      width: 150,
+      editable: false,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      width: 500,
+      editable: false,
+    },
+    {
+      field: "authorId",
+      headerName: "Author",
+      width: 100,
+      editable: false,
+    },
+    {
+      field: "createdAt",
+      headerName: "Created Date",
+      width: 150,
+      renderCell: (params) => formatDate(params.row.createdAt),
+    },
+    {
+      field: "updatedAt",
+      headerName: "Updated Date",
+      width: 150,
+      renderCell: (params) => formatDate(params.row.updatedAt),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      renderCell: ActionRenderer,
+    },
+  ];
 
   return (
     <div className="books-container">
       <div className="header">
-        <h2 className="table-title">Book List</h2>
+        <Typography variant="h4" className="table-title">
+          Book List
+        </Typography>
         <input
           type="text"
           className="search-input"
@@ -102,76 +149,60 @@ const BooksTable = () => {
       ) : error ? (
         <p>Error: {error}</p>
       ) : (
-        <div className="table-wrapper">
-          <table className="table">
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  style={{ width: "10%" }}
-                  onClick={() => requestSort("index")}
-                >
-                  Sr No.
-                  <span className={getClassNamesFor("index")} />
-                </th>
-                <th
-                  scope="col"
-                  style={{ width: "15%" }}
-                  onClick={() => requestSort("bookname")}
-                >
-                  Book Name
-                  <span className={getClassNamesFor("bookname")} />
-                </th>
-                <th scope="col" style={{ width: "55%" }}>
-                  Description
-                </th>
-                <th
-                  scope="col"
-                  style={{ width: "10%" }}
-                  onClick={() => requestSort("authorId")}
-                >
-                  Author
-                  <span className={getClassNamesFor("authorId")} />
-                </th>
-                <th scope="col" style={{ width: "10%" }}>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredBooks?.length > 0 ? (
-                filteredBooks.map((book, index) => (
-                  <tr key={book.id}>
-                    <th scope="row">{index + 1}</th>
-                    <td>{book.bookname}</td>
-                    <td>{book.description}</td>
-                    <td>{book.authorId}</td>
-                    <td>
-                      <button
-                        className="btn edit-button"
-                        onClick={() => handleEdit(book.id)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn delete-button"
-                        onClick={() => handleDelete(book.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="text-center">
-                    No Data found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <Box
+            sx={{
+              height: "auto",
+              width: "100%",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              margin: "30px auto",
+            }}
+          >
+            <DataGrid
+              rows={filteredBooks}
+              density="comfortable"
+              disableRowSelectionOnClick={true}
+              hideFooter={true}
+              getRowId={(row) => row.id + row.bookname}
+              columns={columns}
+              pageSize={pageSize}
+              rowsPerPageOptions={[5, 10, 20]}
+              pagination
+              paginationMode="server"
+              rowCount={total}
+              onPageSizeChange={handlePageSizeChange}
+              sortingMode="server"
+              sortModel={sortModel}
+              onSortModelChange={(model) => setSortModel(model)}
+              autoHeight
+              sx={{
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "#f5f5f5",
+                },
+                "& .MuiDataGrid-footerContainer": {
+                  borderTop: "1px solid #ddd",
+                },
+                "& .MuiDataGrid-row:hover": {
+                  backgroundColor: "#e0f7fa",
+                },
+              }}
+            />
+          </Box>
+          <Pagination
+            shape="rounded"
+            variant="outlined"
+            count={Math.ceil(total / pageSize)}
+            page={page}
+            onChange={handlePageChange}
+            color="primary"
+            sx={{
+              margin: "20px auto",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          />
+        </>
       )}
     </div>
   );

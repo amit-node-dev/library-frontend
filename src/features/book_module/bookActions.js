@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// REGISTER NEW USER
+// ADD NEW BOOKS
 export const addNewBooks = createAsyncThunk(
   "books/addNewBooks",
   async (bookData, { rejectWithValue }) => {
@@ -12,7 +12,6 @@ export const addNewBooks = createAsyncThunk(
         `http://localhost:8080/api/v1/books/add_books`,
         bookData
       );
-      console.log("ADD NEW BOOKS RESPONSE ::: ", response.data);
       if (response.status === 201) {
         toast.success(response.data.message);
         return response.data;
@@ -33,9 +32,12 @@ export const addNewBooks = createAsyncThunk(
 
 export const getAllBooksList = createAsyncThunk(
   "books/getAllBooksList",
-  async (_, { rejectWithValue }) => {
+  async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/books`);
+      const response = await axios.get(`http://localhost:8080/api/v1/books`, {
+        params: { page, pageSize },
+      });
+
       if (response.status === 200) {
         return response.data.data;
       }
@@ -43,9 +45,9 @@ export const getAllBooksList = createAsyncThunk(
       if (error.response) {
         const errorMsg = error.response.data.message;
         toast.error(`${errorMsg}`);
-        return error.response;
+        return rejectWithValue(error.response.data.message);
       } else {
-        toast.error("Failed to add user");
+        toast.error("Failed to fetch books");
         return rejectWithValue(error.message);
       }
     }

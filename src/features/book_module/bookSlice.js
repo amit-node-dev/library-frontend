@@ -1,6 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-// ACTIONS IMPORT
 import {
   addNewBooks,
   getAllBooksList,
@@ -9,22 +7,29 @@ import {
   deleteBooks,
 } from "./bookActions";
 
-// INITAILS STATE
 const initialState = {
   books: [],
   currentBook: null,
   loading: false,
   error: null,
+  total: 0,
+  page: 1,
+  pageSize: 5,
 };
 
-// BOOK SLICE
 const bookSlice = createSlice({
   name: "books",
   initialState,
-  reducers: {},
+  reducers: {
+    setPage(state, action) {
+      state.page = action.payload;
+    },
+    setPageSize(state, action) {
+      state.pageSize = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      // Handle addNewBooks actions
       .addCase(addNewBooks.pending, (state) => {
         state.loading = true;
       })
@@ -37,20 +42,21 @@ const bookSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Handle getAllBooksList actions
       .addCase(getAllBooksList.pending, (state) => {
         state.loading = true;
       })
       .addCase(getAllBooksList.fulfilled, (state, action) => {
         state.loading = false;
-        state.books = action.payload;
+        state.books = action.payload.books;
+        state.total = action.payload.total;
+        state.page = action.payload.page;
+        state.pageSize = action.payload.pageSize;
       })
       .addCase(getAllBooksList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // Handle getBooksById actions
       .addCase(getBooksById.fulfilled, (state, action) => {
         state.loading = false;
         state.currentBook = action.payload.data;
@@ -60,7 +66,6 @@ const bookSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Handle updateBooks actions
       .addCase(updateBooks.pending, (state) => {
         state.loading = true;
       })
@@ -73,7 +78,6 @@ const bookSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Handle deleteBooks actions
       .addCase(deleteBooks.pending, (state) => {
         state.loading = true;
       })
@@ -87,5 +91,7 @@ const bookSlice = createSlice({
       });
   },
 });
+
+export const { setPage, setPageSize } = bookSlice.actions;
 
 export default bookSlice.reducer;

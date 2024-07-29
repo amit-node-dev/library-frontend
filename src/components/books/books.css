@@ -1,13 +1,15 @@
 /* MAIN PAGE */
 .main-page-container {
      position: relative;
+     padding: 100px;
+     text-align: center;
 }
 
 .add-button {
      position: absolute;
-     top: 17px;
-     right: 240px;
-     padding: 9px;
+     top: 102px;
+     right: 20px;
+     padding: 10px 20px;
      background-color: #007bff;
      color: #fff;
      border: none;
@@ -37,7 +39,19 @@
 
 .books-container {
      margin-top: 50px;
-     margin: 30px;
+     margin: 0 auto;
+     /* Center horizontally */
+     padding: 0 10%;
+     /* Adjust the padding to center the table */
+}
+
+.table-wrapper {
+     padding: 20px;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     border-radius: 10px;
+     background-color: #fff;
+     width: 80%;
+     margin: 0 auto;
 }
 
 .header {
@@ -47,12 +61,6 @@
      margin-bottom: 10px;
 }
 
-.table-wrapper {
-     padding: 20px;
-     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-     border-radius: 10px;
-     background-color: #fff;
-}
 
 .table-title {
      font-size: 24px;
