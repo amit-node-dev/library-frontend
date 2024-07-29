@@ -10,7 +10,9 @@ import { Box, IconButton, Typography, Pagination } from "@mui/material";
 import { ClipLoader } from "react-spinners";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { setPage, setPageSize } from "../../features/book_module/bookSlice";
+import BookDetailsModal from "./BookDetailsModal";
 import "./books.css";
 
 const BooksTable = () => {
@@ -23,6 +25,8 @@ const BooksTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [sortModel, setSortModel] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getAllBooksList({ page, pageSize }));
@@ -65,6 +69,16 @@ const BooksTable = () => {
     }
   };
 
+  const handleView = (book) => {
+    setSelectedBook(book);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedBook(null);
+  };
+
   // Custom date formatting function
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -74,6 +88,9 @@ const BooksTable = () => {
   // Custom renderer for actions
   const ActionRenderer = (params) => (
     <div>
+      <IconButton color="primary" onClick={() => handleView(params.row)}>
+        <VisibilityIcon />
+      </IconButton>
       <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
         <EditIcon />
       </IconButton>
@@ -132,7 +149,7 @@ const BooksTable = () => {
     <div className="books-container">
       <div className="header">
         <Typography variant="h4" className="table-title">
-          Book List
+          Books
         </Typography>
         <input
           type="text"
@@ -161,7 +178,7 @@ const BooksTable = () => {
           >
             <DataGrid
               rows={filteredBooks}
-              density="comfortable"
+              density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
               getRowId={(row) => row.id + row.bookname}
@@ -204,6 +221,11 @@ const BooksTable = () => {
           />
         </>
       )}
+      <BookDetailsModal
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        book={selectedBook}
+      />
     </div>
   );
 };
