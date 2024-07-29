@@ -8,7 +8,7 @@
 .add-button {
      position: absolute;
      top: 102px;
-     right: 20px;
+     right: 500px;
      padding: 10px 20px;
      background-color: #007bff;
      color: #fff;
@@ -40,9 +40,7 @@
 .books-container {
      margin-top: 50px;
      margin: 0 auto;
-     /* Center horizontally */
      padding: 0 10%;
-     /* Adjust the padding to center the table */
 }
 
 .table-wrapper {

@@ -6,7 +6,7 @@ import {
   getAuthorsById,
   updateAuthors,
 } from "../../features/author_module/authorActions";
-import "./authors.css";
+import { TextField, Button, Typography, Box, Container } from "@mui/material";
 
 const AddEditAuthors = () => {
   const { authorId } = useParams();
@@ -95,69 +95,90 @@ const AddEditAuthors = () => {
   };
 
   return (
-    <div className="add-edit-author-container">
-      <button className="back-button" onClick={handleBack}>
-        &larr; Back
-      </button>
-      <h2>{authorId ? "Edit Author" : "Add Author"}</h2>
-      <hr />
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>
-            Firstname <span className="mandatory">*</span>
-          </label>
-          <input
-            type="text"
+    <Container maxWidth="md">
+      <Box
+        sx={{
+          mt: 10,
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          padding: "50px",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+          <Typography variant="h4" gutterBottom>
+            {authorId ? "Edit Author" : "Add Author"}
+          </Typography>
+          <Button variant="contained" onClick={handleBack}>
+            &larr; Back
+          </Button>
+        </Box>
+        <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="First Name"
             name="firstname"
             value={authorData.firstname}
             onChange={handleChange}
             onBlur={handleFirstNameBlur}
-            className="form-control"
+            error={!!firstnameError}
+            helperText={firstnameError}
           />
-          {firstnameError && (
-            <div className="error-message">{firstnameError}</div>
-          )}
-        </div>
-        <div className="form-group">
-          <label>
-            Lastname <span className="mandatory">*</span>
-          </label>
-          <input
-            type="text"
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Last Name"
             name="lastname"
             value={authorData.lastname}
             onChange={handleChange}
             onBlur={handleLastNameBlur}
-            className="form-control"
+            error={!!lastnameError}
+            helperText={lastnameError}
           />
-          {lastnameError && (
-            <div className="error-message">{lastnameError}</div>
-          )}
-        </div>
-        <div className="form-group">
-          <label>
-            Email ID <span className="mandatory">*</span>
-          </label>
-          <input
-            type="text"
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Email ID"
             name="email"
             value={authorData.email}
             onChange={handleChange}
             onBlur={handleEmailBlur}
-            className="form-control"
+            error={!!emailError}
+            helperText={emailError}
           />
-          {emailError && <div className="error-message">{emailError}</div>}
-        </div>
-        <div className="button-container">
-          <button type="submit" className="add-edit-button">
-            {authorId ? "Update" : "Add"}
-          </button>
-          <button type="reset" className="reset-button" onClick={handleReset}>
-            Reset
-          </button>
-        </div>
-      </form>
-    </div>
+          <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
+            <Button
+              variant="contained"
+              type="submit"
+              color="primary"
+              sx={{
+                backgroundColor: "#007bff",
+                "&:hover": { backgroundColor: "#0056b3" },
+              }}
+            >
+              {authorId ? "Update" : "Add"}
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleReset}
+              color="secondary"
+              sx={{
+                borderColor: "#f50057",
+                color: "#f50057",
+                "&:hover": {
+                  borderColor: "#c51162",
+                  color: "#c51162",
+                },
+              }}
+            >
+              Reset
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 

@@ -5,29 +5,28 @@ import {
   getAllAuthorsList,
   deleteAuthors,
 } from "../../features/author_module/authorActions";
-import "./authors.css";
+import { Box, IconButton, Typography, Pagination } from "@mui/material";
 import { ClipLoader } from "react-spinners";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { setPage, setPageSize } from "../../features/author_module/authorSlice";
+import "./authors.css";
+import { DataGrid } from "@mui/x-data-grid";
 
 const AuthorsTable = () => {
-  const { authors, loading, error } = useSelector((state) => state.authors);
+  const { authors, loading, error, total, page, pageSize } = useSelector(
+    (state) => state.authors
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredAuthors, setFilteredAuthors] = useState([]);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+  const [sortModel, setSortModel] = useState([]);
 
   useEffect(() => {
-    const fetchAuthorsList = async () => {
-      try {
-        await dispatch(getAllAuthorsList()).unwrap();
-      } catch (error) {
-        console.log("ERROR IN GET ALL AUTHORS LIST ::: ", error);
-      }
-    };
-
-    fetchAuthorsList();
-  }, [dispatch]);
+    dispatch(getAllAuthorsList({ page, pageSize }));
+  }, [dispatch, page, pageSize]);
 
   useEffect(() => {
     let filtered = authors;
@@ -38,19 +37,20 @@ const AuthorsTable = () => {
           .includes(searchQuery.toLowerCase())
       );
     }
-    if (sortConfig.key) {
-      filtered?.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
     setFilteredAuthors(filtered);
-  }, [searchQuery, authors, sortConfig]);
+  }, [searchQuery, authors]);
+
+  const handlePageChange = (event, newPage) => {
+    dispatch(setPage(newPage));
+    dispatch(getAllAuthorsList({ page: newPage, pageSize }));
+  };
+
+  const handlePageSizeChange = (event) => {
+    const newSize = parseInt(event.target.value, 10);
+    dispatch(setPageSize(newSize));
+    dispatch(setPage(1));
+    dispatch(getAllAuthorsList({ page: 1, pageSize: newSize }));
+  };
 
   const handleEdit = (authorId) => {
     navigate(`/authors/${authorId}`);
@@ -59,33 +59,51 @@ const AuthorsTable = () => {
   const handleDelete = async (authorId) => {
     try {
       await dispatch(deleteAuthors(authorId)).unwrap();
-      await dispatch(getAllAuthorsList()).unwrap();
+      await dispatch(getAllAuthorsList({ page, pageSize })).unwrap();
     } catch (error) {
-      console.log("ERROR IN DELETE AUTHORS ::: ", error);
+      console.log("ERROR IN DELETE AUTHOR ::: ", error);
     }
   };
 
-  const requestSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const getClassNamesFor = (name) => {
-    if (!sortConfig) return;
-    return sortConfig.key === name ? sortConfig.direction : undefined;
-  };
+  // Define columns with custom renderers
+  const columns = [
+    { field: "id", headerName: "ID", width: 110 },
+    { field: "firstname", headerName: "First Name", width: 150 },
+    { field: "lastname", headerName: "Last Name", width: 150 },
+    { field: "email", headerName: "Email", width: 200 },
+    { field: "createdAt", headerName: "Created at", width: 200 },
+    { field: "updatedAt", headerName: "Updated at", width: 200 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      renderCell: (params) => (
+        <div>
+          <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            color="error"
+            onClick={() => handleDelete(params.row.id)}
+            style={{ marginLeft: 10 }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="authors-container">
       <div className="header">
-        <h2 className="table-title">Authors List</h2>
+        <Typography variant="h4" className="table-title">
+          Authors
+        </Typography>
         <input
           type="text"
           className="search-input"
-          placeholder="Search books..."
+          placeholder="Search authors..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -97,81 +115,60 @@ const AuthorsTable = () => {
       ) : error ? (
         <p>Error: {error}</p>
       ) : (
-        <div className="table-wrapper">
-          <table className="table">
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  style={{ width: "20%" }}
-                  onClick={() => requestSort("index")}
-                >
-                  Sr No.
-                  <span className={getClassNamesFor("index")} />
-                </th>
-                <th
-                  scope="col"
-                  style={{ width: "20%" }}
-                  onClick={() => requestSort("firstname")}
-                >
-                  Firstname
-                  <span className={getClassNamesFor("firstname")} />
-                </th>
-                <th
-                  scope="col"
-                  style={{ width: "20%" }}
-                  onClick={() => requestSort("lastname")}
-                >
-                  Lastname
-                  <span className={getClassNamesFor("lastname")} />
-                </th>
-                <th
-                  scope="col"
-                  style={{ width: "20%" }}
-                  onClick={() => requestSort("email")}
-                >
-                  Email-Id
-                  <span className={getClassNamesFor("email")} />
-                </th>
-                <th scope="col" style={{ width: "20%" }}>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAuthors?.length > 0 ? (
-                filteredAuthors.map((author, index) => (
-                  <tr key={author.id}>
-                    <th scope="row">{index + 1}</th>
-                    <td>{author.firstname}</td>
-                    <td>{author.lastname}</td>
-                    <td>{author.email}</td>
-                    <td>
-                      <button
-                        className="btn edit-button"
-                        onClick={() => handleEdit(author.id)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn delete-button"
-                        onClick={() => handleDelete(author.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="text-center">
-                    No Data found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <Box
+            sx={{
+              height: "auto",
+              width: "100%",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              margin: "30px auto",
+            }}
+          >
+            <DataGrid
+              rows={filteredAuthors}
+              density="standard"
+              disableRowSelectionOnClick={true}
+              hideFooter={true}
+              getRowId={(row) => row.id + row.firstname + row.lastname}
+              columns={columns}
+              pageSize={pageSize}
+              rowsPerPageOptions={[5, 10, 20]}
+              pagination
+              paginationMode="server"
+              rowCount={total}
+              onPageSizeChange={handlePageSizeChange}
+              sortingMode="server"
+              sortModel={sortModel}
+              onSortModelChange={(model) => setSortModel(model)}
+              autoHeight
+              sx={{
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "#f5f5f5",
+                },
+                "& .MuiDataGrid-footerContainer": {
+                  borderTop: "1px solid #ddd",
+                },
+                "& .MuiDataGrid-row:hover": {
+                  backgroundColor: "#e0f7fa",
+                },
+              }}
+            />
+          </Box>
+          <Pagination
+            shape="rounded"
+            variant="outlined"
+            count={Math.ceil(total / pageSize)}
+            page={page}
+            onChange={handlePageChange}
+            color="primary"
+            sx={{
+              margin: "20px auto",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          />
+        </>
       )}
     </div>
   );

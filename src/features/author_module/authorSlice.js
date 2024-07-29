@@ -1,6 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-// ACTIONS IMPORT
 import {
   addNewAuthors,
   getAllAuthorsList,
@@ -9,22 +7,29 @@ import {
   deleteAuthors,
 } from "./authorActions";
 
-// INITAILS STATE
 const initialState = {
   authors: [],
   currentAuthor: null,
   loading: false,
   error: null,
+  total: 0,
+  page: 1,
+  pageSize: 5,
 };
 
-// AUTHORS SLICE
 const authorSlice = createSlice({
   name: "authors",
   initialState,
-  reducers: {},
+  reducers: {
+    setPage(state, action) {
+      state.page = action.payload;
+    },
+    setPageSize(state, action) {
+      state.pageSize = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      // Handle addNewAuthors actions
       .addCase(addNewAuthors.pending, (state) => {
         state.loading = true;
       })
@@ -37,20 +42,21 @@ const authorSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Handle getAllAuthorsList actions
       .addCase(getAllAuthorsList.pending, (state) => {
         state.loading = true;
       })
       .addCase(getAllAuthorsList.fulfilled, (state, action) => {
         state.loading = false;
-        state.authors = action.payload;
+        state.authors = action.payload.authors;
+        state.total = action.payload.total;
+        state.page = action.payload.page;
+        state.pageSize = action.payload.pageSize;
       })
       .addCase(getAllAuthorsList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // Handle getAuthorsById actions
       .addCase(getAuthorsById.fulfilled, (state, action) => {
         state.loading = false;
         state.currentAuthor = action.payload.data;
@@ -60,7 +66,6 @@ const authorSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Handle updateAuthors actions
       .addCase(updateAuthors.pending, (state) => {
         state.loading = true;
       })
@@ -73,7 +78,6 @@ const authorSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Handle deleteAuthors actions
       .addCase(deleteAuthors.pending, (state) => {
         state.loading = true;
       })
@@ -89,5 +93,7 @@ const authorSlice = createSlice({
       });
   },
 });
+
+export const { setPage, setPageSize } = authorSlice.actions;
 
 export default authorSlice.reducer;

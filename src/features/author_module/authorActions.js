@@ -33,21 +33,16 @@ export const addNewAuthors = createAsyncThunk(
 
 export const getAllAuthorsList = createAsyncThunk(
   "authors/getAllAuthorsList",
-  async (_, { rejectWithValue }) => {
+  async ({ page, pageSize }, thunkAPI) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/authors`);
+      const response = await axios.get(`http://localhost:8080/api/v1/authors`, {
+        params: { page, pageSize },
+      });
       if (response.status === 200) {
         return response.data.data;
       }
     } catch (error) {
-      if (error.response) {
-        const errorMsg = error.response.data.message;
-        toast.error(`${errorMsg}`);
-        return error.response;
-      } else {
-        toast.error("Failed to get authors list");
-        return rejectWithValue(error.message);
-      }
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
