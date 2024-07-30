@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // ACTIONS IMPORT
 import {
-  registerNewUser,
+  registerUser,
   loginUser,
   getUserById,
   getUserList,
@@ -25,15 +25,15 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Handle registerNewUser actions
-      .addCase(registerNewUser.pending, (state) => {
+      // Handle registerUser actions
+      .addCase(registerUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(registerNewUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.users.push(action.payload);
       })
-      .addCase(registerNewUser.rejected, (state, action) => {
+      .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

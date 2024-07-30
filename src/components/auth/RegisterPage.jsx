@@ -17,7 +17,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 // ACTIONS & STORE
-import { registerNewUser } from "../../features/user_module/userActions";
+import { registerUser } from "../../features/user_module/userActions";
 
 // CSS
 import "./auth.css";
@@ -113,7 +113,7 @@ const RegisterPage = () => {
           email,
           password: hashedPassword,
         };
-        const response = await dispatch(registerNewUser(userData)).unwrap();
+        const response = await dispatch(registerUser(userData)).unwrap();
         if (response.statusType === "SUCCESS") {
           navigate("/login");
         }

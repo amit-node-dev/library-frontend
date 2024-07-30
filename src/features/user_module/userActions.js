@@ -3,16 +3,16 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// REGISTER NEW USER
-export const registerNewUser = createAsyncThunk(
-  "users/registerNewUser",
+// REGISTER USER
+export const registerUser = createAsyncThunk(
+  "users/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/v1/users/add_user`,
+        `http://localhost:8080/api/v1/auth/register_user`,
         userData
       );
-      console.log("REGISTER NEW USER RESPONSE ::: ", response.data);
+      console.log("REGISTER USER RESPONSE ::: ", response.data);
       if (response.status === 201) {
         toast.success(response.data.message);
         return response.data;

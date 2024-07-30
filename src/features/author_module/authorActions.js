@@ -1,14 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// REGISTER NEW USER
+import apiClient from "../../utils/apiClient";
+
+// ADD NEW AUTHORS
 export const addNewAuthors = createAsyncThunk(
   "authors/addNewAuthors",
   async (authorsData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
+      const response = await apiClient.post(
         `http://localhost:8080/api/v1/authors/add_authors`,
         authorsData
       );
@@ -19,10 +20,19 @@ export const addNewAuthors = createAsyncThunk(
       }
     } catch (error) {
       if (error.response) {
-        error.response.data.data.forEach((err) => {
-          toast.error(`${err.msg}`);
-        });
-        return error.response;
+        const errorMessage = error.response.data.message;
+        if (errorMessage === "Access denied") {
+          toast.error("You do not have permission to perform this action.");
+        } else {
+          if (error.response.data.data) {
+            error.response.data.data.forEach((err) => {
+              toast.error(`${err.msg}`);
+            });
+          } else {
+            toast.error(errorMessage);
+          }
+        }
+        return error.response.data;
       } else {
         toast.error("Failed to add authors");
         return rejectWithValue(error.message);
@@ -31,27 +41,31 @@ export const addNewAuthors = createAsyncThunk(
   }
 );
 
+// GET ALL AUTHORS LIST
 export const getAllAuthorsList = createAsyncThunk(
   "authors/getAllAuthorsList",
-  async ({ page, pageSize }, thunkAPI) => {
+  async ({ page, pageSize }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/authors`, {
-        params: { page, pageSize },
-      });
+      const response = await apiClient.get(
+        `http://localhost:8080/api/v1/authors`,
+        { params: { page, pageSize } }
+      );
       if (response.status === 200) {
         return response.data.data;
       }
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      toast.error("Failed to fetch authors list");
+      return rejectWithValue(error.message);
     }
   }
 );
 
+// GET AUTHOR BY ID
 export const getAuthorsById = createAsyncThunk(
   "authors/getAuthorsById",
   async (authorId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
+      const response = await apiClient.get(
         `http://localhost:8080/api/v1/authors/${authorId}`
       );
       if (response.status === 200) {
@@ -60,21 +74,22 @@ export const getAuthorsById = createAsyncThunk(
     } catch (error) {
       if (error.response) {
         const errorMsg = error.response.data.message;
-        toast.error(`${errorMsg}`);
-        return error.response;
+        toast.error(errorMsg);
+        return error.response.data;
       } else {
-        toast.error("Failed to get authors by id");
+        toast.error("Failed to fetch author by ID");
         return rejectWithValue(error.message);
       }
     }
   }
 );
 
+// UPDATE AUTHORS
 export const updateAuthors = createAsyncThunk(
   "authors/updateAuthors",
   async ({ authorId, authorsData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await apiClient.put(
         `http://localhost:8080/api/v1/authors/${authorId}`,
         authorsData
       );
@@ -85,21 +100,22 @@ export const updateAuthors = createAsyncThunk(
     } catch (error) {
       if (error.response) {
         const errorMsg = error.response.data.message;
-        toast.error(`${errorMsg}`);
-        return error.response;
+        toast.error(errorMsg);
+        return error.response.data;
       } else {
-        toast.error("Failed to update authors");
+        toast.error("Failed to update author");
         return rejectWithValue(error.message);
       }
     }
   }
 );
 
+// DELETE AUTHORS
 export const deleteAuthors = createAsyncThunk(
   "authors/deleteAuthors",
   async (authorId, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(
+      const response = await apiClient.delete(
         `http://localhost:8080/api/v1/authors/${authorId}`
       );
       if (response.status === 200) {
@@ -109,10 +125,10 @@ export const deleteAuthors = createAsyncThunk(
     } catch (error) {
       if (error.response) {
         const errorMsg = error.response.data.message;
-        toast.error(`${errorMsg}`);
-        return error.response;
+        toast.error(errorMsg);
+        return error.response.data;
       } else {
-        toast.error("Failed to delete authors");
+        toast.error("Failed to delete author");
         return rejectWithValue(error.message);
       }
     }

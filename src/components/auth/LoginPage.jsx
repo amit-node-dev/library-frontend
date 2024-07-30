@@ -62,6 +62,7 @@ const LoginPage = () => {
         const response = await dispatch(loginUser(userData)).unwrap();
         if (response.statusType === "SUCCESS") {
           navigate("/dashboard");
+          localStorage.setItem("token", response.data);
         }
       }
     } catch (error) {
