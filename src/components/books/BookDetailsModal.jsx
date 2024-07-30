@@ -1,5 +1,3 @@
-// src/components/BookDetailsModal.js
-
 import React from "react";
 import {
   Modal,
@@ -10,11 +8,54 @@ import {
   Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { styled, keyframes } from "@mui/system";
+
+// Keyframes for animations
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const slideIn = keyframes`
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
+// Styled components for modal
+const ModalContainer = styled(Paper)(({ theme }) => ({
+  padding: "20px",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: { xs: "90%", sm: 600 },
+  backgroundColor: "#eeeeee",
+  borderRadius: "14px",
+  boxShadow: "2px 3px 20px 1px",
+  p: 3,
+  height: "auto",
+  maxHeight: "80vh",
+  overflowY: "auto",
+  animation: `${fadeIn} 0.5s ease-in-out`,
+}));
+
+const ContentBox = styled(Box)(({ theme }) => ({
+  animation: `${slideIn} 0.5s ease-in-out`,
+}));
 
 const BookDetailsModal = ({ open, onClose, book }) => {
   if (!book) return null;
 
-  // Custom date formatting function
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
@@ -27,22 +68,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       aria-labelledby="book-details-title"
       aria-describedby="book-details-description"
     >
-      <Paper
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: { xs: "90%", sm: 600 },
-          bgcolor: "background.paper",
-          borderRadius: 2,
-          boxShadow: 24,
-          p: 3,
-          height: 600,
-          outline: "none",
-          overflowY: "auto",
-        }}
-      >
+      <ModalContainer>
         <Box
           display="flex"
           justifyContent="space-between"
@@ -57,7 +83,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
           </IconButton>
         </Box>
         <Divider sx={{ mb: 2 }} />
-        <Box>
+        <ContentBox>
           <Typography variant="h6" sx={{ mb: 1 }}>
             <strong>Book Name:</strong>
           </Typography>
@@ -90,8 +116,8 @@ const BookDetailsModal = ({ open, onClose, book }) => {
             <strong>Updated At:</strong>
           </Typography>
           <Typography variant="body1">{formatDate(book.updatedAt)}</Typography>
-        </Box>
-      </Paper>
+        </ContentBox>
+      </ModalContainer>
     </Modal>
   );
 };

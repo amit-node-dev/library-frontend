@@ -97,6 +97,7 @@ const AddEditAuthors = () => {
   return (
     <Container maxWidth="md">
       <Box
+        className="add-edit-author-container"
         sx={{
           mt: 10,
           border: "1px solid #ddd",
@@ -104,17 +105,36 @@ const AddEditAuthors = () => {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           padding: "50px",
           backgroundColor: "#fff",
+          animation: "fadeIn 1s ease-in-out",
         }}
       >
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <Typography variant="h4" gutterBottom>
             {authorId ? "Edit Author" : "Add Author"}
           </Typography>
-          <Button variant="contained" onClick={handleBack}>
+          <Button
+            variant="contained"
+            className="back-button"
+            onClick={handleBack}
+            sx={{
+              backgroundColor: "#007bff",
+              "&:hover": {
+                backgroundColor: "#0056b3",
+                transform: "scale(1.05)",
+              },
+              transition: "background-color 0.3s ease, transform 0.3s ease",
+            }}
+          >
             &larr; Back
           </Button>
         </Box>
-        <Box component="form" onSubmit={handleSubmit}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            animation: "slideIn 0.5s ease-out",
+          }}
+        >
           <TextField
             fullWidth
             margin="normal"
@@ -125,6 +145,13 @@ const AddEditAuthors = () => {
             onBlur={handleFirstNameBlur}
             error={!!firstnameError}
             helperText={firstnameError}
+            sx={{
+              animation: "fadeIn 1s ease-in-out",
+              "&:focus-within": {
+                borderColor: "#007bff",
+                boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
+              },
+            }}
           />
           <TextField
             fullWidth
@@ -136,6 +163,13 @@ const AddEditAuthors = () => {
             onBlur={handleLastNameBlur}
             error={!!lastnameError}
             helperText={lastnameError}
+            sx={{
+              animation: "fadeIn 1s ease-in-out",
+              "&:focus-within": {
+                borderColor: "#007bff",
+                boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
+              },
+            }}
           />
           <TextField
             fullWidth
@@ -147,6 +181,13 @@ const AddEditAuthors = () => {
             onBlur={handleEmailBlur}
             error={!!emailError}
             helperText={emailError}
+            sx={{
+              animation: "fadeIn 1s ease-in-out",
+              "&:focus-within": {
+                borderColor: "#007bff",
+                boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
+              },
+            }}
           />
           <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
             <Button
@@ -155,7 +196,11 @@ const AddEditAuthors = () => {
               color="primary"
               sx={{
                 backgroundColor: "#007bff",
-                "&:hover": { backgroundColor: "#0056b3" },
+                "&:hover": {
+                  backgroundColor: "#0056b3",
+                  transform: "scale(1.05)",
+                },
+                transition: "background-color 0.3s ease, transform 0.3s ease",
               }}
             >
               {authorId ? "Update" : "Add"}
@@ -164,6 +209,7 @@ const AddEditAuthors = () => {
               variant="outlined"
               onClick={handleReset}
               color="secondary"
+              className="reset-button"
               sx={{
                 borderColor: "#f50057",
                 color: "#f50057",
@@ -171,6 +217,7 @@ const AddEditAuthors = () => {
                   borderColor: "#c51162",
                   color: "#c51162",
                 },
+                transition: "border-color 0.3s ease, color 0.3s ease",
               }}
             >
               Reset

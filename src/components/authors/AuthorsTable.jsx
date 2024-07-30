@@ -10,8 +10,8 @@ import { ClipLoader } from "react-spinners";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { setPage, setPageSize } from "../../features/author_module/authorSlice";
-import "./authors.css";
 import { DataGrid } from "@mui/x-data-grid";
+import "./authors.css";
 
 const AuthorsTable = () => {
   const { authors, loading, error, total, page, pageSize } = useSelector(
@@ -78,7 +78,7 @@ const AuthorsTable = () => {
       headerName: "Actions",
       width: 150,
       renderCell: (params) => (
-        <div>
+        <div className="actions-container">
           <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
             <EditIcon />
           </IconButton>
@@ -95,7 +95,7 @@ const AuthorsTable = () => {
   ];
 
   return (
-    <div className="authors-container">
+    <div className="authors-table-container">
       <div className="header">
         <Typography variant="h4" className="table-title">
           Authors
@@ -110,10 +110,10 @@ const AuthorsTable = () => {
       </div>
       {loading ? (
         <div className="spinner-container">
-          <ClipLoader size={50} color={"#123abc"} loading={loading} />
+          <ClipLoader size={50} color={"#007bff"} loading={loading} />
         </div>
       ) : error ? (
-        <p>Error: {error}</p>
+        <p className="error-message">Error: {error}</p>
       ) : (
         <>
           <Box
@@ -123,6 +123,7 @@ const AuthorsTable = () => {
               border: "1px solid #ddd",
               borderRadius: "4px",
               margin: "30px auto",
+              animation: "fadeIn 1s ease-in-out",
             }}
           >
             <DataGrid
@@ -145,6 +146,7 @@ const AuthorsTable = () => {
               sx={{
                 "& .MuiDataGrid-columnHeaders": {
                   backgroundColor: "#f5f5f5",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   borderTop: "1px solid #ddd",

@@ -87,7 +87,7 @@ const BooksTable = () => {
 
   // Custom renderer for actions
   const ActionRenderer = (params) => (
-    <div>
+    <div className="actions-container">
       <IconButton color="primary" onClick={() => handleView(params.row)}>
         <VisibilityIcon />
       </IconButton>
@@ -174,6 +174,7 @@ const BooksTable = () => {
               border: "1px solid #ddd",
               borderRadius: "4px",
               margin: "30px auto",
+              animation: "fadeIn 1s ease-in-out",
             }}
           >
             <DataGrid
@@ -203,6 +204,12 @@ const BooksTable = () => {
                 "& .MuiDataGrid-row:hover": {
                   backgroundColor: "#e0f7fa",
                 },
+                "& .actions-container > *": {
+                  transition: "color 0.3s ease",
+                },
+                "& .actions-container > *:hover": {
+                  color: "#007bff",
+                },
               }}
             />
           </Box>
@@ -217,6 +224,7 @@ const BooksTable = () => {
               margin: "20px auto",
               display: "flex",
               justifyContent: "center",
+              animation: "fadeIn 1s ease-in-out",
             }}
           />
         </>
@@ -225,6 +233,9 @@ const BooksTable = () => {
         open={isModalOpen}
         onClose={handleCloseModal}
         book={selectedBook}
+        sx={{
+          animation: "fadeIn 0.5s ease-in-out",
+        }}
       />
     </div>
   );

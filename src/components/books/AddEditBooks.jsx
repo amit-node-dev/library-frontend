@@ -19,6 +19,7 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
+import "./books.css";
 
 const AddEditBooks = () => {
   const { bookId } = useParams();
@@ -88,12 +89,16 @@ const AddEditBooks = () => {
     handleAuthorIdBlur();
 
     if (bookData.bookname && bookData.description && bookData.authorId) {
-      if (bookId) {
-        await dispatch(updateBooks({ bookId, bookData })).unwrap();
-      } else {
-        await dispatch(addNewBooks(bookData)).unwrap();
+      try {
+        if (bookId) {
+          await dispatch(updateBooks({ bookId, bookData })).unwrap();
+        } else {
+          await dispatch(addNewBooks(bookData)).unwrap();
+        }
+        navigate("/books");
+      } catch (error) {
+        console.log("Error in handleSubmit:", error);
       }
-      navigate("/books");
     }
   };
 
@@ -122,17 +127,35 @@ const AddEditBooks = () => {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           padding: "50px",
           backgroundColor: "#fff",
+          animation: "fadeIn 1s ease-in-out",
         }}
       >
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <Typography variant="h4" gutterBottom>
             {bookId ? "Edit Book" : "Add New Book"}
           </Typography>
-          <Button variant="contained" onClick={handleBack}>
+          <Button
+            variant="contained"
+            onClick={handleBack}
+            sx={{
+              backgroundColor: "#007bff",
+              "&:hover": {
+                backgroundColor: "#0056b3",
+                transform: "scale(1.05)",
+              },
+              transition: "background-color 0.3s ease, transform 0.3s ease",
+            }}
+          >
             &larr; Back
           </Button>
         </Box>
-        <Box component="form" onSubmit={handleSubmit}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            animation: "slideIn 0.5s ease-out",
+          }}
+        >
           <TextField
             fullWidth
             margin="normal"
@@ -143,6 +166,13 @@ const AddEditBooks = () => {
             onBlur={handleBookNameBlur}
             error={!!booknameError}
             helperText={booknameError}
+            sx={{
+              animation: "fadeIn 1s ease-in-out",
+              "&:focus-within": {
+                borderColor: "#007bff",
+                boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
+              },
+            }}
           />
           <TextField
             fullWidth
@@ -156,6 +186,13 @@ const AddEditBooks = () => {
             helperText={descriptionError}
             multiline
             rows={4}
+            sx={{
+              animation: "fadeIn 1s ease-in-out",
+              "&:focus-within": {
+                borderColor: "#007bff",
+                boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
+              },
+            }}
           />
           <FormControl fullWidth margin="normal" error={!!authorIdError}>
             <InputLabel>Author Name</InputLabel>
@@ -165,6 +202,13 @@ const AddEditBooks = () => {
               onChange={handleChange}
               onBlur={handleAuthorIdBlur}
               label="Author Name"
+              sx={{
+                animation: "fadeIn 1s ease-in-out",
+                "&:focus": {
+                  borderColor: "#007bff",
+                  boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
+                },
+              }}
             >
               {authors.map((author) => (
                 <MenuItem key={author.id} value={author.id}>
@@ -181,7 +225,11 @@ const AddEditBooks = () => {
               color="primary"
               sx={{
                 backgroundColor: "#007bff",
-                "&:hover": { backgroundColor: "#0056b3" },
+                "&:hover": {
+                  backgroundColor: "#0056b3",
+                  transform: "scale(1.05)",
+                },
+                transition: "background-color 0.3s ease, transform 0.3s ease",
               }}
             >
               {bookId ? "Update Book" : "Add Book"}
@@ -197,6 +245,7 @@ const AddEditBooks = () => {
                   borderColor: "#c51162",
                   color: "#c51162",
                 },
+                transition: "border-color 0.3s ease, color 0.3s ease",
               }}
             >
               Reset

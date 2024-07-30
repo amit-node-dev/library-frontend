@@ -16,6 +16,7 @@ import MainPage from "./components/books/MainPage";
 import AddEditBooks from "./components/books/AddEditBooks";
 import AuthorMainPage from "./components/authors/MainPage";
 import AddEditAuthors from "./components/authors/AddEditAuthors";
+import About from "./components/about/About";
 
 function App() {
   return (
@@ -90,6 +91,16 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <AddEditAuthors />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <About />
               </Layout>
             </PrivateRoute>
           }
