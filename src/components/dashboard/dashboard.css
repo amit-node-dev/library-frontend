@@ -1,7 +1,12 @@
 .navbar {
      background-color: #343a40;
-     padding: 0.5rem;
+     padding: 0.5rem 1rem;
      border-bottom: 2px solid #495057;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     position: sticky;
+     top: 0;
+     z-index: 1000;
+     transition: background-color 0.3s ease;
 }
 
 .container-fluid {
@@ -18,24 +23,47 @@
      text-transform: uppercase;
      letter-spacing: 1px;
      text-decoration: none;
+     transition: color 0.3s, transform 0.3s;
+}
+
+.navbar-brand:hover {
+     color: #007bff;
+     transform: scale(1.1);
 }
 
 .navbar-nav {
      display: flex;
-     gap: 1rem;
+     gap: 2rem;
 }
 
 .navbar-nav .nav-link {
      color: #ffffff;
      font-size: 1rem;
      font-weight: 500;
-     transition: color 0.3s, transform 0.2s;
+     transition: color 0.3s, transform 0.3s;
      text-decoration: none;
+     position: relative;
 }
 
 .navbar-nav .nav-link:hover {
      color: #adb5bd;
-     transform: scale(1.05);
+     transform: scale(1.1);
+}
+
+.navbar-nav .nav-link::after {
+     content: '';
+     display: block;
+     width: 0;
+     height: 2px;
+     background: #007bff;
+     transition: width 0.3s;
+     position: absolute;
+     bottom: -2px;
+     left: 0;
+}
+
+.navbar-nav .nav-link:hover::after {
+     width: 100%;
 }
 
 .navbar-nav .nav-link.active {
@@ -56,6 +84,7 @@
 .user-email {
      color: #ffffff;
      margin-right: 1rem;
+     font-size: 1rem;
 }
 
 .btn-logout {
@@ -66,9 +95,32 @@
      padding: 0.5rem 1rem;
      cursor: pointer;
      font-size: 1rem;
-     transition: background-color 0.3s;
+     transition: background-color 0.3s, transform 0.3s;
 }
 
 .btn-logout:hover {
      background-color: #c82333;
+     transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+     from {
+          opacity: 0;
+     }
+
+     to {
+          opacity: 1;
+     }
+}
+
+@keyframes slideIn {
+     from {
+          transform: translateY(-20px);
+          opacity: 0;
+     }
+
+     to {
+          transform: translateY(0);
+          opacity: 1;
+     }
 }

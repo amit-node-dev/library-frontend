@@ -94,19 +94,28 @@ const AuthorsTable = () => {
     },
   ];
 
+  const handleAddAuthors = () => {
+    navigate("/authors/add_authors");
+  };
+
   return (
     <div className="authors-table-container">
-      <div className="header">
+      <div className="author-header">
         <Typography variant="h4" className="table-title">
           Authors
         </Typography>
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search authors..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <div className="author-util">
+          <button onClick={handleAddAuthors} className="author-add-button">
+            Add Authors
+          </button>
+          <input
+            type="text"
+            className="author-search-input"
+            placeholder="Search authors..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
       {loading ? (
         <div className="spinner-container">

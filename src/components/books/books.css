@@ -47,23 +47,23 @@
      animation: slideIn 0.5s ease-out;
 }
 
-.books-container {
+.book-container {
      padding: 20px;
      animation: fadeIn 1s ease-in-out;
 }
 
-.header {
+.book-header {
      display: flex;
      justify-content: space-between;
      align-items: center;
      margin-bottom: 20px;
 }
 
-.util{
+.book-util{
      display: flex;
 }
 
-.search-input {
+.book-search-input {
      padding: 10px;
      border: 1px solid #ccc;
      border-radius: 4px;
@@ -71,7 +71,7 @@
      transition: border-color 0.3s ease;
 }
 
-.search-input:focus {
+.book-search-input:focus {
      border-color: #007bff;
      outline: none;
 }
@@ -84,13 +84,6 @@
      background-color: #d1d1d1;
      min-height: 90vh;
      box-sizing: border-box;
-}
-
-.error-message {
-     color: red;
-     font-size: 13px;
-     margin: 3px;
-     font-weight: 500;
 }
 
 @keyframes fadeIn {

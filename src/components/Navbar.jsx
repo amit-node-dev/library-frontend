@@ -34,7 +34,7 @@ const Navbar = () => {
               Books
             </Link>
             <Link className="nav-link" to="/authors">
-              Author
+              Authors
             </Link>
             <Link className="nav-link" to="/users">
               Users

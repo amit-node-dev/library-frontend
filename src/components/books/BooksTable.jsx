@@ -150,16 +150,16 @@ const BooksTable = () => {
   };
 
   return (
-    <div className="books-container">
-      <div className="header">
+    <div className="book-container">
+      <div className="book-header">
         <Typography variant="h4">Books</Typography>
-        <div className="util">
+        <div className="book-util">
           <button onClick={handleAddBook} className="book-add-button">
             Add Book
           </button>
           <input
             type="text"
-            className="search-input"
+            className="book-search-input"
             placeholder="Search books..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
