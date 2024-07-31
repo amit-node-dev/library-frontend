@@ -5,6 +5,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
+import apiClient from "../utils/apiClient";
 
 // CSS IMPORTS
 import "./dashboard/dashboard.css";
@@ -12,8 +13,9 @@ import "./dashboard/dashboard.css";
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("email");
+  const handleLogout = async () => {
+    await apiClient.post(`http://localhost:8080/api/v1/auth/logout`);
+    localStorage.clear();
     toast.success("Thank You! For Visting Us.");
     navigate("/login");
   };
@@ -33,6 +35,12 @@ const Navbar = () => {
             </Link>
             <Link className="nav-link" to="/authors">
               Author
+            </Link>
+            <Link className="nav-link" to="/users">
+              Users
+            </Link>
+            <Link className="nav-link" to="/roles">
+              Roles
             </Link>
             <Link className="nav-link" to="/about">
               About

@@ -39,20 +39,22 @@ const LoginPage = () => {
     setPasswordError(password === "" ? "Password is required" : "");
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   const handleSubmitLoginForm = async (e) => {
     e.preventDefault();
-    localStorage.setItem("email", email);
     try {
       setEmailError("");
       setPasswordError("");
 
-      if (email === "") {
-        setEmailError("Email Id is required");
-      }
-
-      if (password === "") {
-        setPasswordError("Password is required");
-      }
+      handleEmailBlur();
+      handlePasswordBlur();
 
       if (email && password) {
         const userData = {
@@ -61,21 +63,14 @@ const LoginPage = () => {
         };
         const response = await dispatch(loginUser(userData)).unwrap();
         if (response.statusType === "SUCCESS") {
-          navigate("/dashboard");
+          localStorage.setItem("email", email);
           localStorage.setItem("token", response.data);
+          navigate("/dashboard");
         }
       }
     } catch (error) {
       console.log("ERROR IN HANDLE SUBMIT ::: ", error);
     }
-  };
-
-  const handleClickShowPassword = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
   };
 
   return (

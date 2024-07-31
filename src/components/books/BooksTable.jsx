@@ -145,19 +145,26 @@ const BooksTable = () => {
     },
   ];
 
+  const handleAddBook = () => {
+    navigate("/books/add_books");
+  };
+
   return (
     <div className="books-container">
       <div className="header">
-        <Typography variant="h4" className="table-title">
-          Books
-        </Typography>
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search books..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <Typography variant="h4">Books</Typography>
+        <div className="util">
+          <button onClick={handleAddBook} className="book-add-button">
+            Add Book
+          </button>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search books..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
       {loading ? (
         <div className="spinner-container">

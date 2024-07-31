@@ -248,7 +248,7 @@ const RegisterPage = () => {
             <Typography align="center" variant="caption" component="h4">
               Already have an account?
             </Typography>
-            <Link to="/login" className="register-link">
+            <Link to="/login" className="login-link">
               Login
             </Link>
           </div>
