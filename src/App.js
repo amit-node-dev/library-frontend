@@ -12,10 +12,12 @@ import PrivateRoute from "./PrivateRoutes";
 import RegisterPage from "./components/auth/RegisterPage";
 import LoginPage from "./components/auth/LoginPage";
 import Dashboard from "./components/dashboard/Dashboard";
-import MainPage from "./components/books/MainPage";
+import BookMainPage from "./components/books/MainPage";
 import AddEditBooks from "./components/books/AddEditBooks";
 import AuthorMainPage from "./components/authors/MainPage";
 import AddEditAuthors from "./components/authors/AddEditAuthors";
+import UserMainPage from "./components/users/MainPage";
+import AddEditUsers from "./components/users/AddEditUsers";
 import About from "./components/about/About";
 
 function App() {
@@ -40,7 +42,7 @@ function App() {
           element={
             <PrivateRoute>
               <Layout>
-                <MainPage />
+                <BookMainPage />
               </Layout>
             </PrivateRoute>
           }
@@ -91,6 +93,36 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <AddEditAuthors />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <UserMainPage />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/add_users"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AddEditUsers />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/:userId"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AddEditUsers />
               </Layout>
             </PrivateRoute>
           }

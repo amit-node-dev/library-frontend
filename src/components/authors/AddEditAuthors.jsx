@@ -148,10 +148,6 @@ const AddEditAuthors = () => {
               helperText={firstnameError}
               sx={{
                 animation: "fadeIn 1s ease-in-out",
-                "&:focus-within": {
-                  borderColor: "#007bff",
-                  boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
-                },
               }}
             />
             <TextField
@@ -166,10 +162,6 @@ const AddEditAuthors = () => {
               helperText={lastnameError}
               sx={{
                 animation: "fadeIn 1s ease-in-out",
-                "&:focus-within": {
-                  borderColor: "#007bff",
-                  boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
-                },
               }}
             />
             <TextField
@@ -184,10 +176,6 @@ const AddEditAuthors = () => {
               helperText={emailError}
               sx={{
                 animation: "fadeIn 1s ease-in-out",
-                "&:focus-within": {
-                  borderColor: "#007bff",
-                  boxShadow: "0 0 0 3px rgba(0, 123, 255, 0.25)",
-                },
               }}
             />
             <Box

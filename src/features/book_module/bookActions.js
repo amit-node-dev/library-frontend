@@ -9,10 +9,7 @@ export const addNewBooks = createAsyncThunk(
   "books/addNewBooks",
   async (bookData, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(
-        `http://localhost:8080/api/v1/books/add_books`,
-        bookData
-      );
+      const response = await apiClient.post(`/books/add_books`, bookData);
       if (response.status === 201) {
         toast.success(response.data.message);
         return response.data;
@@ -48,12 +45,9 @@ export const getAllBooksList = createAsyncThunk(
   "books/getAllBooksList",
   async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(
-        `http://localhost:8080/api/v1/books`,
-        {
-          params: { page, pageSize },
-        }
-      );
+      const response = await apiClient.get(`/books`, {
+        params: { page, pageSize },
+      });
 
       if (response.status === 200) {
         return response.data.data;
@@ -76,9 +70,7 @@ export const getBooksById = createAsyncThunk(
   "books/getBooksById",
   async (bookId, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(
-        `http://localhost:8080/api/v1/books/${bookId}`
-      );
+      const response = await apiClient.get(`/books/${bookId}`);
       if (response.status === 200) {
         return response.data;
       }
@@ -100,10 +92,7 @@ export const updateBooks = createAsyncThunk(
   "books/updateBooks",
   async ({ bookId, bookData }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put(
-        `http://localhost:8080/api/v1/books/${bookId}`,
-        bookData
-      );
+      const response = await apiClient.put(`/books/${bookId}`, bookData);
       if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;
@@ -126,9 +115,7 @@ export const deleteBooks = createAsyncThunk(
   "books/deleteBooks",
   async (bookId, { rejectWithValue }) => {
     try {
-      const response = await apiClient.delete(
-        `http://localhost:8080/api/v1/books/${bookId}`
-      );
+      const response = await apiClient.delete(`/books/${bookId}`);
       if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;

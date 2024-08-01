@@ -31,10 +31,15 @@ const StyledCarouselItem = styled("div")(() => ({
   alignItems: "center",
   height: "852px",
   backgroundColor: "#dedede",
+  overflow: "hidden",
   "& img": {
     width: "100%",
     height: "auto",
     animation: "fadeIn 2s ease-in-out",
+  },
+  "@keyframes fadeIn": {
+    "0%": { opacity: 0 },
+    "100%": { opacity: 1 },
   },
   "@keyframes fadeSlideIn": {
     "0%": { opacity: 0, transform: "translateX(-100%)" },
@@ -76,7 +81,11 @@ const Dashboard = () => {
       >
         {slides.map((slide, index) => (
           <StyledCarouselItem key={index}>
-            <img src={slide.image} alt={`slide-${index}`} />
+            <img
+              src={slide.image}
+              alt={`slide-${index}`}
+              onLoad={(e) => (e.target.style.opacity = 1)}
+            />
             <TextOverlay>{slide.text}</TextOverlay>
           </StyledCarouselItem>
         ))}

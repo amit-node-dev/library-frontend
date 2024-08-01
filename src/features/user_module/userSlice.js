@@ -4,10 +4,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   registerUser,
   loginUser,
+  addUser,
+  getAllUsersList,
   getUserById,
-  getUserList,
-  deleteUser,
-  updateUserById,
+  updateUsers,
+  deleteUsers,
 } from "./userActions";
 
 // INITAILS STATE
@@ -16,13 +17,23 @@ const initialState = {
   currentUser: null,
   loading: false,
   error: null,
+  total: 0,
+  page: 1,
+  pageSize: 5,
 };
 
 // USER SLICE
 const userSlice = createSlice({
   name: "users",
   initialState,
-  reducers: {},
+  reducers: {
+    setPage(state, action) {
+      state.page = action.payload;
+    },
+    setPageSize(state, action) {
+      state.pageSize = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Handle registerUser actions
@@ -51,15 +62,31 @@ const userSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Handle getUserList actions
-      .addCase(getUserList.pending, (state) => {
+      // Handle addUser actions
+      .addCase(addUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getUserList.fulfilled, (state, action) => {
+      .addCase(addUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload;
+        state.users.push(action.payload);
       })
-      .addCase(getUserList.rejected, (state, action) => {
+      .addCase(addUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Handle getAllUsersList actions
+      .addCase(getAllUsersList.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllUsersList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.users;
+        state.total = action.payload.total;
+        state.page = action.payload.page;
+        state.pageSize = action.payload.pageSize;
+      })
+      .addCase(getAllUsersList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -74,32 +101,34 @@ const userSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Handle updateUserById actions
-      .addCase(updateUserById.pending, (state) => {
+      // Handle updateUsers actions
+      .addCase(updateUsers.pending, (state) => {
         state.loading = true;
       })
-      .addCase(updateUserById.fulfilled, (state, action) => {
+      .addCase(updateUsers.fulfilled, (state, action) => {
         state.loading = false;
         state.currentUser = action.payload;
       })
-      .addCase(updateUserById.rejected, (state, action) => {
+      .addCase(updateUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // Handle deleteUser actions
-      .addCase(deleteUser.pending, (state) => {
+      // Handle deleteUsers actions
+      .addCase(deleteUsers.pending, (state) => {
         state.loading = true;
       })
-      .addCase(deleteUser.fulfilled, (state, action) => {
+      .addCase(deleteUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = state.users.filter((user) => user._id !== action.payload);
+        state.users = state.users.filter((user) => user.id !== action.payload);
       })
-      .addCase(deleteUser.rejected, (state, action) => {
+      .addCase(deleteUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
+
+export const { setPage, setPageSize } = userSlice.actions;
 
 export default userSlice.reducer;

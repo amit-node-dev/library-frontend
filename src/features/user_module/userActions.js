@@ -2,17 +2,61 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import apiClient from "../../utils/apiClient";
 
 // REGISTER USER
 export const registerUser = createAsyncThunk(
-  "users/registerUser",
+  "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `http://localhost:8080/api/v1/auth/register_user`,
-        userData
-      );
-      console.log("REGISTER USER RESPONSE ::: ", response.data);
+      const response = await apiClient.post(`/auth/register_user`, userData);
+      if (response.status === 201) {
+        toast.success(response.data.message);
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        error.response.data.data.forEach((err) => {
+          toast.error(`${err.msg}`);
+        });
+        return error.response;
+      } else {
+        toast.error("Failed to register user");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// LOGIN USER
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/auth/login`, userData);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response;
+      } else {
+        toast.error("Failed to login user");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// ADD USERS
+export const addUser = createAsyncThunk(
+  "users/addUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/users/add_users`, userData);
       if (response.status === 201) {
         toast.success(response.data.message);
         return response.data;
@@ -31,43 +75,16 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// LOGIN USER
-export const loginUser = createAsyncThunk(
-  "users/loginUser",
-  async (userData, { rejectWithValue }) => {
+// GET ALL LIST OF USERS
+export const getAllUsersList = createAsyncThunk(
+  "users/getAllUsersList",
+  async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `http://localhost:8080/api/v1/auth/login`,
-        userData
-      );
-      console.log("LOGIN USER RESPONSE ::: ", response.data);
-      if (response.status === 200) {
-        toast.success(response.data.message);
-        return response.data;
-      }
-    } catch (error) {
-      if (error.response) {
-        const errorMsg = error.response.data.message;
-        toast.error(`${errorMsg}`);
-        return error.response;
-      } else {
-        toast.error("Failed to add user");
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const getUserList = createAsyncThunk(
-  "users/getUserList",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`http://localhost:8080/api/v1/users/`);
+      const response = await apiClient.get(`/users`, {
+        params: { page, pageSize },
+      });
       if (response.status === 200) {
         return response.data.data;
-      } else {
-        toast.error(response.data.message);
-        return rejectWithValue(response.data.message);
       }
     } catch (error) {
       toast.error("Failed to fetch user list");
@@ -80,9 +97,7 @@ export const getUserById = createAsyncThunk(
   "users/getUserById",
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/user-module/edit-user/${userId}`
-      );
+      const response = await apiClient.get(`/users/${userId}`);
       if (response.status === 200) {
         return response.data;
       } else {
@@ -96,14 +111,11 @@ export const getUserById = createAsyncThunk(
   }
 );
 
-export const updateUserById = createAsyncThunk(
-  "users/updateUserById",
+export const updateUsers = createAsyncThunk(
+  "users/updateUsers",
   async ({ userId, userData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `http://localhost:8080/user-module/update-user/${userId}`,
-        userData
-      );
+      const response = await axios.put(`/users/${userId}`, userData);
       if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;
@@ -118,13 +130,11 @@ export const updateUserById = createAsyncThunk(
   }
 );
 
-export const deleteUser = createAsyncThunk(
-  "users/deleteUser",
+export const deleteUsers = createAsyncThunk(
+  "users/deleteUsers",
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:8080/user-module/delete-user/${userId}`
-      );
+      const response = await axios.delete(`/users/${userId}`);
       if (response.status === 200) {
         toast.success(response.data.message);
         return userId;

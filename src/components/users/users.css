@@ -1,4 +1,4 @@
-.author-main-page-container {
+.user-main-page-container {
      position: relative;
      padding: 100px;
      text-align: center;
@@ -14,7 +14,7 @@
      margin-top: 20px;
 }
 
-.author-add-button {
+.user-add-button {
      padding: 8px 8px;
      background-color: #007bff;
      color: #fff;
@@ -28,22 +28,22 @@
      margin-right: 1rem;
 }
 
-.author-add-button:hover {
+.user-add-button:hover {
      background-color: #0056b3;
      transform: scale(1.05);
 }
 
-.author-add-button:focus {
+.user-add-button:focus {
      outline: none;
      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-.authors-table-container {
+.users-table-container {
      padding: 20px;
      animation: fadeIn 1s ease-in-out;
 }
 
-.author-table-wrapper {
+.user-table-wrapper {
      padding: 20px;
      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
      border-radius: 8px;
@@ -53,19 +53,19 @@
      animation: slideIn 0.5s ease-out;
 }
 
-.author-header {
+.user-header {
      display: flex;
      justify-content: space-between;
      align-items: center;
      margin-bottom: 20px;
 }
 
-.author-util {
+.user-util {
      display: flex;
      align-items: center;
 }
 
-.author-search-input {
+.user-search-input {
      padding: 10px;
      border: 1px solid #ccc;
      border-radius: 4px;
@@ -73,13 +73,13 @@
      transition: border-color 0.3s ease;
 }
 
-.author-search-input:focus {
+.user-search-input:focus {
      border-color: #007bff;
      outline: none;
 }
 
 /* ADD / EDIT PAGE CSS */
-.author-add-edit-container {
+.user-add-edit-container {
      position: relative;
      padding: 50px;
      text-align: center;

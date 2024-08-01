@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-// THIRD PARTY COMPONENTS
+// THRID PARTY CONTENTS
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
@@ -12,41 +12,41 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { DataGrid } from "@mui/x-data-grid";
 
 // CSS
-import "./authors.css";
+import "./users.css";
 
 // ACTIONS & STORES
 import {
-  getAllAuthorsList,
-  deleteAuthors,
-} from "../../features/author_module/authorActions";
-import { setPage, setPageSize } from "../../features/author_module/authorSlice";
+  getAllUsersList,
+  deleteUsers,
+} from "../../features/user_module/userActions";
+import { setPage, setPageSize } from "../../features/user_module/userSlice";
 
-const AuthorsTable = () => {
-  const { authors, loading, error, total, page, pageSize } = useSelector(
-    (state) => state.authors
+const UsersTable = () => {
+  const { users, loading, error, total, page, pageSize } = useSelector(
+    (state) => state.users
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredAuthors, setFilteredAuthors] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [sortModel, setSortModel] = useState([]);
 
   useEffect(() => {
-    dispatch(getAllAuthorsList({ page, pageSize }));
+    dispatch(getAllUsersList({ page, pageSize }));
   }, [dispatch, page, pageSize]);
 
   useEffect(() => {
-    let filtered = authors;
+    let filtered = users;
     if (searchQuery) {
-      filtered = authors.filter((author) =>
-        `${author.firstname} ${author.lastname} ${author.email}`
+      filtered = users.filter((user) =>
+        `${user.firstname} ${user.lastname} ${user.email} ${user.role.name}`
           .toLowerCase()
           .includes(searchQuery.toLowerCase())
       );
     }
-    setFilteredAuthors(filtered);
-  }, [searchQuery, authors]);
+    setFilteredUsers(filtered);
+  }, [searchQuery, users]);
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -58,27 +58,49 @@ const AuthorsTable = () => {
     dispatch(setPage(1));
   };
 
-  const handleEdit = (authorId) => {
-    navigate(`/authors/${authorId}`);
+  const handleEdit = (userId) => {
+    navigate(`/users/${userId}`);
   };
 
-  const handleDelete = async (authorId) => {
+  const handleDelete = async (userId) => {
     try {
-      await dispatch(deleteAuthors(authorId)).unwrap();
-      await dispatch(getAllAuthorsList({ page, pageSize })).unwrap();
+      await dispatch(deleteUsers(userId)).unwrap();
+      await dispatch(getAllUsersList({ page, pageSize })).unwrap();
     } catch (error) {
-      console.log("ERROR IN DELETE AUTHOR ::: ", error);
+      console.log("ERROR IN DELETE USER ::: ", error);
     }
+  };
+
+  // Custom date formatting function
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
   };
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "ID", width: 110 },
+    { field: "id", headerName: "User Id", width: 110 },
     { field: "firstname", headerName: "First Name", width: 150 },
     { field: "lastname", headerName: "Last Name", width: 150 },
     { field: "email", headerName: "Email", width: 200 },
-    { field: "createdAt", headerName: "Created at", width: 200 },
-    { field: "updatedAt", headerName: "Updated at", width: 200 },
+    {
+      field: "role",
+      headerName: "Role",
+      width: 200,
+      renderCell: (params) => (params.row.role ? params.row.role.name : "N/A"),
+    },
+    {
+      field: "createdAt",
+      headerName: "Created Date",
+      width: 150,
+      renderCell: (params) => formatDate(params.row.createdAt),
+    },
+    {
+      field: "updatedAt",
+      headerName: "Updated Date",
+      width: 150,
+      renderCell: (params) => formatDate(params.row.updatedAt),
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -100,24 +122,24 @@ const AuthorsTable = () => {
     },
   ];
 
-  const handleAddAuthors = () => {
-    navigate("/authors/add_authors");
+  const handleAddUsers = () => {
+    navigate("/users/add_users");
   };
 
   return (
-    <div className="authors-table-container">
-      <div className="author-header">
+    <div className="users-table-container">
+      <div className="user-header">
         <Typography variant="h4" className="table-title">
-          Authors
+          Users
         </Typography>
-        <div className="author-util">
-          <button onClick={handleAddAuthors} className="author-add-button">
-            Add Authors
+        <div className="user-util">
+          <button onClick={handleAddUsers} className="user-add-button">
+            Add Users
           </button>
           <input
             type="text"
-            className="author-search-input"
-            placeholder="Search authors..."
+            className="user-search-input"
+            placeholder="Search users..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -142,7 +164,7 @@ const AuthorsTable = () => {
             }}
           >
             <DataGrid
-              rows={filteredAuthors}
+              rows={filteredUsers}
               density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
@@ -191,4 +213,4 @@ const AuthorsTable = () => {
   );
 };
 
-export default AuthorsTable;
+export default UsersTable;

@@ -10,7 +10,7 @@ export const addNewAuthors = createAsyncThunk(
   async (authorsData, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(
-        `http://localhost:8080/api/v1/authors/add_authors`,
+        `/authors/add_authors`,
         authorsData
       );
       console.log("ADD NEW AUTHORS RESPONSE ::: ", response.data);
@@ -46,10 +46,9 @@ export const getAllAuthorsList = createAsyncThunk(
   "authors/getAllAuthorsList",
   async ({ page, pageSize }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(
-        `http://localhost:8080/api/v1/authors`,
-        { params: { page, pageSize } }
-      );
+      const response = await apiClient.get(`/authors`, {
+        params: { page, pageSize },
+      });
       if (response.status === 200) {
         return response.data.data;
       }
@@ -65,9 +64,7 @@ export const getAuthorsById = createAsyncThunk(
   "authors/getAuthorsById",
   async (authorId, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(
-        `http://localhost:8080/api/v1/authors/${authorId}`
-      );
+      const response = await apiClient.get(`/authors/${authorId}`);
       if (response.status === 200) {
         return response.data;
       }
@@ -89,10 +86,7 @@ export const updateAuthors = createAsyncThunk(
   "authors/updateAuthors",
   async ({ authorId, authorsData }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put(
-        `http://localhost:8080/api/v1/authors/${authorId}`,
-        authorsData
-      );
+      const response = await apiClient.put(`/authors/${authorId}`, authorsData);
       if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;
@@ -115,9 +109,7 @@ export const deleteAuthors = createAsyncThunk(
   "authors/deleteAuthors",
   async (authorId, { rejectWithValue }) => {
     try {
-      const response = await apiClient.delete(
-        `http://localhost:8080/api/v1/authors/${authorId}`
-      );
+      const response = await apiClient.delete(`/authors/${authorId}`);
       if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;
