@@ -148,7 +148,6 @@ const AddEditUsers = () => {
     <div className="user-add-edit-container">
       <Container maxWidth="md">
         <Box
-          className="add-edit-user-container"
           sx={{
             mt: 10,
             border: "1px solid #ddd",
@@ -287,7 +286,6 @@ const AddEditUsers = () => {
                 animation: "fadeIn 1s ease-in-out",
               }}
             />
-
             <Box
               sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
             >

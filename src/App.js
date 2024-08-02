@@ -9,15 +9,31 @@ import {
 // CUSTOM COMPONENTS
 import Layout from "./components/LayoutPage";
 import PrivateRoute from "./PrivateRoutes";
+
+// AUTH
 import RegisterPage from "./components/auth/RegisterPage";
 import LoginPage from "./components/auth/LoginPage";
+
+// DASHBOARD
 import Dashboard from "./components/dashboard/Dashboard";
+
+// BOOKS
 import BookMainPage from "./components/books/MainPage";
 import AddEditBooks from "./components/books/AddEditBooks";
+
+// AUTHORS
 import AuthorMainPage from "./components/authors/MainPage";
 import AddEditAuthors from "./components/authors/AddEditAuthors";
+
+// USERS
 import UserMainPage from "./components/users/MainPage";
 import AddEditUsers from "./components/users/AddEditUsers";
+
+// ROLES
+import RoleMainPage from "./components/roles/MainPage";
+import AddEditRole from "./components/roles/AddEditRole";
+
+// ABOUT
 import About from "./components/about/About";
 
 function App() {
@@ -123,6 +139,36 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <AddEditUsers />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/roles"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <RoleMainPage />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/roles/add_roles"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AddEditRole />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/roles/:roleId"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AddEditRole />
               </Layout>
             </PrivateRoute>
           }

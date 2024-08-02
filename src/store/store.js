@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 
 import userReducer from "../features/user_module/userSlice";
+import roleReducer from "../features/role_module/roleSlice";
 import bookReducer from "../features/book_module/bookSlice";
 import authorReducer from "../features/author_module/authorSlice";
 
 // Combine reducers
 const rootReducer = combineReducers({
   users: userReducer,
+  roles: roleReducer,
   books: bookReducer,
   authors: authorReducer,
 });
