@@ -1,3 +1,4 @@
+/* MAIN PAGE CSS */
 .book-main-page-container {
      position: relative;
      padding: 100px;
@@ -5,6 +6,16 @@
      background-color: #d1d1d1;
      min-height: 90vh;
      box-sizing: border-box;
+}
+
+.book-table-wrapper {
+     padding: 20px;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     border-radius: 8px;
+     background-color: #ffffff;
+     width: 90%;
+     margin: 0 auto;
+     animation: slideIn 0.5s ease-out;
 }
 
 /* BOOKS TABLE CSS */
@@ -36,16 +47,6 @@
 .book-add-button:focus {
      outline: none;
      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.book-table-wrapper {
-     padding: 20px;
-     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-     border-radius: 8px;
-     background-color: #ffffff;
-     width: 80%;
-     margin: 0 auto;
-     animation: slideIn 0.5s ease-out;
 }
 
 .book-container {
@@ -86,6 +87,17 @@
      background-color: #d1d1d1;
      min-height: 90vh;
      box-sizing: border-box;
+}
+
+/* BOOKS DETAILS VIEW */
+.book-authorname-container{
+     display: flex;
+     flex-direction: row;
+}
+
+.book-story-container {
+     margin-top: 10px;
+     padding: 10px;
 }
 
 @keyframes fadeIn {

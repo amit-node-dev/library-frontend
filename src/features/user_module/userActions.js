@@ -87,8 +87,14 @@ export const getAllUsersList = createAsyncThunk(
         return response.data.data;
       }
     } catch (error) {
-      toast.error("Failed to fetch user list");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to fetch user list");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -105,8 +111,14 @@ export const getUserById = createAsyncThunk(
         return rejectWithValue(response.data.message);
       }
     } catch (error) {
-      toast.error("Failed to fetch user data");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to fetch user data");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -124,8 +136,14 @@ export const updateUsers = createAsyncThunk(
         return rejectWithValue(response.data.message);
       }
     } catch (error) {
-      toast.error("Failed to update user");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to update user");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -143,8 +161,14 @@ export const deleteUsers = createAsyncThunk(
         return rejectWithValue(response.data.message);
       }
     } catch (error) {
-      toast.error("Failed to delete user");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to delete user");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );

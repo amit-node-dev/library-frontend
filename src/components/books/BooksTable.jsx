@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from "react";
+
+// THIRD PARTY IMPORTS
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
+
+// MUI IMPORTS
+import { DataGrid } from "@mui/x-data-grid";
+import { Box, IconButton, Typography, Pagination } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+// CUSTOM COMPONENTS
+import BookDetailsModal from "./BookDetailsModal";
+
+// ACTIONS & STORES
 import {
   getAllBooksList,
   deleteBooks,
 } from "../../features/book_module/bookActions";
-import { DataGrid } from "@mui/x-data-grid";
-import { Box, IconButton, Typography, Pagination } from "@mui/material";
-import { ClipLoader } from "react-spinners";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import { setPage, setPageSize } from "../../features/book_module/bookSlice";
-import BookDetailsModal from "./BookDetailsModal";
+
+// CSS IMPORTS
 import "./books.css";
 
 const BooksTable = () => {

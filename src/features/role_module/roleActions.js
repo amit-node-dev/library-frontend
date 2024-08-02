@@ -41,8 +41,14 @@ export const getAllRolesList = createAsyncThunk(
         return response.data.data;
       }
     } catch (error) {
-      toast.error("Failed to fetch roles list");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to fetch roles list");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -56,8 +62,14 @@ export const getRoleById = createAsyncThunk(
         return response.data;
       }
     } catch (error) {
-      toast.error("Failed to fetch role data");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to fetch role data");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -72,8 +84,14 @@ export const updateRole = createAsyncThunk(
         return response.data;
       }
     } catch (error) {
-      toast.error("Failed to update role");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to update role");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -88,8 +106,14 @@ export const deleteRole = createAsyncThunk(
         return response.data;
       }
     } catch (error) {
-      toast.error("Failed to delete user");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to delete user");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );

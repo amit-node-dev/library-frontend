@@ -1,4 +1,6 @@
 import React from "react";
+
+// MUI IMPORTS
 import {
   Modal,
   Paper,
@@ -9,6 +11,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled, keyframes } from "@mui/system";
+
+// CSS
+import "./books.css";
 
 // Keyframes for animations
 const fadeIn = keyframes`
@@ -32,24 +37,24 @@ const slideIn = keyframes`
 `;
 
 // Styled components for modal
-const ModalContainer = styled(Paper)(({ theme }) => ({
+const ModalContainer = styled(Paper)(() => ({
   padding: "20px",
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: { xs: "90%", sm: 600 },
+  width: "50%",
   backgroundColor: "#eeeeee",
   borderRadius: "14px",
   boxShadow: "2px 3px 20px 1px",
-  p: 3,
+  p: 2,
   height: "auto",
   maxHeight: "80vh",
   overflowY: "auto",
   animation: `${fadeIn} 0.5s ease-in-out`,
 }));
 
-const ContentBox = styled(Box)(({ theme }) => ({
+const ContentBox = styled(Box)(() => ({
   animation: `${slideIn} 0.5s ease-in-out`,
 }));
 
@@ -76,7 +81,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
           mb={4}
         >
           <Typography id="book-details-title" variant="h5" component="h2">
-            Book Details
+            Book-Id #{book.id}
           </Typography>
           <IconButton onClick={onClose} size="large">
             <CloseIcon />
@@ -84,38 +89,65 @@ const BookDetailsModal = ({ open, onClose, book }) => {
         </Box>
         <Divider sx={{ mb: 2 }} />
         <ContentBox>
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            <strong>Book Name:</strong>
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {book.bookname}
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <Typography variant="h7" sx={{ fontWeight: "700" }}>
+                {book.bookname}
+              </Typography>
+            </div>
+            <div className="book-authorname-container">
+              <Typography variant="caption">
+                <strong>Author:- </strong>
+              </Typography>
+              <Typography variant="caption" sx={{ marginLeft: "2px" }}>
+                {book.author.firstname + " " + book.author.lastname}
+              </Typography>
+            </div>
+          </Box>
 
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            <strong>Description:</strong>
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {book.description}
-          </Typography>
+          <div className="book-story-container">
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              <strong>Story:</strong>
+            </Typography>
+            <Typography
+              className="book-description"
+              variant="body2"
+              sx={{ mb: 2, lineHeight: "25px" }}
+            >
+              {book.description}
+            </Typography>
+          </div>
 
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            <strong>Author Id:</strong>
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {book.authorId}
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "20px",
+            }}
+          >
+            <div>
+              <Typography variant="caption">
+                <strong>Created At:</strong>
+              </Typography>
+              <Typography variant="body2">
+                {formatDate(book.createdAt)}
+              </Typography>
+            </div>
 
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            <strong>Created At:</strong>
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {formatDate(book.createdAt)}
-          </Typography>
-
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            <strong>Updated At:</strong>
-          </Typography>
-          <Typography variant="body1">{formatDate(book.updatedAt)}</Typography>
+            <div>
+              <Typography variant="caption">
+                <strong>Last Updated At:</strong>
+              </Typography>
+              <Typography variant="body2">
+                {formatDate(book.updatedAt)}
+              </Typography>
+            </div>
+          </Box>
         </ContentBox>
       </ModalContainer>
     </Modal>

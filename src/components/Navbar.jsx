@@ -10,6 +10,9 @@ import apiClient from "../utils/apiClient";
 // CSS IMPORTS
 import "./dashboard/dashboard.css";
 
+// LOGO
+import BrandLogo from "../images/brandLogo.gif";
+
 const Navbar = () => {
   const navigate = useNavigate();
 
@@ -25,7 +28,7 @@ const Navbar = () => {
       <div className="container-fluid">
         <div className="navbar-brand-container">
           <Link className="navbar-brand" to="/dashboard">
-            ❁LMS❁
+            <img src={BrandLogo} alt="brand-logo" />
           </Link>
         </div>
         <div className="navbar-nav-container">

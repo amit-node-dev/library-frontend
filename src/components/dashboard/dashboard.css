@@ -16,19 +16,9 @@
      justify-content: space-between;
 }
 
-.navbar-brand {
-     color: #ffffff;
-     font-size: 1.5rem;
-     font-weight: bold;
-     text-transform: uppercase;
-     letter-spacing: 1px;
-     text-decoration: none;
-     transition: color 0.3s, transform 0.3s;
-}
-
-.navbar-brand:hover {
-     color: #007bff;
-     transform: scale(1.1);
+.navbar-brand-container img {
+     width: 100px;
+     height: 30px;
 }
 
 .navbar-nav {

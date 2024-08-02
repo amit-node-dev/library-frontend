@@ -53,8 +53,14 @@ export const getAllAuthorsList = createAsyncThunk(
         return response.data.data;
       }
     } catch (error) {
-      toast.error("Failed to fetch authors list");
-      return rejectWithValue(error.message);
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to fetch authors list");
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
