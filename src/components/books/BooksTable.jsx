@@ -8,6 +8,8 @@ import { ClipLoader } from "react-spinners";
 // MUI IMPORTS
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, IconButton, Typography, Pagination } from "@mui/material";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -98,7 +100,7 @@ const BooksTable = () => {
   // Custom renderer for actions
   const ActionRenderer = (params) => (
     <div className="actions-container">
-      <IconButton color="primary" onClick={() => handleView(params.row)}>
+      <IconButton color="secondary" onClick={() => handleView(params.row)}>
         <VisibilityIcon />
       </IconButton>
       <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
@@ -166,9 +168,14 @@ const BooksTable = () => {
       <div className="book-header">
         <Typography variant="h4">Books</Typography>
         <div className="book-util">
-          <button onClick={handleAddBook} className="book-add-button">
-            Add Book
-          </button>
+          <Fab
+            size="small"
+            color="warning"
+            aria-label="add"
+            sx={{ marginRight: "2rem" }}
+          >
+            <AddIcon onClick={handleAddBook} />
+          </Fab>
           <input
             type="text"
             className="book-search-input"

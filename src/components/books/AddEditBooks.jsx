@@ -31,11 +31,13 @@ const AddEditBooks = () => {
 
   const [bookData, setBookData] = useState({
     bookname: "",
+    title: "",
     description: "",
     authorId: "",
   });
 
   const [booknameError, setBooknameError] = useState("");
+  const [titleError, setTilteError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [authorIdError, setAuthorIdError] = useState("");
 
@@ -53,6 +55,7 @@ const AddEditBooks = () => {
     if (bookId && currentBook) {
       setBookData({
         bookname: currentBook.bookname,
+        title: currentBook.title,
         description: currentBook.description,
         authorId: currentBook.authorId,
       });
@@ -68,7 +71,11 @@ const AddEditBooks = () => {
   };
 
   const handleBookNameBlur = () => {
-    setBooknameError(bookData.bookname === "" ? "Book name is required" : "");
+    setBooknameError(bookData.bookname === "" ? "Name is required" : "");
+  };
+
+  const handleTitleBlur = () => {
+    setTilteError(bookData.title === "" ? "Title is required" : "");
   };
 
   const handleDescriptionBlur = () => {
@@ -85,10 +92,16 @@ const AddEditBooks = () => {
     e.preventDefault();
 
     handleBookNameBlur();
+    handleTitleBlur();
     handleDescriptionBlur();
     handleAuthorIdBlur();
 
-    if (bookData.bookname && bookData.description && bookData.authorId) {
+    if (
+      bookData.bookname &&
+      bookData.title &&
+      bookData.description &&
+      bookData.authorId
+    ) {
       try {
         if (bookId) {
           await dispatch(updateBooks({ bookId, bookData })).unwrap();
@@ -105,10 +118,12 @@ const AddEditBooks = () => {
   const handleReset = () => {
     setBookData({
       bookname: "",
+      title: "",
       description: "",
       authorId: "",
     });
     setBooknameError("");
+    setTilteError("");
     setDescriptionError("");
     setAuthorIdError("");
   };
@@ -158,9 +173,10 @@ const AddEditBooks = () => {
             }}
           >
             <TextField
+              size="small"
               fullWidth
               margin="normal"
-              label="Book Name"
+              label="Name"
               name="bookname"
               value={bookData.bookname}
               onChange={handleChange}
@@ -172,6 +188,22 @@ const AddEditBooks = () => {
               }}
             />
             <TextField
+              size="small"
+              fullWidth
+              margin="normal"
+              label="Title"
+              name="title"
+              value={bookData.title}
+              onChange={handleChange}
+              onBlur={handleTitleBlur}
+              error={!!titleError}
+              helperText={titleError}
+              sx={{
+                animation: "fadeIn 1s ease-in-out",
+              }}
+            />
+            <TextField
+              size="small"
               fullWidth
               margin="normal"
               label="Description"
@@ -188,13 +220,13 @@ const AddEditBooks = () => {
               }}
             />
             <FormControl fullWidth margin="normal" error={!!authorIdError}>
-              <InputLabel>Author Name</InputLabel>
+              <InputLabel>Author</InputLabel>
               <Select
                 name="authorId"
                 value={bookData.authorId}
                 onChange={handleChange}
                 onBlur={handleAuthorIdBlur}
-                label="Author Name"
+                label="Author"
                 sx={{
                   animation: "fadeIn 1s ease-in-out",
                 }}
