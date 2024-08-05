@@ -100,6 +100,11 @@ const BookDetailsModal = ({ open, onClose, book }) => {
                 {book.bookname}
               </Typography>
             </div>
+            <div>
+              <Typography variant="h7" sx={{ fontWeight: "700" }}>
+                {book.category.name}
+              </Typography>
+            </div>
             <div className="book-authorname-container">
               <Typography variant="caption">
                 <strong>Author:- </strong>
@@ -109,6 +114,19 @@ const BookDetailsModal = ({ open, onClose, book }) => {
               </Typography>
             </div>
           </Box>
+
+          <div className="book-title-container">
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              <strong>Title:</strong>
+            </Typography>
+            <Typography
+              className="book-title"
+              variant="body2"
+              sx={{ lineHeight: "25px" }}
+            >
+              {book.title}
+            </Typography>
+          </div>
 
           <div className="book-story-container">
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -120,6 +138,19 @@ const BookDetailsModal = ({ open, onClose, book }) => {
               sx={{ mb: 2, lineHeight: "25px" }}
             >
               {book.description}
+            </Typography>
+          </div>
+
+          <div className="book-conclusion-container">
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              <strong>Conclusion:</strong>
+            </Typography>
+            <Typography
+              className="book-conclusion"
+              variant="body2"
+              sx={{ lineHeight: "25px" }}
+            >
+              {book.conclusion}
             </Typography>
           </div>
 

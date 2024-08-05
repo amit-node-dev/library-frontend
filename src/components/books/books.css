@@ -71,8 +71,8 @@
      flex-direction: row;
 }
 
-.book-story-container {
-     margin-top: 10px;
+.book-title-container, .book-story-container, .book-conclusion-container {
+     margin-top: 5px;
      padding: 10px;
 }
 

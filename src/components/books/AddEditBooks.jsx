@@ -36,8 +36,9 @@ const AddEditBooks = () => {
   const navigate = useNavigate();
 
   const { currentBook } = useSelector((state) => state.books);
-  const { authors } = useSelector((state) => state.authors);
+  console.log("CURR ", currentBook);
 
+  const [authorList, setAuthorList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
 
   const [bookData, setBookData] = useState({
@@ -58,7 +59,13 @@ const AddEditBooks = () => {
 
   useEffect(() => {
     dispatch(getAllCategoryList()).then((response) => {
-      setCategoryList(response.payload.roles);
+      setCategoryList(response.payload);
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getAllAuthorsList({ page: 1, pageSize: 5 })).then((response) => {
+      setAuthorList(response.payload.authors);
     });
   }, [dispatch]);
 
@@ -69,16 +76,12 @@ const AddEditBooks = () => {
   }, [dispatch, bookId]);
 
   useEffect(() => {
-    dispatch(getAllAuthorsList());
-  }, [dispatch]);
-
-  useEffect(() => {
     if (bookId && currentBook) {
       setBookData({
         bookname: currentBook.bookname,
         title: currentBook.title,
         authorId: currentBook.authorId,
-        categoryIdId: currentBook.categoryId,
+        categoryId: currentBook.categoryId,
         description: currentBook.description,
         conclusion: currentBook.conclusion,
       });
@@ -246,7 +249,7 @@ const AddEditBooks = () => {
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth margin="normal" error={!!authorIdError}>
                   <Autocomplete
-                    options={authors}
+                    options={authorList}
                     getOptionLabel={(option) =>
                       `${option.firstname} ${option.lastname}`
                     }
@@ -269,7 +272,7 @@ const AddEditBooks = () => {
                       />
                     )}
                     value={
-                      authors.find(
+                      authorList?.find(
                         (author) => author.id === bookData.authorId
                       ) || null
                     }
@@ -284,7 +287,7 @@ const AddEditBooks = () => {
                 >
                   <Autocomplete
                     options={categoryList}
-                    getOptionLabel={(option) => option.value}
+                    getOptionLabel={(option) => `${option.name}`}
                     onChange={(event, value) => {
                       setBookData({
                         ...bookData,
@@ -304,7 +307,7 @@ const AddEditBooks = () => {
                       />
                     )}
                     value={
-                      categoryList.find(
+                      categoryList?.find(
                         (category) => category.id === bookData.categoryId
                       ) || null
                     }

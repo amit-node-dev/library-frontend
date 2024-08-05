@@ -118,26 +118,33 @@ const BooksTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "Id", width: 110 },
+    { field: "id", headerName: "Id", width: 90 },
     {
       field: "bookname",
       headerName: "Book Name",
-      width: 150,
+      width: 200,
       editable: false,
     },
     {
-      field: "description",
+      field: "title",
       headerName: "Title",
-      width: 450,
+      width: 300,
       editable: false,
     },
     {
       field: "author",
       headerName: "Author Name",
-      width: 150,
+      width: 200,
       editable: false,
       renderCell: (params) =>
-        params.row.author.firstname + " " + params.row.author.lastname,
+        params.row.author?.firstname + " " + params.row.author?.lastname,
+    },
+    {
+      field: "category",
+      headerName: "Category",
+      width: 200,
+      editable: false,
+      renderCell: (params) => params.row.category?.name,
     },
     {
       field: "createdAt",
