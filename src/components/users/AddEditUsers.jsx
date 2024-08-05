@@ -16,6 +16,7 @@ import {
   IconButton,
   MenuItem,
   Grid,
+  Fab,
 } from "@mui/material";
 
 // ACTIONS & STORES
@@ -25,7 +26,7 @@ import {
   updateUsers,
 } from "../../features/user_module/userActions";
 import { getAllRolesList } from "../../features/role_module/roleActions";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { ArrowBack, Visibility, VisibilityOff } from "@mui/icons-material";
 
 const AddEditUsers = () => {
   const { userId } = useParams();
@@ -270,21 +271,14 @@ const AddEditUsers = () => {
             <Typography variant="h4" gutterBottom>
               {userId ? "Edit User" : "Add User"}
             </Typography>
-            <Button
-              variant="contained"
-              className="back-button"
-              onClick={handleBack}
-              sx={{
-                backgroundColor: "#007bff",
-                "&:hover": {
-                  backgroundColor: "#0056b3",
-                  transform: "scale(1.05)",
-                },
-                transition: "background-color 0.3s ease, transform 0.3s ease",
-              }}
+            <Fab
+              size="small"
+              color="warning"
+              aria-label="add"
+              sx={{ marginRight: "2rem" }}
             >
-              &larr; Back
-            </Button>
+              <ArrowBack onClick={handleBack} />
+            </Fab>
           </Box>
           <Box
             component="form"

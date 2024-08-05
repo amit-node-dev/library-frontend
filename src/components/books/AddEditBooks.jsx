@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
+
+// THIRD PARTY COMPONENTS
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  addNewBooks,
-  getBooksById,
-  updateBooks,
-} from "../../features/book_module/bookActions";
-import { getAllAuthorsList } from "../../features/author_module/authorActions";
+
+// MUI IMPORTS
 import {
   TextField,
   Button,
@@ -14,11 +12,22 @@ import {
   Box,
   Container,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
+  Fab,
+  Grid,
+  Autocomplete,
 } from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
+
+// ACTIONS & STORES
+import {
+  addNewBooks,
+  getBooksById,
+  updateBooks,
+} from "../../features/book_module/bookActions";
+import { getAllAuthorsList } from "../../features/author_module/authorActions";
+import { getAllCategoryList } from "../../features/category_module/categoryActions";
+
+// CSS
 import "./books.css";
 
 const AddEditBooks = () => {
@@ -29,17 +38,29 @@ const AddEditBooks = () => {
   const { currentBook } = useSelector((state) => state.books);
   const { authors } = useSelector((state) => state.authors);
 
+  const [categoryList, setCategoryList] = useState([]);
+
   const [bookData, setBookData] = useState({
     bookname: "",
     title: "",
-    description: "",
     authorId: "",
+    categoryId: "",
+    description: "",
+    conclusion: "",
   });
 
   const [booknameError, setBooknameError] = useState("");
   const [titleError, setTilteError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [authorIdError, setAuthorIdError] = useState("");
+  const [categoryIdError, setCategoryIdError] = useState("");
+  const [conclusionError, setConclusionError] = useState("");
+
+  useEffect(() => {
+    dispatch(getAllCategoryList()).then((response) => {
+      setCategoryList(response.payload.roles);
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     if (bookId) {
@@ -56,8 +77,10 @@ const AddEditBooks = () => {
       setBookData({
         bookname: currentBook.bookname,
         title: currentBook.title,
-        description: currentBook.description,
         authorId: currentBook.authorId,
+        categoryIdId: currentBook.categoryId,
+        description: currentBook.description,
+        conclusion: currentBook.conclusion,
       });
     }
   }, [currentBook, bookId]);
@@ -78,29 +101,44 @@ const AddEditBooks = () => {
     setTilteError(bookData.title === "" ? "Title is required" : "");
   };
 
+  const handleAuthorIdBlur = () => {
+    setAuthorIdError(bookData.authorId === "" ? "Author Name is required" : "");
+  };
+
+  const handleCategoryIdBlur = () => {
+    setCategoryIdError(
+      bookData.categoryId === "" ? "Category is required" : ""
+    );
+  };
+
   const handleDescriptionBlur = () => {
     setDescriptionError(
       bookData.description === "" ? "Description is required" : ""
     );
   };
 
-  const handleAuthorIdBlur = () => {
-    setAuthorIdError(bookData.authorId === "" ? "Author Name is required" : "");
+  const handleConclusionBlur = () => {
+    setConclusionError(
+      bookData.conclusion === "" ? "Conclusion is required" : ""
+    );
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     handleBookNameBlur();
     handleTitleBlur();
-    handleDescriptionBlur();
     handleAuthorIdBlur();
+    handleCategoryIdBlur();
+    handleDescriptionBlur();
+    handleConclusionBlur();
 
     if (
       bookData.bookname &&
       bookData.title &&
+      bookData.authorId &&
+      bookData.categoryId &&
       bookData.description &&
-      bookData.authorId
+      bookData.conclusion
     ) {
       try {
         if (bookId) {
@@ -119,13 +157,17 @@ const AddEditBooks = () => {
     setBookData({
       bookname: "",
       title: "",
-      description: "",
       authorId: "",
+      categoryId: "",
+      description: "",
+      conclusion: "",
     });
     setBooknameError("");
     setTilteError("");
-    setDescriptionError("");
     setAuthorIdError("");
+    setCategoryIdError("");
+    setDescriptionError("");
+    setConclusionError("");
   };
 
   const handleBack = () => {
@@ -134,10 +176,10 @@ const AddEditBooks = () => {
 
   return (
     <div className="book-add-edit-container">
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <Box
           sx={{
-            mt: 10,
+            mt: 5,
             border: "1px solid #ddd",
             borderRadius: "8px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -150,20 +192,14 @@ const AddEditBooks = () => {
             <Typography variant="h4" gutterBottom>
               {bookId ? "Edit Book" : "Add New Book"}
             </Typography>
-            <Button
-              variant="contained"
-              onClick={handleBack}
-              sx={{
-                backgroundColor: "#007bff",
-                "&:hover": {
-                  backgroundColor: "#0056b3",
-                  transform: "scale(1.05)",
-                },
-                transition: "background-color 0.3s ease, transform 0.3s ease",
-              }}
+            <Fab
+              size="small"
+              color="warning"
+              aria-label="add"
+              sx={{ marginRight: "2rem" }}
             >
-              &larr; Back
-            </Button>
+              <ArrowBack onClick={handleBack} />
+            </Fab>
           </Box>
           <Box
             component="form"
@@ -172,36 +208,111 @@ const AddEditBooks = () => {
               animation: "slideIn 0.5s ease-out",
             }}
           >
-            <TextField
-              size="small"
-              fullWidth
-              margin="normal"
-              label="Name"
-              name="bookname"
-              value={bookData.bookname}
-              onChange={handleChange}
-              onBlur={handleBookNameBlur}
-              error={!!booknameError}
-              helperText={booknameError}
-              sx={{
-                animation: "fadeIn 1s ease-in-out",
-              }}
-            />
-            <TextField
-              size="small"
-              fullWidth
-              margin="normal"
-              label="Title"
-              name="title"
-              value={bookData.title}
-              onChange={handleChange}
-              onBlur={handleTitleBlur}
-              error={!!titleError}
-              helperText={titleError}
-              sx={{
-                animation: "fadeIn 1s ease-in-out",
-              }}
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  size="small"
+                  fullWidth
+                  margin="normal"
+                  label="Name"
+                  name="bookname"
+                  value={bookData.bookname}
+                  onChange={handleChange}
+                  onBlur={handleBookNameBlur}
+                  error={!!booknameError}
+                  helperText={booknameError}
+                  sx={{
+                    animation: "fadeIn 1s ease-in-out",
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  size="small"
+                  fullWidth
+                  margin="normal"
+                  label="Title"
+                  name="title"
+                  value={bookData.title}
+                  onChange={handleChange}
+                  onBlur={handleTitleBlur}
+                  error={!!titleError}
+                  helperText={titleError}
+                  sx={{
+                    animation: "fadeIn 1s ease-in-out",
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth margin="normal" error={!!authorIdError}>
+                  <Autocomplete
+                    options={authors}
+                    getOptionLabel={(option) =>
+                      `${option.firstname} ${option.lastname}`
+                    }
+                    onChange={(event, value) => {
+                      setBookData({
+                        ...bookData,
+                        authorId: value ? value.id : "",
+                      });
+                    }}
+                    onBlur={handleAuthorIdBlur}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Author"
+                        error={!!authorIdError}
+                        helperText={authorIdError}
+                        sx={{
+                          animation: "fadeIn 1s ease-in-out",
+                        }}
+                      />
+                    )}
+                    value={
+                      authors.find(
+                        (author) => author.id === bookData.authorId
+                      ) || null
+                    }
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl
+                  fullWidth
+                  margin="normal"
+                  error={!!categoryIdError}
+                >
+                  <Autocomplete
+                    options={categoryList}
+                    getOptionLabel={(option) => option.value}
+                    onChange={(event, value) => {
+                      setBookData({
+                        ...bookData,
+                        categoryId: value ? value.id : "",
+                      });
+                    }}
+                    onBlur={handleCategoryIdBlur}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Category"
+                        error={!!categoryIdError}
+                        helperText={categoryIdError}
+                        sx={{
+                          animation: "fadeIn 1s ease-in-out",
+                        }}
+                      />
+                    )}
+                    value={
+                      categoryList.find(
+                        (category) => category.id === bookData.categoryId
+                      ) || null
+                    }
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+
             <TextField
               size="small"
               fullWidth
@@ -214,63 +325,66 @@ const AddEditBooks = () => {
               error={!!descriptionError}
               helperText={descriptionError}
               multiline
-              rows={4}
+              rows={5}
               sx={{
                 animation: "fadeIn 1s ease-in-out",
               }}
             />
-            <FormControl fullWidth margin="normal" error={!!authorIdError}>
-              <InputLabel>Author</InputLabel>
-              <Select
-                name="authorId"
-                value={bookData.authorId}
-                onChange={handleChange}
-                onBlur={handleAuthorIdBlur}
-                label="Author"
-                sx={{
-                  animation: "fadeIn 1s ease-in-out",
-                }}
-              >
-                {authors.map((author) => (
-                  <MenuItem key={author.id} value={author.id}>
-                    {author.firstname + " " + author.lastname}
-                  </MenuItem>
-                ))}
-              </Select>
-              {authorIdError && (
-                <FormHelperText>{authorIdError}</FormHelperText>
-              )}
-            </FormControl>
+            <TextField
+              size="small"
+              fullWidth
+              margin="normal"
+              label="Conclusion"
+              name="conclusion"
+              value={bookData.conclusion}
+              onChange={handleChange}
+              onBlur={handleConclusionBlur}
+              error={!!conclusionError}
+              helperText={conclusionError}
+              multiline
+              rows={3}
+              sx={{
+                animation: "fadeIn 1s ease-in-out",
+              }}
+            />
             <Box
-              sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 2,
+                animation: "slideInUp 0.5s ease-out",
+              }}
             >
               <Button
-                variant="contained"
                 type="submit"
-                color="primary"
+                variant="contained"
+                className="submit-button"
                 sx={{
-                  backgroundColor: "#007bff",
+                  backgroundColor: "#28a745",
                   "&:hover": {
-                    backgroundColor: "#0056b3",
+                    backgroundColor: "#218838",
                     transform: "scale(1.05)",
                   },
                   transition: "background-color 0.3s ease, transform 0.3s ease",
                 }}
               >
-                {bookId ? "Update Book" : "Add Book"}
+                {bookId ? "Update" : "Submit"}
               </Button>
+
               <Button
+                type="reset"
                 variant="outlined"
+                className="reset-button"
                 onClick={handleReset}
-                color="secondary"
                 sx={{
-                  borderColor: "#f50057",
-                  color: "#f50057",
+                  ml: 2,
+                  color: "#dc3545",
+                  borderColor: "#dc3545",
                   "&:hover": {
-                    borderColor: "#c51162",
-                    color: "#c51162",
+                    backgroundColor: "#f8d7da",
+                    transform: "scale(1.05)",
                   },
-                  transition: "border-color 0.3s ease, color 0.3s ease",
+                  transition: "background-color 0.3s ease, transform 0.3s ease",
                 }}
               >
                 Reset

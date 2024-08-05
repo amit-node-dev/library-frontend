@@ -118,7 +118,7 @@ const BooksTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "Book Id", width: 110 },
+    { field: "id", headerName: "Id", width: 110 },
     {
       field: "bookname",
       headerName: "Book Name",
@@ -127,13 +127,13 @@ const BooksTable = () => {
     },
     {
       field: "description",
-      headerName: "Description",
+      headerName: "Title",
       width: 450,
       editable: false,
     },
     {
       field: "author",
-      headerName: "Author",
+      headerName: "Author Name",
       width: 150,
       editable: false,
       renderCell: (params) =>
@@ -141,13 +141,13 @@ const BooksTable = () => {
     },
     {
       field: "createdAt",
-      headerName: "Created Date",
+      headerName: "Published Date",
       width: 150,
       renderCell: (params) => formatDate(params.row.createdAt),
     },
     {
       field: "updatedAt",
-      headerName: "Updated Date",
+      headerName: "Last Updated Date",
       width: 150,
       renderCell: (params) => formatDate(params.row.updatedAt),
     },
@@ -240,6 +240,8 @@ const BooksTable = () => {
             />
           </Box>
           <Pagination
+            showFirstButton
+            showLastButton
             shape="rounded"
             variant="outlined"
             count={Math.ceil(total / pageSize)}

@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 
 // MUI CONTENTS
-import { Box, IconButton, Typography, Pagination } from "@mui/material";
+import { Box, IconButton, Typography, Pagination, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DataGrid } from "@mui/x-data-grid";
@@ -128,9 +129,14 @@ const RoleTable = () => {
           Roles
         </Typography>
         <div className="role-util">
-          <button onClick={handleAddRoles} className="role-add-button">
-            Add Roles
-          </button>
+          <Fab
+            size="small"
+            color="warning"
+            aria-label="add"
+            sx={{ marginRight: "2rem" }}
+          >
+            <AddIcon onClick={handleAddRoles} />
+          </Fab>
           <input
             type="text"
             className="role-search-input"

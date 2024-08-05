@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 
 // MUI CONTENTS
-import { Box, IconButton, Typography, Pagination } from "@mui/material";
+import { Box, IconButton, Typography, Pagination, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DataGrid } from "@mui/x-data-grid";
@@ -71,18 +72,38 @@ const AuthorsTable = () => {
     }
   };
 
+  // Custom date formatting function
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "ID", width: 110 },
-    { field: "firstname", headerName: "First Name", width: 150 },
-    { field: "lastname", headerName: "Last Name", width: 150 },
-    { field: "email", headerName: "Email", width: 200 },
-    { field: "createdAt", headerName: "Created at", width: 200 },
-    { field: "updatedAt", headerName: "Updated at", width: 200 },
+    { field: "id", headerName: "Id", width: 110 },
+    {
+      field: "fullname",
+      headerName: "Fullname",
+      width: 250,
+      renderCell: (params) => params.row.firstname + " " + params.row.lastname,
+    },
+    { field: "email", headerName: "Email Id", width: 250 },
+    {
+      field: "createdAt",
+      headerName: "Created at",
+      width: 250,
+      renderCell: (params) => formatDate(params.row.createdAt),
+    },
+    {
+      field: "updatedAt",
+      headerName: "Updated at",
+      width: 250,
+      renderCell: (params) => formatDate(params.row.updatedAt),
+    },
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      width: 250,
       renderCell: (params) => (
         <div className="actions-container">
           <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
@@ -111,9 +132,14 @@ const AuthorsTable = () => {
           Authors
         </Typography>
         <div className="author-util">
-          <button onClick={handleAddAuthors} className="author-add-button">
-            Add Authors
-          </button>
+          <Fab
+            size="small"
+            color="warning"
+            aria-label="add"
+            sx={{ marginRight: "2rem" }}
+          >
+            <AddIcon onClick={handleAddAuthors} />
+          </Fab>
           <input
             type="text"
             className="author-search-input"
@@ -173,6 +199,8 @@ const AuthorsTable = () => {
             />
           </Box>
           <Pagination
+            showFirstButton
+            showLastButton
             shape="rounded"
             variant="outlined"
             count={Math.ceil(total / pageSize)}

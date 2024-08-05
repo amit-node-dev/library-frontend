@@ -5,7 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI IMPORTS
-import { TextField, Button, Typography, Box, Container } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Container,
+  Fab,
+} from "@mui/material";
 
 // ACTIONS & STORES
 import {
@@ -13,6 +20,7 @@ import {
   getRoleById,
   updateRole,
 } from "../../features/role_module/roleActions";
+import { ArrowBack } from "@mui/icons-material";
 
 const AddEditRole = () => {
   const { roleId } = useParams();
@@ -96,21 +104,14 @@ const AddEditRole = () => {
             <Typography variant="h4" gutterBottom>
               {roleId ? "Edit Role" : "Add Role"}
             </Typography>
-            <Button
-              variant="contained"
-              className="back-button"
-              onClick={handleBack}
-              sx={{
-                backgroundColor: "#007bff",
-                "&:hover": {
-                  backgroundColor: "#0056b3",
-                  transform: "scale(1.05)",
-                },
-                transition: "background-color 0.3s ease, transform 0.3s ease",
-              }}
+            <Fab
+              size="small"
+              color="warning"
+              aria-label="add"
+              sx={{ marginRight: "2rem" }}
             >
-              &larr; Back
-            </Button>
+              <ArrowBack onClick={handleBack} />
+            </Fab>
           </Box>
           <Box
             component="form"
@@ -121,6 +122,7 @@ const AddEditRole = () => {
           >
             <TextField
               fullWidth
+              size="small"
               margin="normal"
               label="Role Name"
               name="name"

@@ -132,7 +132,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
           >
             <div>
               <Typography variant="caption">
-                <strong>Created At:</strong>
+                <strong>Published Date:</strong>
               </Typography>
               <Typography variant="body2">
                 {formatDate(book.createdAt)}

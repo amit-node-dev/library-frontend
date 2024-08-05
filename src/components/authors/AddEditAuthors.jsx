@@ -6,7 +6,16 @@ import {
   getAuthorsById,
   updateAuthors,
 } from "../../features/author_module/authorActions";
-import { TextField, Button, Typography, Box, Container } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Container,
+  Fab,
+  Grid,
+} from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
 
 const AddEditAuthors = () => {
   const { authorId } = useParams();
@@ -96,11 +105,11 @@ const AddEditAuthors = () => {
 
   return (
     <div className="author-add-edit-container">
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <Box
           className="add-edit-author-container"
           sx={{
-            mt: 10,
+            mt: 5,
             border: "1px solid #ddd",
             borderRadius: "8px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -113,21 +122,14 @@ const AddEditAuthors = () => {
             <Typography variant="h4" gutterBottom>
               {authorId ? "Edit Author" : "Add Author"}
             </Typography>
-            <Button
-              variant="contained"
-              className="back-button"
-              onClick={handleBack}
-              sx={{
-                backgroundColor: "#007bff",
-                "&:hover": {
-                  backgroundColor: "#0056b3",
-                  transform: "scale(1.05)",
-                },
-                transition: "background-color 0.3s ease, transform 0.3s ease",
-              }}
+            <Fab
+              size="small"
+              color="warning"
+              aria-label="add"
+              sx={{ marginRight: "2rem" }}
             >
-              &larr; Back
-            </Button>
+              <ArrowBack onClick={handleBack} />
+            </Fab>
           </Box>
           <Box
             component="form"
@@ -136,48 +138,59 @@ const AddEditAuthors = () => {
               animation: "slideIn 0.5s ease-out",
             }}
           >
-            <TextField
-              fullWidth
-              margin="normal"
-              label="First Name"
-              name="firstname"
-              value={authorData.firstname}
-              onChange={handleChange}
-              onBlur={handleFirstNameBlur}
-              error={!!firstnameError}
-              helperText={firstnameError}
-              sx={{
-                animation: "fadeIn 1s ease-in-out",
-              }}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Last Name"
-              name="lastname"
-              value={authorData.lastname}
-              onChange={handleChange}
-              onBlur={handleLastNameBlur}
-              error={!!lastnameError}
-              helperText={lastnameError}
-              sx={{
-                animation: "fadeIn 1s ease-in-out",
-              }}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Email ID"
-              name="email"
-              value={authorData.email}
-              onChange={handleChange}
-              onBlur={handleEmailBlur}
-              error={!!emailError}
-              helperText={emailError}
-              sx={{
-                animation: "fadeIn 1s ease-in-out",
-              }}
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  margin="normal"
+                  label="First Name"
+                  name="firstname"
+                  value={authorData.firstname}
+                  onChange={handleChange}
+                  onBlur={handleFirstNameBlur}
+                  error={!!firstnameError}
+                  helperText={firstnameError}
+                  sx={{
+                    animation: "fadeIn 1s ease-in-out",
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  margin="normal"
+                  label="Last Name"
+                  name="lastname"
+                  value={authorData.lastname}
+                  onChange={handleChange}
+                  onBlur={handleLastNameBlur}
+                  error={!!lastnameError}
+                  helperText={lastnameError}
+                  sx={{
+                    animation: "fadeIn 1s ease-in-out",
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  margin="normal"
+                  label="Email ID"
+                  name="email"
+                  value={authorData.email}
+                  onChange={handleChange}
+                  onBlur={handleEmailBlur}
+                  error={!!emailError}
+                  helperText={emailError}
+                  sx={{
+                    animation: "fadeIn 1s ease-in-out",
+                  }}
+                />
+              </Grid>
+            </Grid>
             <Box
               sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
             >
@@ -194,7 +207,7 @@ const AddEditAuthors = () => {
                   transition: "background-color 0.3s ease, transform 0.3s ease",
                 }}
               >
-                {authorId ? "Update" : "Add"}
+                {authorId ? "Update" : "Submit"}
               </Button>
               <Button
                 variant="outlined"
