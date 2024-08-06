@@ -1,5 +1,5 @@
 // REACT IMPORTS
-import React from "react";
+import React, { useState } from "react";
 
 // THIRD PARTY IMPORTS
 import { toast } from "react-toastify";
@@ -15,7 +15,16 @@ import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import { deepOrange } from "@mui/material/colors";
+import BookIcon from "@mui/icons-material/Book";
+import PersonIcon from "@mui/icons-material/Person";
+import GroupIcon from "@mui/icons-material/Group";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 // LOGO
 import BrandLogo from "../images/brandLogo.gif";
@@ -23,11 +32,22 @@ import BrandLogo from "../images/brandLogo.gif";
 const Navbar = () => {
   const navigate = useNavigate();
 
+  const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
+  const [booksMenuAnchorEl, setBooksMenuAnchorEl] = useState(null);
+
   const handleLogout = async () => {
     await apiClient.post(`http://localhost:8080/api/v1/auth/logout`);
     localStorage.clear();
     toast.success("Thank You! For Visiting Us.");
     navigate("/login");
+  };
+
+  const handleMenuOpen = (event, setAnchorEl) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = (setAnchorEl) => {
+    setAnchorEl(null);
   };
 
   const firstName = localStorage.getItem("firstname") || "";
@@ -65,130 +85,112 @@ const Navbar = () => {
             gap: "2rem",
           }}
         >
-          <Typography
-            component={Link}
-            to="/books"
-            sx={{
-              color: "#ffffff",
-              fontSize: "1rem",
-              fontWeight: 500,
-              textDecoration: "none",
-              position: "relative",
-              "&:hover": {
-                color: "#adb5bd",
-                transform: "scale(1.1)",
-                "&::after": {
-                  width: "100%",
+          <Box>
+            <Typography
+              onClick={(event) => handleMenuOpen(event, setBooksMenuAnchorEl)}
+              sx={{
+                cursor: "pointer",
+                color: "#ffffff",
+                fontSize: "1rem",
+                fontWeight: 500,
+                position: "relative",
+                "&:hover": {
+                  color: "#adb5bd",
+                  transform: "scale(1.1)",
                 },
-              },
-              "&::after": {
-                content: '""',
-                display: "block",
-                width: 0,
-                height: "2px",
-                background: "#007bff",
-                transition: "width 0.3s",
-                position: "absolute",
-                bottom: "-2px",
-                left: 0,
-              },
-            }}
-          >
-            Books
-          </Typography>
-          <Typography
-            component={Link}
-            to="/authors"
+              }}
+            >
+              Books List
+            </Typography>
+            <Menu
+              anchorEl={booksMenuAnchorEl}
+              open={Boolean(booksMenuAnchorEl)}
+              onClose={() => handleMenuClose(setBooksMenuAnchorEl)}
+            >
+              <MenuItem
+                component={Link}
+                to="/books"
+                onClick={() => handleMenuClose(setBooksMenuAnchorEl)}
+              >
+                <ListItemIcon>
+                  <BookIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Books" />
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/authors"
+                onClick={() => handleMenuClose(setBooksMenuAnchorEl)}
+              >
+                <ListItemIcon>
+                  <PersonIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Authors" />
+              </MenuItem>
+            </Menu>
+          </Box>
+
+          <Divider
+            orientation="vertical"
+            flexItem
             sx={{
-              color: "#ffffff",
-              fontSize: "1rem",
-              fontWeight: 500,
-              textDecoration: "none",
-              position: "relative",
-              "&:hover": {
-                color: "#adb5bd",
-                transform: "scale(1.1)",
-                "&::after": {
-                  width: "100%",
-                },
-              },
-              "&::after": {
-                content: '""',
-                display: "block",
-                width: 0,
-                height: "2px",
-                background: "#007bff",
-                transition: "width 0.3s",
-                position: "absolute",
-                bottom: "-2px",
-                left: 0,
-              },
+              borderColor: "#dedede",
             }}
-          >
-            Authors
-          </Typography>
-          <Typography
-            component={Link}
-            to="/users"
+          />
+
+          <Box>
+            <Typography
+              onClick={(event) => handleMenuOpen(event, setProfileMenuAnchorEl)}
+              sx={{
+                cursor: "pointer",
+                color: "#ffffff",
+                fontSize: "1rem",
+                fontWeight: 500,
+                position: "relative",
+                "&:hover": {
+                  color: "#adb5bd",
+                  transform: "scale(1.1)",
+                },
+              }}
+            >
+              Profile
+            </Typography>
+            <Menu
+              anchorEl={profileMenuAnchorEl}
+              open={Boolean(profileMenuAnchorEl)}
+              onClose={() => handleMenuClose(setProfileMenuAnchorEl)}
+            >
+              <MenuItem
+                component={Link}
+                to="/users"
+                onClick={() => handleMenuClose(setProfileMenuAnchorEl)}
+              >
+                <ListItemIcon>
+                  <GroupIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Users" />
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/roles"
+                onClick={() => handleMenuClose(setProfileMenuAnchorEl)}
+              >
+                <ListItemIcon>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Roles" />
+              </MenuItem>
+            </Menu>
+          </Box>
+
+          <Divider
+            orientation="vertical"
+            flexItem
             sx={{
-              color: "#ffffff",
-              fontSize: "1rem",
-              fontWeight: 500,
-              textDecoration: "none",
-              position: "relative",
-              "&:hover": {
-                color: "#adb5bd",
-                transform: "scale(1.1)",
-                "&::after": {
-                  width: "100%",
-                },
-              },
-              "&::after": {
-                content: '""',
-                display: "block",
-                width: 0,
-                height: "2px",
-                background: "#007bff",
-                transition: "width 0.3s",
-                position: "absolute",
-                bottom: "-2px",
-                left: 0,
-              },
+              borderColor: "#dedede",
             }}
-          >
-            Users
-          </Typography>
-          <Typography
-            component={Link}
-            to="/roles"
-            sx={{
-              color: "#ffffff",
-              fontSize: "1rem",
-              fontWeight: 500,
-              textDecoration: "none",
-              position: "relative",
-              "&:hover": {
-                color: "#adb5bd",
-                transform: "scale(1.1)",
-                "&::after": {
-                  width: "100%",
-                },
-              },
-              "&::after": {
-                content: '""',
-                display: "block",
-                width: 0,
-                height: "2px",
-                background: "#007bff",
-                transition: "width 0.3s",
-                position: "absolute",
-                bottom: "-2px",
-                left: 0,
-              },
-            }}
-          >
-            Roles
-          </Typography>
+          />
+
           <Typography
             component={Link}
             to="/about"
@@ -238,6 +240,7 @@ const Navbar = () => {
           >
             {firstName} {lastName}
           </Typography>
+
           <Button
             sx={{
               backgroundColor: "#dc3545",
