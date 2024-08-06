@@ -178,7 +178,9 @@ const UsersTable = () => {
               density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
-              getRowId={(row) => row.id + row.firstname + row.lastname}
+              getRowId={(row) =>
+                row ? row.id + row.firstname + row.lastname : ""
+              }
               columns={columns}
               pageSize={pageSize}
               rowsPerPageOptions={[5, 10, 20]}

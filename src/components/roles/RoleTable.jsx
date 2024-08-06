@@ -169,7 +169,7 @@ const RoleTable = () => {
               density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
-              getRowId={(row) => row.id + row.name}
+              getRowId={(row) => (row ? row.id + row.name : "")}
               columns={columns}
               pageSize={pageSize}
               rowsPerPageOptions={[5, 10, 20]}

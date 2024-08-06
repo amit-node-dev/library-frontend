@@ -29,7 +29,7 @@ const StyledCarouselItem = styled("div")(() => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  height: "852px",
+  height: "835px",
   backgroundColor: "#dedede",
   overflow: "hidden",
   "& img": {

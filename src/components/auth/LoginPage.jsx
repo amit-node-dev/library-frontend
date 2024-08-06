@@ -62,9 +62,13 @@ const LoginPage = () => {
           password,
         };
         const response = await dispatch(loginUser(userData)).unwrap();
+        console.log("RESPONSE ::: ", response);
         if (response.statusType === "SUCCESS") {
-          localStorage.setItem("email", email);
-          localStorage.setItem("token", response.data);
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("firstname", response.data.firstname);
+          localStorage.setItem("lastname", response.data.lastname);
+          localStorage.setItem("email", response.data.email);
+
           navigate("/dashboard");
         }
       }

@@ -36,7 +36,6 @@ const AddEditBooks = () => {
   const navigate = useNavigate();
 
   const { currentBook } = useSelector((state) => state.books);
-  console.log("CURR ", currentBook);
 
   const [authorList, setAuthorList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);

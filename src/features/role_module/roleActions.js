@@ -17,10 +17,23 @@ export const addRole = createAsyncThunk(
       }
     } catch (error) {
       if (error.response) {
-        error.response.data.data.forEach((err) => {
-          toast.error(`${err.msg}`);
-        });
-        return error.response;
+        const errorResponse = error.response.data;
+
+        if (errorResponse.statusType && errorResponse.message) {
+          toast.error(`${errorResponse.message}`);
+        }
+
+        if (errorResponse.data && Array.isArray(errorResponse.data)) {
+          errorResponse.data.forEach((err) => {
+            toast.error(`${err.msg}`);
+          });
+        } else if (errorResponse.message) {
+          toast.error(`${errorResponse.message}`);
+        } else {
+          toast.error("An error occurred while adding the role");
+        }
+
+        return errorResponse;
       } else {
         toast.error("Failed to add role");
         return rejectWithValue(error.message);

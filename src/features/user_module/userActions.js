@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import apiClient from "../../utils/apiClient";
 
 // REGISTER USER
@@ -127,7 +127,7 @@ export const updateUsers = createAsyncThunk(
   "users/updateUsers",
   async ({ userId, userData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/users/${userId}`, userData);
+      const response = await apiClient.put(`/users/${userId}`, userData);
       if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;
@@ -152,7 +152,7 @@ export const deleteUsers = createAsyncThunk(
   "users/deleteUsers",
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`/users/${userId}`);
+      const response = await apiClient.delete(`/users/${userId}`);
       if (response.status === 200) {
         toast.success(response.data.message);
         return userId;

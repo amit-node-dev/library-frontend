@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Country, State, City } from "country-state-city";
+import bcrypt from "bcryptjs";
 
 // MUI IMPORTS
 import {
@@ -38,6 +39,7 @@ const AddEditUsers = () => {
     firstname: "",
     lastname: "",
     email: "",
+    oldpassword: "",
     password: "",
     confirmPassword: "",
     age: "",
@@ -50,12 +52,9 @@ const AddEditUsers = () => {
   const [firstnameError, setFirstnameError] = useState("");
   const [lastnameError, setLastnameError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [oldPasswordError, setOldPasswordError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const [ageError, setAgeError] = useState("");
-  const [countryError, setCountryError] = useState("");
-  const [stateError, setStateError] = useState("");
-  const [cityError, setCityError] = useState("");
   const [roleError, setRoleError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
@@ -85,6 +84,8 @@ const AddEditUsers = () => {
         firstname: currentUser.firstname,
         lastname: currentUser.lastname,
         email: currentUser.email,
+        age: currentUser.age,
+        oldpassword: "",
         password: "",
         confirmPassword: "",
         country: currentUser.country || "",
@@ -153,11 +154,19 @@ const AddEditUsers = () => {
     setEmailError(userData.email === "" ? "Email Id is required" : "");
   };
 
+  const handleOldPasswordBlur = () => {
+    if (userData.oldpassword.length < 8) {
+      setOldPasswordError("Old Password must be at least 8 characters long");
+    } else {
+      setOldPasswordError("");
+    }
+  };
+
   const handlePasswordBlur = () => {
-    if (userData.password.length > 0 && userData.password.length < 8) {
+    if (userData.password.length < 8) {
       setPasswordError("Password must be at least 8 characters long");
     } else {
-      setPasswordError("Password is required");
+      setPasswordError("");
     }
   };
 
@@ -165,24 +174,8 @@ const AddEditUsers = () => {
     if (userData.confirmPassword !== userData.password) {
       setConfirmPasswordError("Passwords do not match");
     } else {
-      setConfirmPasswordError("Confirm Password is required");
+      setConfirmPasswordError("");
     }
-  };
-
-  const handleAgeBlur = () => {
-    setAgeError(userData.age === "" ? "Age is required" : "");
-  };
-
-  const handleCounrtyBlur = () => {
-    setCountryError(userData.country === "" ? "Country is required" : "");
-  };
-
-  const handleStateBlur = () => {
-    setStateError(userData.state === "" ? "State is required" : "");
-  };
-
-  const handleCityBlur = () => {
-    setCityError(userData.city === "" ? "City is required" : "");
   };
 
   const handleRoleBlur = () => {
@@ -195,12 +188,9 @@ const AddEditUsers = () => {
     handleFirstNameBlur();
     handleLastNameBlur();
     handleEmailBlur();
+    handleOldPasswordBlur();
     handlePasswordBlur();
     handleConfirmPasswordBlur();
-    handleAgeBlur();
-    handleCounrtyBlur();
-    handleStateBlur();
-    handleCityBlur();
     handleRoleBlur();
 
     if (
@@ -209,15 +199,17 @@ const AddEditUsers = () => {
       userData.email &&
       userData.password.length >= 8 &&
       userData.password === userData.confirmPassword &&
-      userData.age &&
-      userData.country &&
-      userData.state &&
-      userData.city &&
       userData.role
     ) {
       if (userId) {
         await dispatch(updateUsers({ userId, userData })).unwrap();
       } else {
+        const saltRounds = 10;
+        const hashedNewPassword = await bcrypt.hash(
+          userData.password,
+          saltRounds
+        );
+        userData.password = hashedNewPassword;
         await dispatch(addUser(userData)).unwrap();
       }
       navigate("/users");
@@ -229,6 +221,7 @@ const AddEditUsers = () => {
       firstname: "",
       lastname: "",
       email: "",
+      oldpassword: "",
       password: "",
       confirmPassword: "",
       age: "",
@@ -240,12 +233,9 @@ const AddEditUsers = () => {
     setFirstnameError("");
     setLastnameError("");
     setEmailError("");
+    setOldPasswordError("");
     setPasswordError("");
     setConfirmPasswordError("");
-    setAgeError("");
-    setCountryError("");
-    setStateError("");
-    setCityError("");
     setRoleError("");
   };
 
@@ -348,20 +338,55 @@ const AddEditUsers = () => {
                   name="age"
                   value={userData.age}
                   onChange={handleChange}
-                  onBlur={handleAgeBlur}
-                  error={!!ageError}
-                  helperText={ageError}
                   sx={{
                     animation: "fadeIn 1s ease-in-out",
                   }}
                 />
               </Grid>
+              {userId && (
+                <>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      margin="normal"
+                      label="Old Password"
+                      name="oldpassword"
+                      type={showPassword ? "text" : "password"}
+                      value={userData.oldpassword}
+                      onChange={handleChange}
+                      onBlur={handleOldPasswordBlur}
+                      error={!!oldPasswordError}
+                      helperText={oldPasswordError}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        animation: "fadeIn 1s ease-in-out",
+                      }}
+                    />
+                  </Grid>
+                </>
+              )}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   size="small"
                   margin="normal"
-                  label="Password"
+                  label={userId ? "New Password" : "Password"}
                   name="password"
                   type={showPassword ? "text" : "password"}
                   value={userData.password}
@@ -432,9 +457,6 @@ const AddEditUsers = () => {
                   name="country"
                   value={userData.country}
                   onChange={handleCountryChange}
-                  onBlur={handleCounrtyBlur}
-                  error={!!countryError}
-                  helperText={countryError}
                   sx={{
                     animation: "fadeIn 1s ease-in-out",
                   }}
@@ -456,9 +478,6 @@ const AddEditUsers = () => {
                   name="state"
                   value={userData.state}
                   onChange={handleStateChange}
-                  onBlur={handleStateBlur}
-                  error={!!stateError}
-                  helperText={stateError}
                   sx={{
                     animation: "fadeIn 1s ease-in-out",
                   }}
@@ -480,9 +499,6 @@ const AddEditUsers = () => {
                   name="city"
                   value={userData.city}
                   onChange={handleCityChange}
-                  onBlur={handleCityBlur}
-                  error={!!cityError}
-                  helperText={cityError}
                   sx={{
                     animation: "fadeIn 1s ease-in-out",
                   }}
