@@ -33,6 +33,8 @@ const RoleTable = () => {
   const [filteredRoles, setFilteredRoles] = useState([]);
   const [sortModel, setSortModel] = useState([]);
 
+  const roleId = localStorage.getItem("roleId");
+
   useEffect(() => {
     dispatch(getAllRolesList({ page, pageSize }));
   }, [dispatch, page, pageSize]);
@@ -78,36 +80,41 @@ const RoleTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "Id", width: 150 },
+    { field: "id", headerName: "Id", width: 250 },
     {
       field: "name",
       headerName: "Role Name",
-      width: 250,
+      width: 350,
       renderCell: (params) => params.row.name,
     },
     {
       field: "createdAt",
       headerName: "Created Date",
-      width: 250,
+      width: 350,
       renderCell: (params) => formatDate(params.row.createdAt),
     },
     {
       field: "updatedAt",
       headerName: "Updated Date",
-      width: 250,
+      width: 350,
       renderCell: (params) => formatDate(params.row.updatedAt),
     },
     {
       field: "actions",
       headerName: "Actions",
-      width: 250,
+      width: 350,
       renderCell: (params) => (
         <div className="actions-container">
-          <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
+          <IconButton
+            color="primary"
+            disabled={roleId !== "1"}
+            onClick={() => handleEdit(params.row.id)}
+          >
             <EditIcon />
           </IconButton>
           <IconButton
             color="error"
+            disabled={roleId !== "1"}
             onClick={() => handleDelete(params.row.id)}
             style={{ marginLeft: 10 }}
           >
@@ -129,14 +136,16 @@ const RoleTable = () => {
           Roles
         </Typography>
         <div className="role-util">
-          <Fab
-            size="small"
-            color="warning"
-            aria-label="add"
-            sx={{ marginRight: "2rem" }}
-          >
-            <AddIcon onClick={handleAddRoles} />
-          </Fab>
+          {roleId === "1" && (
+            <Fab
+              size="small"
+              color="warning"
+              aria-label="add"
+              sx={{ marginRight: "2rem" }}
+            >
+              <AddIcon onClick={handleAddRoles} />
+            </Fab>
+          )}
           <input
             type="text"
             className="role-search-input"
@@ -158,8 +167,6 @@ const RoleTable = () => {
             sx={{
               height: "auto",
               width: "100%",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
               margin: "30px auto",
               animation: "fadeIn 1s ease-in-out",
             }}
@@ -184,13 +191,18 @@ const RoleTable = () => {
               sx={{
                 "& .MuiDataGrid-columnHeaders": {
                   backgroundColor: "#f5f5f5",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   borderTop: "1px solid #ddd",
                 },
                 "& .MuiDataGrid-row:hover": {
                   backgroundColor: "#e0f7fa",
+                },
+                "& .actions-container > *": {
+                  transition: "color 0.3s ease",
+                },
+                "& .actions-container > *:hover": {
+                  color: "#007bff",
                 },
               }}
             />

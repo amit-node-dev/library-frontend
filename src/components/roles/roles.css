@@ -1,9 +1,9 @@
 /* MAIN PAGE */
 .role-main-page-container {
      position: relative;
-     padding: 100px;
+     padding: 80px;
      text-align: center;
-     background-color: #d1d1d1;
+     background-color: darkgray;
      min-height: 90vh;
      box-sizing: border-box;
 }
@@ -13,7 +13,7 @@
      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
      border-radius: 8px;
      background-color: #ffffff;
-     width: 90%;
+     width: 100%;
      margin: 0 auto;
      animation: slideIn 0.5s ease-out;
 }

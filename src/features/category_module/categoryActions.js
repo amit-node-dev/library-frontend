@@ -10,7 +10,6 @@ export const getAllCategoryList = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`/categories`);
-
       if (response.status === 200) {
         return response.data.data;
       }

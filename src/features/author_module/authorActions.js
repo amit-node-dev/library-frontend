@@ -13,7 +13,6 @@ export const addNewAuthors = createAsyncThunk(
         `/authors/add_authors`,
         authorsData
       );
-      console.log("ADD NEW AUTHORS RESPONSE ::: ", response.data);
       if (response.status === 201) {
         toast.success(response.data.message);
         return response.data;
@@ -44,7 +43,7 @@ export const addNewAuthors = createAsyncThunk(
 // GET ALL AUTHORS LIST
 export const getAllAuthorsList = createAsyncThunk(
   "authors/getAllAuthorsList",
-  async ({ page, pageSize }, { rejectWithValue }) => {
+  async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`/authors`, {
         params: { page, pageSize },

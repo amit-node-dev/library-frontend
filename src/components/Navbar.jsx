@@ -1,5 +1,5 @@
 // REACT IMPORTS
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // THIRD PARTY IMPORTS
 import { toast } from "react-toastify";
@@ -34,6 +34,7 @@ const Navbar = () => {
 
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const [booksMenuAnchorEl, setBooksMenuAnchorEl] = useState(null);
+  const [roleName, setRoleName] = useState("");
 
   const handleLogout = async () => {
     await apiClient.post(`http://localhost:8080/api/v1/auth/logout`);
@@ -52,7 +53,32 @@ const Navbar = () => {
 
   const firstName = localStorage.getItem("firstname") || "";
   const lastName = localStorage.getItem("lastname") || "";
+  const roleId = parseInt(localStorage.getItem("roleId"), 10) || "";
   const avatarChar = firstName.charAt(0).toUpperCase() || "-";
+
+  const getRole = () => {
+    try {
+      switch (roleId) {
+        case 1:
+          setRoleName("Super Admin");
+          break;
+        case 2:
+          setRoleName("Admin");
+          break;
+        default:
+          setRoleName("Customer");
+          break;
+      }
+    } catch (error) {
+      console.log("ERROR IN GET ROLE ::: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getRole();
+  }, [roleId]);
+
+  console.log("ROLE ::: ", roleName);
 
   return (
     <AppBar
@@ -100,32 +126,37 @@ const Navbar = () => {
                 },
               }}
             >
-              Books List
+              Library
             </Typography>
             <Menu
               anchorEl={booksMenuAnchorEl}
               open={Boolean(booksMenuAnchorEl)}
               onClose={() => handleMenuClose(setBooksMenuAnchorEl)}
+              sx={{
+                "& .MuiPaper-root": {
+                  borderRadius: 2,
+                  boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+                  mt: 2,
+                  minWidth: 180,
+                  color: "#495057",
+                },
+              }}
             >
               <MenuItem
                 component={Link}
                 to="/books"
                 onClick={() => handleMenuClose(setBooksMenuAnchorEl)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#dedede",
+                    color: "#343a40",
+                  },
+                }}
               >
                 <ListItemIcon>
                   <BookIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="Books" />
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/authors"
-                onClick={() => handleMenuClose(setBooksMenuAnchorEl)}
-              >
-                <ListItemIcon>
-                  <PersonIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText primary="Authors" />
               </MenuItem>
             </Menu>
           </Box>
@@ -153,17 +184,32 @@ const Navbar = () => {
                 },
               }}
             >
-              Profile
+              Manage Profile
             </Typography>
             <Menu
               anchorEl={profileMenuAnchorEl}
               open={Boolean(profileMenuAnchorEl)}
               onClose={() => handleMenuClose(setProfileMenuAnchorEl)}
+              sx={{
+                "& .MuiPaper-root": {
+                  borderRadius: 2,
+                  boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+                  mt: 2,
+                  minWidth: 180,
+                  color: "#495057",
+                },
+              }}
             >
               <MenuItem
                 component={Link}
                 to="/users"
                 onClick={() => handleMenuClose(setProfileMenuAnchorEl)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#f8f9fa",
+                    color: "#343a40",
+                  },
+                }}
               >
                 <ListItemIcon>
                   <GroupIcon fontSize="small" />
@@ -174,11 +220,33 @@ const Navbar = () => {
                 component={Link}
                 to="/roles"
                 onClick={() => handleMenuClose(setProfileMenuAnchorEl)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#f8f9fa",
+                    color: "#343a40",
+                  },
+                }}
               >
                 <ListItemIcon>
                   <SettingsIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="Roles" />
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/authors"
+                onClick={() => handleMenuClose(setBooksMenuAnchorEl)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#dedede",
+                    color: "#343a40",
+                  },
+                }}
+              >
+                <ListItemIcon>
+                  <PersonIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Authors" />
               </MenuItem>
             </Menu>
           </Box>
@@ -234,12 +302,26 @@ const Navbar = () => {
           >
             {avatarChar}
           </Avatar>
-          <Typography
-            variant="body1"
-            sx={{ color: "#ffffff", marginRight: "1rem" }}
-          >
-            {firstName} {lastName}
-          </Typography>
+          <Box>
+            <Typography
+              variant="body2"
+              sx={{ color: "#ffffff", marginRight: "1rem" }}
+            >
+              {firstName} {lastName}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "#dedede",
+                marginRight: "1rem",
+                fontSize: "10px",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              {roleName}
+            </Typography>
+          </Box>
 
           <Button
             sx={{
@@ -247,11 +329,25 @@ const Navbar = () => {
               color: "#ffffff",
               borderRadius: 4,
               padding: "0.5rem 1rem",
-              fontSize: "0.7rem",
-              transition: "background-color 0.3s, transform 0.3s",
+              fontSize: "0.6rem",
+              transition:
+                "background-color 0.3s, transform 0.3s, box-shadow 0.3s",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              border: "1px solid transparent",
               "&:hover": {
                 backgroundColor: "#c82333",
-                transform: "scale(1.1)",
+                transform: "translateY(-2px)",
+                boxShadow: "0 8px 12px rgba(0, 0, 0, 0.2)",
+                border: "1px solid #dc3545",
+              },
+              "&:active": {
+                backgroundColor: "#bd2130",
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                transform: "translateY(0)",
+              },
+              "&:focus": {
+                outline: "none",
+                boxShadow: "0 0 0 3px rgba(220, 53, 69, 0.5)",
               },
             }}
             onClick={handleLogout}

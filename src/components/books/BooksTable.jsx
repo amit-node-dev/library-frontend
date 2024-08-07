@@ -7,7 +7,16 @@ import { ClipLoader } from "react-spinners";
 
 // MUI IMPORTS
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, IconButton, Typography, Pagination } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Typography,
+  Pagination,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -22,6 +31,8 @@ import {
   getAllBooksList,
   deleteBooks,
 } from "../../features/book_module/bookActions";
+import { getAllAuthorsList } from "../../features/author_module/authorActions";
+import { getAllCategoryList } from "../../features/category_module/categoryActions";
 import { setPage, setPageSize } from "../../features/book_module/bookSlice";
 
 // CSS IMPORTS
@@ -31,6 +42,9 @@ const BooksTable = () => {
   const { books, loading, error, total, page, pageSize } = useSelector(
     (state) => state.books
   );
+  const { authors } = useSelector((state) => state.authors);
+  const { categories } = useSelector((state) => state.categories);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -39,9 +53,15 @@ const BooksTable = () => {
   const [sortModel, setSortModel] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAuthor, setSelectedAuthor] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const roleId = localStorage.getItem("roleId");
 
   useEffect(() => {
     dispatch(getAllBooksList({ page, pageSize }));
+    dispatch(getAllCategoryList());
+    dispatch(getAllAuthorsList());
   }, [dispatch, page, pageSize]);
 
   useEffect(() => {
@@ -53,8 +73,17 @@ const BooksTable = () => {
           .includes(searchQuery.toLowerCase())
       );
     }
+    if (selectedCategory) {
+      filtered = filtered.filter(
+        (book) => book.categoryId === selectedCategory
+      );
+    }
+
+    if (selectedAuthor) {
+      filtered = filtered.filter((book) => book.authorId === selectedAuthor);
+    }
     setFilteredBooks(filtered);
-  }, [searchQuery, books]);
+  }, [searchQuery, selectedCategory, selectedAuthor, books]);
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -103,11 +132,16 @@ const BooksTable = () => {
       <IconButton color="secondary" onClick={() => handleView(params.row)}>
         <VisibilityIcon />
       </IconButton>
-      <IconButton color="primary" onClick={() => handleEdit(params.row.id)}>
+      <IconButton
+        color="primary"
+        disabled={roleId !== "1"}
+        onClick={() => handleEdit(params.row.id)}
+      >
         <EditIcon />
       </IconButton>
       <IconButton
         color="error"
+        disabled={roleId !== "1"}
         onClick={() => handleDelete(params.row.id)}
         style={{ marginLeft: 10 }}
       >
@@ -123,19 +157,16 @@ const BooksTable = () => {
       field: "bookname",
       headerName: "Book Name",
       width: 200,
-      editable: false,
     },
     {
       field: "title",
       headerName: "Title",
       width: 300,
-      editable: false,
     },
     {
       field: "author",
       headerName: "Author Name",
       width: 200,
-      editable: false,
       renderCell: (params) =>
         params.row.author?.firstname + " " + params.row.author?.lastname,
     },
@@ -143,25 +174,24 @@ const BooksTable = () => {
       field: "category",
       headerName: "Category",
       width: 200,
-      editable: false,
       renderCell: (params) => params.row.category?.name,
     },
     {
       field: "createdAt",
       headerName: "Published Date",
-      width: 150,
+      width: 200,
       renderCell: (params) => formatDate(params.row.createdAt),
     },
     {
       field: "updatedAt",
       headerName: "Last Updated Date",
-      width: 150,
+      width: 200,
       renderCell: (params) => formatDate(params.row.updatedAt),
     },
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      width: 200,
       renderCell: ActionRenderer,
     },
   ];
@@ -173,16 +203,52 @@ const BooksTable = () => {
   return (
     <div className="book-container">
       <div className="book-header">
-        <Typography variant="h4">Books</Typography>
+        <Typography variant="h4">List Of Books</Typography>
         <div className="book-util">
-          <Fab
-            size="small"
-            color="warning"
-            aria-label="add"
-            sx={{ marginRight: "2rem" }}
-          >
-            <AddIcon onClick={handleAddBook} />
-          </Fab>
+          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
+            <InputLabel id="category-select-label">By Category</InputLabel>
+            <Select
+              labelId="category-select-label"
+              id="category-select"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <MenuItem value="">Select Category</MenuItem>
+              {categories?.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
+            <InputLabel id="author-select-label">By Author</InputLabel>
+            <Select
+              labelId="author-select-label"
+              id="author-select"
+              value={selectedAuthor}
+              onChange={(e) => setSelectedAuthor(e.target.value)}
+            >
+              <MenuItem value="">Select Author</MenuItem>
+              {authors?.map((author) => (
+                <MenuItem key={author.id} value={author.id}>
+                  {author.firstname} {author.lastname}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {roleId === "1" && (
+            <Fab
+              size="small"
+              color="warning"
+              aria-label="add"
+              sx={{ marginRight: "2rem" }}
+            >
+              <AddIcon onClick={handleAddBook} />
+            </Fab>
+          )}
+
           <input
             type="text"
             className="book-search-input"
@@ -204,9 +270,7 @@ const BooksTable = () => {
             sx={{
               height: "auto",
               width: "100%",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              margin: "30px auto",
+              margin: "0px auto",
               animation: "fadeIn 1s ease-in-out",
             }}
           >
