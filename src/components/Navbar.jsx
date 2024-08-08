@@ -78,8 +78,6 @@ const Navbar = () => {
     getRole();
   }, [roleId]);
 
-  console.log("ROLE ::: ", roleName);
-
   return (
     <AppBar
       position="sticky"

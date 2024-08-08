@@ -117,7 +117,13 @@ const MobileOTPBased = () => {
         const response = await dispatch(verifyOTP(userData)).unwrap();
         if (response.statusType === "SUCCESS") {
           localStorage.setItem("token", response.data.token);
+          localStorage.setItem("firstname", response.data.firstname);
+          localStorage.setItem("lastname", response.data.lastname);
+          localStorage.setItem("email", response.data.email);
+          localStorage.setItem("roleId", response.data.roleId);
+          localStorage.setItem("userId", response.data.id);
           localStorage.setItem("mobileNumber", response.data.mobileNumber);
+
           navigate("/dashboard");
         } else {
           setOTPError("Invalid OTP");

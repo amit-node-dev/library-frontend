@@ -48,6 +48,7 @@ const UsersTable = () => {
   const [selectedRole, setSelectedRole] = useState("");
 
   const roleId = localStorage.getItem("roleId");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     dispatch(getAllUsersList({ page, pageSize }));
@@ -99,12 +100,15 @@ const UsersTable = () => {
   };
 
   const ActionRenderer = (params) => {
+    console.log("PARAM ", params.row.id);
+    console.log("ID ", userId);
+    const isSelf = params.row.id !== userId;
     return (
       <div className="actions-container">
         <IconButton
           color="primary"
           onClick={() => handleEdit(params.row.id)}
-          disabled={roleId !== "1"}
+          disabled={isSelf}
         >
           <EditIcon />
         </IconButton>
