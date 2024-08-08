@@ -1,4 +1,3 @@
-import "./App.css";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,6 +12,7 @@ import PrivateRoute from "./PrivateRoutes";
 // AUTH
 import RegisterPage from "./components/auth/RegisterPage";
 import LoginPage from "./components/auth/LoginPage";
+import MobileOTPBased from "./components/auth/MobileOTPBased";
 
 // DASHBOARD
 import Dashboard from "./components/dashboard/Dashboard";
@@ -43,6 +43,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/mobile_otp_based" element={<MobileOTPBased />} />
         <Route
           path="/dashboard"
           element={

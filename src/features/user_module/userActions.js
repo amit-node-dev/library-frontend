@@ -51,6 +51,54 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// SEND OTP
+export const sendOTP = createAsyncThunk(
+  "auth/sendOTP",
+  async (mobileNumber, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/auth/send_otp`, {
+        mobileNumber: mobileNumber,
+      });
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response;
+      } else {
+        toast.error("Failed to send otp");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// VERIFY OTP
+export const verifyOTP = createAsyncThunk(
+  "auth/verifyOTP",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/auth/verify_otp`, userData);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response;
+      } else {
+        toast.error("Failed to send otp");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
 // ADD USERS
 export const addUser = createAsyncThunk(
   "users/addUser",

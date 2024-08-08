@@ -16,6 +16,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Divider } from "@mui/material";
 
 // CSS
 import "./auth.css";
@@ -74,6 +75,14 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.log("ERROR IN HANDLE SUBMIT ::: ", error);
+    }
+  };
+
+  const handleOpenOTPBasedLogin = () => {
+    try {
+      navigate("/mobile_otp_based");
+    } catch (error) {
+      console.log("ERROR IN HANDLE OTP BASED LOGIN ::: ", error);
     }
   };
 
@@ -136,7 +145,7 @@ const LoginPage = () => {
             Login
           </Button>
           <hr />
-          <div className="center-text">
+          <div className="center-text" style={{ marginBottom: "2rem" }}>
             <Typography align="center" variant="caption" component="h4">
               If you don't have an account
             </Typography>
@@ -144,6 +153,17 @@ const LoginPage = () => {
               Register
             </Link>
           </div>
+
+          <Divider />
+          <Button
+            onClick={handleOpenOTPBasedLogin}
+            variant="contained"
+            color="secondary"
+            fullWidth
+            style={{ marginTop: "2rem" }}
+          >
+            Use Mobile Number
+          </Button>
         </form>
       </div>
     </div>
