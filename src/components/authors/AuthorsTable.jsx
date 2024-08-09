@@ -17,8 +17,8 @@ import "./authors.css";
 
 // ACTIONS & STORES
 import {
-  getAllAuthorsList,
   deleteAuthors,
+  getAllAuthorsListPagination,
 } from "../../features/author_module/authorActions";
 import { setPage, setPageSize } from "../../features/author_module/authorSlice";
 
@@ -36,7 +36,7 @@ const AuthorsTable = () => {
   const roleId = localStorage.getItem("roleId");
 
   useEffect(() => {
-    dispatch(getAllAuthorsList({ page, pageSize }));
+    dispatch(getAllAuthorsListPagination({ page, pageSize }));
   }, [dispatch, page, pageSize]);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const AuthorsTable = () => {
   const handleDelete = async (authorId) => {
     try {
       await dispatch(deleteAuthors(authorId)).unwrap();
-      await dispatch(getAllAuthorsList({ page, pageSize })).unwrap();
+      await dispatch(getAllAuthorsListPagination({ page, pageSize })).unwrap();
     } catch (error) {
       console.log("ERROR IN DELETE AUTHOR ::: ", error);
     }

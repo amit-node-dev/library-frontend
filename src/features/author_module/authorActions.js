@@ -40,14 +40,36 @@ export const addNewAuthors = createAsyncThunk(
   }
 );
 
-// GET ALL AUTHORS LIST
-export const getAllAuthorsList = createAsyncThunk(
-  "authors/getAllAuthorsList",
+// GET ALL AUTHORS LIST WITH PAGINATION
+export const getAllAuthorsListPagination = createAsyncThunk(
+  "authors/getAllAuthorsListPagination",
   async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`/authors`, {
         params: { page, pageSize },
       });
+      if (response.status === 200) {
+        return response.data.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to fetch authors list");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// GET ALL AUTHORS LIST
+export const getAllAuthorsList = createAsyncThunk(
+  "authors/getAllAuthorsList",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/authors`);
       if (response.status === 200) {
         return response.data.data;
       }

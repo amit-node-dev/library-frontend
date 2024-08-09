@@ -17,8 +17,8 @@ import "./roles.css";
 
 // ACTIONS & STORES
 import {
-  getAllRolesList,
   deleteRole,
+  getAllRolesListPagination,
 } from "../../features/role_module/roleActions";
 import { setPage, setPageSize } from "../../features/role_module/roleSlice";
 
@@ -36,7 +36,7 @@ const RoleTable = () => {
   const roleId = localStorage.getItem("roleId");
 
   useEffect(() => {
-    dispatch(getAllRolesList({ page, pageSize }));
+    dispatch(getAllRolesListPagination({ page, pageSize }));
   }, [dispatch, page, pageSize]);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const RoleTable = () => {
   const handleDelete = async (roleId) => {
     try {
       await dispatch(deleteRole(roleId)).unwrap();
-      await dispatch(getAllRolesList({ page, pageSize })).unwrap();
+      await dispatch(getAllRolesListPagination({ page, pageSize })).unwrap();
     } catch (error) {
       console.log("ERROR IN DELETE ROLE ::: ", error);
     }

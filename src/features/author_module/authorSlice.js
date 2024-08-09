@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   addNewAuthors,
   getAllAuthorsList,
+  getAllAuthorsListPagination,
   getAuthorsById,
   updateAuthors,
   deleteAuthors,
@@ -42,15 +43,27 @@ const authorSlice = createSlice({
         state.error = action.payload;
       })
 
+      .addCase(getAllAuthorsListPagination.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllAuthorsListPagination.fulfilled, (state, action) => {
+        state.loading = false;
+        state.authors = action.payload.authors;
+        state.total = action.payload.total;
+        state.page = action.payload.page;
+        state.pageSize = action.payload.pageSize;
+      })
+      .addCase(getAllAuthorsListPagination.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       .addCase(getAllAuthorsList.pending, (state) => {
         state.loading = true;
       })
       .addCase(getAllAuthorsList.fulfilled, (state, action) => {
         state.loading = false;
         state.authors = action.payload.authors;
-        state.total = action.payload.total;
-        state.page = action.payload.page;
-        state.pageSize = action.payload.pageSize;
       })
       .addCase(getAllAuthorsList.rejected, (state, action) => {
         state.loading = false;

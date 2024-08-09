@@ -42,14 +42,36 @@ export const addRole = createAsyncThunk(
   }
 );
 
-// GET ALL LIST OF ROLES
-export const getAllRolesList = createAsyncThunk(
-  "roles/getAllRolesList",
+// GET ALL LIST OF ROLES WITH PAGINATION
+export const getAllRolesListPagination = createAsyncThunk(
+  "roles/getAllRolesListPagination",
   async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`/roles`, {
         params: { page, pageSize },
       });
+      if (response.status === 200) {
+        return response.data.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to fetch roles list with pagination");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// GET ALL LIST OF ROLES
+export const getAllRolesList = createAsyncThunk(
+  "roles/getAllRolesList",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/roles`);
       if (response.status === 200) {
         return response.data.data;
       }
@@ -66,6 +88,7 @@ export const getAllRolesList = createAsyncThunk(
   }
 );
 
+// GET ROLE BY ID
 export const getRoleById = createAsyncThunk(
   "roles/getRoleById",
   async (roleId, { rejectWithValue }) => {
@@ -87,6 +110,7 @@ export const getRoleById = createAsyncThunk(
   }
 );
 
+// UPDATE ROLE
 export const updateRole = createAsyncThunk(
   "roles/updateRole",
   async ({ roleId, roleData }, { rejectWithValue }) => {
@@ -109,6 +133,7 @@ export const updateRole = createAsyncThunk(
   }
 );
 
+// DELETE ROLE
 export const deleteRole = createAsyncThunk(
   "roles/deleteRole",
   async (roleId, { rejectWithValue }) => {

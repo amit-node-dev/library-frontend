@@ -4,6 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   addRole,
   getAllRolesList,
+  getAllRolesListPagination,
   getRoleById,
   updateRole,
   deleteRole,
@@ -54,11 +55,24 @@ const roleSlice = createSlice({
       .addCase(getAllRolesList.fulfilled, (state, action) => {
         state.loading = false;
         state.roles = action.payload.roles;
+      })
+      .addCase(getAllRolesList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Handle getAllRolesListPagination actions
+      .addCase(getAllRolesListPagination.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllRolesListPagination.fulfilled, (state, action) => {
+        state.loading = false;
+        state.roles = action.payload.roles;
         state.total = action.payload.total;
         state.page = action.payload.page;
         state.pageSize = action.payload.pageSize;
       })
-      .addCase(getAllRolesList.rejected, (state, action) => {
+      .addCase(getAllRolesListPagination.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
