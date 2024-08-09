@@ -26,12 +26,14 @@ import registerPage from "../../images/regsiterPage.jpg";
 const RegisterPage = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
+  const [age, setAge] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [firstnameError, setFirstnameError] = useState("");
   const [lastnameError, setLastnameError] = useState("");
+  const [ageError, setAgeError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
@@ -51,6 +53,10 @@ const RegisterPage = () => {
 
   const handleLastNameBlur = () => {
     setLastnameError(lastname === "" ? "Last name is required" : "");
+  };
+
+  const handleAgeBlur = () => {
+    setAgeError(lastname === "" ? "Age is required" : "");
   };
 
   const handleEmailBlur = () => {
@@ -99,11 +105,12 @@ const RegisterPage = () => {
 
     handleFirstNameBlur();
     handleLastNameBlur();
+    handleAgeBlur();
     handleEmailBlur();
     handlePasswordBlur();
     handleConfirmPasswordBlur();
 
-    if (firstname && lastname && email && password && confirmPassword) {
+    if (firstname && lastname && age && email && password && confirmPassword) {
       if (password !== confirmPassword) {
         setConfirmPasswordError("Passwords do not match");
       } else {
@@ -112,6 +119,7 @@ const RegisterPage = () => {
         const userData = {
           firstname,
           lastname,
+          age,
           email,
           password: hashedPassword,
           mobileNumber,
@@ -159,6 +167,21 @@ const RegisterPage = () => {
               onBlur={handleLastNameBlur}
               error={!!lastnameError}
               helperText={lastnameError}
+              fullWidth
+              margin="normal"
+            />
+          </div>
+          <div className="form-group">
+            <TextField
+              id="age"
+              label="Age"
+              type="age"
+              variant="standard"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              onBlur={handleAgeBlur}
+              error={!!ageError}
+              helperText={ageError}
               fullWidth
               margin="normal"
             />

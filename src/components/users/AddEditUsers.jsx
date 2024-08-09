@@ -43,6 +43,7 @@ const AddEditUsers = () => {
     password: "",
     confirmPassword: "",
     age: "",
+    mobileNumber: "",
     country: "",
     state: "",
     city: "",
@@ -85,6 +86,7 @@ const AddEditUsers = () => {
         lastname: currentUser.lastname,
         email: currentUser.email,
         age: currentUser.age,
+        mobileNumber: currentUser.mobileNumber,
         oldpassword: "",
         password: "",
         confirmPassword: "",
@@ -193,26 +195,55 @@ const AddEditUsers = () => {
     handleConfirmPasswordBlur();
     handleRoleBlur();
 
-    if (
-      userData.firstname &&
-      userData.lastname &&
-      userData.email &&
-      userData.password.length >= 8 &&
-      userData.password === userData.confirmPassword &&
-      userData.role
-    ) {
+    const {
+      firstname,
+      lastname,
+      email,
+      password,
+      confirmPassword,
+      role,
+      oldpassword,
+    } = userData;
+
+    const isValidForm =
+      firstname &&
+      lastname &&
+      email &&
+      password.length >= 8 &&
+      password === confirmPassword &&
+      role;
+
+    if (!isValidForm) {
+      return;
+    }
+
+    try {
+      const saltRounds = 10;
+
       if (userId) {
-        await dispatch(updateUsers({ userId, userData })).unwrap();
+        let hashedNewPassword = await bcrypt.hash(password, saltRounds);
+        let updatedUserData = {
+          ...userData,
+          password: hashedNewPassword,
+        };
+
+        await dispatch(
+          updateUsers({ userId, userData: updatedUserData })
+        ).unwrap();
       } else {
-        const saltRounds = 10;
-        const hashedNewPassword = await bcrypt.hash(
-          userData.password,
-          saltRounds
-        );
-        userData.password = hashedNewPassword;
-        await dispatch(addUser(userData)).unwrap();
+        let hashedNewPassword = await bcrypt.hash(password, saltRounds);
+
+        let newUserData = {
+          ...userData,
+          password: hashedNewPassword,
+        };
+
+        await dispatch(addUser(newUserData)).unwrap();
       }
+
       navigate("/users");
+    } catch (error) {
+      console.error("Error during user submission:", error);
     }
   };
 
@@ -225,6 +256,7 @@ const AddEditUsers = () => {
       password: "",
       confirmPassword: "",
       age: "",
+      mobileNumber: "",
       country: "",
       state: "",
       city: "",
@@ -337,6 +369,20 @@ const AddEditUsers = () => {
                   label="Age"
                   name="age"
                   value={userData.age}
+                  onChange={handleChange}
+                  sx={{
+                    animation: "fadeIn 1s ease-in-out",
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  margin="normal"
+                  label="Mobile Number"
+                  name="mobileNumber"
+                  value={userData.mobileNumber}
                   onChange={handleChange}
                   sx={{
                     animation: "fadeIn 1s ease-in-out",
