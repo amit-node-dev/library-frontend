@@ -100,15 +100,12 @@ const UsersTable = () => {
   };
 
   const ActionRenderer = (params) => {
-    console.log("PARAM ", params.row.id);
-    console.log("ID ", userId);
-    const isSelf = params.row.id !== userId;
     return (
       <div className="actions-container">
         <IconButton
           color="primary"
           onClick={() => handleEdit(params.row.id)}
-          disabled={isSelf}
+          disabled={roleId !== "1"}
         >
           <EditIcon />
         </IconButton>

@@ -21,6 +21,7 @@ import { ButtonBase, Divider } from "@mui/material";
 // CSS
 import "./auth.css";
 import loginPage from "../../images/loginPage.jpg";
+import { toast } from "react-toastify";
 
 const MobileOTPBased = () => {
   const [mobileNumber, setMobileNumber] = useState("");
@@ -121,10 +122,13 @@ const MobileOTPBased = () => {
           localStorage.setItem("lastname", response.data.lastname);
           localStorage.setItem("email", response.data.email);
           localStorage.setItem("roleId", response.data.roleId);
-          localStorage.setItem("userId", response.data.id);
+          localStorage.setItem("userId", response.data.userId);
           localStorage.setItem("mobileNumber", response.data.mobileNumber);
 
-          navigate("/dashboard");
+          navigate("/register");
+          setTimeout(() => {
+            toast.info("First Register Yourself");
+          }, 1000);
         } else {
           setOTPError("Invalid OTP");
         }

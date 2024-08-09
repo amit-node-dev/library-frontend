@@ -69,7 +69,7 @@ const LoginPage = () => {
           localStorage.setItem("lastname", response.data.lastname);
           localStorage.setItem("email", response.data.email);
           localStorage.setItem("roleId", response.data.roleId);
-          localStorage.setItem("userId", response.data.id);
+          localStorage.setItem("userId", response.data.userId);
 
           navigate("/dashboard");
         }

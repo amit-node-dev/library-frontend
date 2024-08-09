@@ -43,6 +43,8 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const mobileNumber = localStorage.getItem("mobileNumber");
+
   const handleFirstNameBlur = () => {
     setFirstnameError(firstname === "" ? "First name is required" : "");
   };
@@ -112,6 +114,7 @@ const RegisterPage = () => {
           lastname,
           email,
           password: hashedPassword,
+          mobileNumber,
         };
         const response = await dispatch(registerUser(userData)).unwrap();
         if (response.statusType === "SUCCESS") {
