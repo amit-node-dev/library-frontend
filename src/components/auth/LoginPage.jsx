@@ -87,6 +87,13 @@ const LoginPage = () => {
     }
   };
 
+  const handleReset = () => {
+    setEmail("");
+    setEmailError("");
+    setPassword("");
+    setPasswordError("");
+  };
+
   return (
     <div className="main-container">
       <div className="image-container">
@@ -136,15 +143,29 @@ const LoginPage = () => {
               }}
             />
           </div>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            style={{ marginTop: "1rem" }}
-          >
-            Login
-          </Button>
+          <div className="form-button">
+            <Button
+              type="submit"
+              size="small"
+              variant="contained"
+              color="success"
+              fullWidth
+              style={{ marginTop: "1rem", marginRight: "5px" }}
+            >
+              Login
+            </Button>
+            <Button
+              type="reset"
+              size="small"
+              variant="contained"
+              color="error"
+              fullWidth
+              style={{ marginTop: "1rem", marginLeft: "5px" }}
+              onClick={handleReset}
+            >
+              Reset
+            </Button>
+          </div>
           <hr />
           <div className="center-text" style={{ marginBottom: "2rem" }}>
             <Typography align="center" variant="caption" component="h4">
@@ -159,7 +180,7 @@ const LoginPage = () => {
           <Button
             onClick={handleOpenOTPBasedLogin}
             variant="contained"
-            color="secondary"
+            color="primary"
             fullWidth
             style={{ marginTop: "2rem" }}
           >

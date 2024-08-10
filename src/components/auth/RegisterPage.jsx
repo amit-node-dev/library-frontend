@@ -22,6 +22,7 @@ import { registerUser } from "../../features/user_module/userActions";
 // CSS
 import "./auth.css";
 import registerPage from "../../images/regsiterPage.jpg";
+import { Divider } from "@mui/material";
 
 const RegisterPage = () => {
   const [firstname, setFirstname] = useState("");
@@ -130,6 +131,22 @@ const RegisterPage = () => {
         }
       }
     }
+  };
+
+  const handleReset = () => {
+    setFirstname("");
+    setLastname("");
+    setEmail("");
+    setAge("");
+    setPassword("");
+    setConfirmPassword("");
+
+    setFirstnameError("");
+    setLastnameError("");
+    setEmailError("");
+    setAgeError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
   };
 
   return (
@@ -260,16 +277,38 @@ const RegisterPage = () => {
               }}
             />
           </div>
-          <Button
-            type="submit"
-            variant="contained"
-            color="error"
-            fullWidth
-            style={{ marginTop: "1rem" }}
-          >
-            Register
-          </Button>
-          <hr />
+          <div className="form-button">
+            <Button
+              type="submit"
+              variant="contained"
+              color="success"
+              fullWidth
+              style={{
+                marginTop: "1rem",
+                marginBottom: "2rem",
+                marginRight: "5px",
+              }}
+            >
+              Register
+            </Button>
+            <Button
+              type="reset"
+              size="small"
+              variant="contained"
+              color="error"
+              fullWidth
+              style={{
+                marginTop: "1rem",
+                marginBottom: "2rem",
+                marginLeft: "5px",
+              }}
+              onClick={handleReset}
+            >
+              Reset
+            </Button>
+          </div>
+
+          <Divider />
           <div className="center-text">
             <Typography align="center" variant="caption" component="h4">
               Already have an account?
