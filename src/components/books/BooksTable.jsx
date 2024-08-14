@@ -68,19 +68,19 @@ const BooksTable = () => {
     let filtered = books;
     if (searchQuery) {
       filtered = books.filter((book) =>
-        `${book.bookname} ${book.description} ${book.authorId}`
+        `${book.isbn} ${book.bookname} ${book.publisher} ${book.category.name} ${book.location}`
           .toLowerCase()
           .includes(searchQuery.toLowerCase())
       );
     }
     if (selectedCategory) {
       filtered = filtered.filter(
-        (book) => book.categoryId === selectedCategory
+        (book) => book.category_id === selectedCategory
       );
     }
 
     if (selectedAuthor) {
-      filtered = filtered.filter((book) => book.authorId === selectedAuthor);
+      filtered = filtered.filter((book) => book.author_id === selectedAuthor);
     }
     setFilteredBooks(filtered);
   }, [searchQuery, selectedCategory, selectedAuthor, books]);
@@ -120,12 +120,6 @@ const BooksTable = () => {
     setSelectedBook(null);
   };
 
-  // Custom date formatting function
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
-
   // Custom renderer for actions
   const ActionRenderer = (params) => (
     <div className="actions-container">
@@ -152,41 +146,56 @@ const BooksTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "Id", width: 90 },
+    { field: "id", headerName: "ID", width: 50 },
+    {
+      field: "isbn",
+      headerName: "ISBN",
+      width: 150,
+    },
     {
       field: "bookname",
-      headerName: "Book Name",
+      headerName: "NAME",
+      width: 150,
+    },
+    {
+      field: "publisher",
+      headerName: "PUBLISHER",
       width: 200,
     },
     {
-      field: "title",
-      headerName: "Title",
-      width: 300,
+      field: "publication_year",
+      headerName: "PUBLICATION YEAR",
+      width: 150,
     },
     {
       field: "author",
-      headerName: "Author Name",
-      width: 200,
+      headerName: "AUTHOR",
+      width: 150,
       renderCell: (params) =>
-        params.row.author?.firstname + " " + params.row.author?.lastname,
+        params.row.author
+          ? params.row.author?.firstname + " " + params.row.author?.lastname
+          : "N/A",
     },
     {
       field: "category",
-      headerName: "Category",
-      width: 200,
+      headerName: "CATEGORY",
+      width: 150,
       renderCell: (params) => params.row.category?.name,
     },
     {
-      field: "createdAt",
-      headerName: "Published Date",
-      width: 200,
-      renderCell: (params) => formatDate(params.row.createdAt),
+      field: "total_copies",
+      headerName: "TOTAL BOOKS",
+      width: 150,
     },
     {
-      field: "updatedAt",
-      headerName: "Last Updated Date",
-      width: 200,
-      renderCell: (params) => formatDate(params.row.updatedAt),
+      field: "available_copies",
+      headerName: "AVAILABLE BOOKS",
+      width: 150,
+    },
+    {
+      field: "location",
+      headerName: "LOCATION",
+      width: 150,
     },
     {
       field: "actions",

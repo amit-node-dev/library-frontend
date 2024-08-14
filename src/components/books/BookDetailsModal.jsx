@@ -61,11 +61,6 @@ const ContentBox = styled(Box)(() => ({
 const BookDetailsModal = ({ open, onClose, book }) => {
   if (!book) return null;
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
-
   return (
     <Modal
       open={open}
@@ -81,7 +76,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
           mb={4}
         >
           <Typography id="book-details-title" variant="h5" component="h2">
-            Book-Id #{book.id}
+            ISBN: {book.isbn}
           </Typography>
           <IconButton onClick={onClose} size="large">
             <CloseIcon />
@@ -110,7 +105,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
                 <strong>Author:- </strong>
               </Typography>
               <Typography variant="caption" sx={{ marginLeft: "2px" }}>
-                {book.author.firstname + " " + book.author.lastname}
+                {book.author?.firstname + " " + book.author?.lastname}
               </Typography>
             </div>
           </Box>
@@ -163,20 +158,23 @@ const BookDetailsModal = ({ open, onClose, book }) => {
           >
             <div>
               <Typography variant="caption">
-                <strong>Published Date:</strong>
+                <strong>Published Year:</strong>
               </Typography>
-              <Typography variant="body2">
-                {formatDate(book.createdAt)}
-              </Typography>
+              <Typography variant="body2">{book.publication_year}</Typography>
             </div>
 
             <div>
               <Typography variant="caption">
-                <strong>Last Updated At:</strong>
+                <strong>Location:</strong>
               </Typography>
-              <Typography variant="body2">
-                {formatDate(book.updatedAt)}
+              <Typography variant="body2">{book.location}</Typography>
+            </div>
+
+            <div>
+              <Typography variant="caption">
+                <strong>Publisher:</strong>
               </Typography>
+              <Typography variant="body2">{book.publisher}</Typography>
             </div>
           </Box>
         </ContentBox>

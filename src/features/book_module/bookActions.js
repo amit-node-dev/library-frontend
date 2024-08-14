@@ -9,6 +9,7 @@ export const addNewBooks = createAsyncThunk(
   "books/addNewBooks",
   async (bookData, { rejectWithValue }) => {
     try {
+      console.log("DATA ", bookData);
       const response = await apiClient.post(`/books/add_books`, bookData);
       if (response.status === 201) {
         toast.success(response.data.message);
