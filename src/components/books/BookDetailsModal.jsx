@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 // MUI IMPORTS
 import {
@@ -8,12 +9,26 @@ import {
   Box,
   IconButton,
   Divider,
+  Button,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled, keyframes } from "@mui/system";
+import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
 // CSS
 import "./books.css";
+
+// ACTIONS & STORES
+import {
+  addNewBorroRecord,
+  getBorrowBookRecordStatus,
+} from "../../features/borrowRecord_module/borrorRecordAction";
+
+// CUSTOM MODAL
+import BorrowModal from "./BorrowModal";
 
 // Keyframes for animations
 const fadeIn = keyframes`
@@ -59,127 +74,236 @@ const ContentBox = styled(Box)(() => ({
 }));
 
 const BookDetailsModal = ({ open, onClose, book }) => {
+  const [isReserved, setIsReserved] = useState(false);
+  const [borrowModalOpen, setBorrowModalOpen] = useState(false);
+  const [checkReturn, setCheckReturn] = useState(false);
+  const [borrowStatus, setBorrowStatus] = useState(null);
+
+  const dispatch = useDispatch();
+
+  const userId = localStorage.getItem("userId");
+
+  // OPEN BORROW MODEL
+  const openBorrowModal = () => {
+    setBorrowModalOpen(true);
+  };
+
+  // CLOSE BORROW MODEL
+  const closeBorrowModal = () => {
+    setBorrowModalOpen(false);
+  };
+
+  const handleBorrowBookRecord = async (borrowDates) => {
+    try {
+      const borrowData = {
+        userId: userId,
+        bookId: book.id,
+        borrowDate: borrowDates.borrowDate,
+        dueDate: borrowDates.dueDate,
+      };
+      const response = await dispatch(addNewBorroRecord(borrowData));
+      if (response.payload.statusType === "SUCCESS") {
+        handlecheckReturn();
+      }
+    } catch (error) {
+      console.log("ERROR IN BORROW BOOK RECORD ::: ", error);
+    }
+  };
+
+  const handlecheckReturn = async () => {
+    try {
+      const borrowData = {
+        userId: userId,
+        bookId: book.id,
+      };
+      const response = await dispatch(getBorrowBookRecordStatus(borrowData));
+
+      const resultResponse = response.payload;
+      if (resultResponse.message === "NOT FOUND") {
+        setCheckReturn(false);
+      } else {
+        setBorrowStatus(resultResponse.data.status);
+        setCheckReturn(true);
+      }
+    } catch (error) {
+      console.log("ERROR IN CHECK BORROW BOOK STATUS ::: ", error);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      setCheckReturn(false);
+      handlecheckReturn();
+    }
+  }, [open]);
+
+  const handleReturnBook = () => {};
+
+  const handleReserveBook = () => {
+    setIsReserved(!isReserved);
+  };
+
   if (!book) return null;
 
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="book-details-title"
-      aria-describedby="book-details-description"
-    >
-      <ModalContainer>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={4}
-        >
-          <Typography id="book-details-title" variant="h5" component="h2">
-            ISBN: {book.isbn}
-          </Typography>
-          <IconButton onClick={onClose} size="large">
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Divider sx={{ mb: 2 }} />
-        <ContentBox>
+    <>
+      <Modal
+        open={open}
+        onClose={onClose}
+        aria-labelledby="book-details-title"
+        aria-describedby="book-details-description"
+      >
+        <ModalContainer>
           <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={4}
           >
-            <div>
-              <Typography variant="h7" sx={{ fontWeight: "700" }}>
-                {book.bookname}
-              </Typography>
-            </div>
-            <div>
-              <Typography variant="h7" sx={{ fontWeight: "700" }}>
-                {book.category.name}
-              </Typography>
-            </div>
-            <div className="book-authorname-container">
-              <Typography variant="caption">
-                <strong>Author:- </strong>
-              </Typography>
-              <Typography variant="caption" sx={{ marginLeft: "2px" }}>
-                {book.author?.firstname + " " + book.author?.lastname}
-              </Typography>
-            </div>
+            {checkReturn && borrowStatus === "borrowed" ? (
+              <Button
+                color="primary"
+                variant="outlined"
+                onClick={handleReturnBook}
+              >
+                <ArrowCircleUpIcon />
+                &nbsp;<Typography>Return</Typography>
+              </Button>
+            ) : !checkReturn && book.available_copies > 0 ? (
+              <Button
+                color="success"
+                variant="outlined"
+                onClick={openBorrowModal}
+              >
+                <ArrowCircleDownIcon />
+                <Typography>Borrow</Typography>
+              </Button>
+            ) : (
+              <Button
+                color="secondary"
+                variant="outlined"
+                onClick={handleReserveBook}
+              >
+                {isReserved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                <Typography sx={{ marginLeft: "5px" }}>
+                  {isReserved ? "Reserved" : "Reserve"}
+                </Typography>
+              </Button>
+            )}
+            <Typography id="book-details-title" variant="h7" component="h3">
+              ISBN: {book.isbn}
+            </Typography>
+            <IconButton onClick={onClose} size="normal">
+              <CloseIcon />
+            </IconButton>
           </Box>
-
-          <div className="book-title-container">
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              <strong>Title:</strong>
-            </Typography>
-            <Typography
-              className="book-title"
-              variant="body2"
-              sx={{ lineHeight: "25px" }}
+          <Divider sx={{ mb: 2 }} />
+          <ContentBox>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
             >
-              {book.title}
-            </Typography>
-          </div>
+              <div>
+                <Typography variant="h7" sx={{ fontWeight: "700" }}>
+                  {book.bookname}
+                </Typography>
+              </div>
+              <div>
+                <Typography variant="h7" sx={{ fontWeight: "700" }}>
+                  {book.category.name}
+                </Typography>
+              </div>
+              <div className="book-authorname-container">
+                <Typography variant="caption">
+                  <strong>Author:- </strong>
+                </Typography>
+                <Typography variant="caption" sx={{ marginLeft: "2px" }}>
+                  {book.author?.firstname + " " + book.author?.lastname}
+                </Typography>
+              </div>
+            </Box>
 
-          <div className="book-story-container">
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              <strong>Story:</strong>
-            </Typography>
-            <Typography
-              className="book-description"
-              variant="body2"
-              sx={{ mb: 2, lineHeight: "25px" }}
-            >
-              {book.description}
-            </Typography>
-          </div>
-
-          <div className="book-conclusion-container">
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              <strong>Conclusion:</strong>
-            </Typography>
-            <Typography
-              className="book-conclusion"
-              variant="body2"
-              sx={{ lineHeight: "25px" }}
-            >
-              {book.conclusion}
-            </Typography>
-          </div>
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "20px",
-            }}
-          >
-            <div>
-              <Typography variant="caption">
-                <strong>Published Year:</strong>
+            <div className="book-title-container">
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                <strong>Title:</strong>
               </Typography>
-              <Typography variant="body2">{book.publication_year}</Typography>
+              <Typography
+                className="book-title"
+                variant="body2"
+                sx={{ lineHeight: "25px" }}
+              >
+                {book.title}
+              </Typography>
             </div>
 
-            <div>
-              <Typography variant="caption">
-                <strong>Location:</strong>
+            <div className="book-story-container">
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                <strong>Story:</strong>
               </Typography>
-              <Typography variant="body2">{book.location}</Typography>
+              <Typography
+                className="book-description"
+                variant="body2"
+                sx={{ mb: 2, lineHeight: "25px" }}
+              >
+                {book.description}
+              </Typography>
             </div>
 
-            <div>
-              <Typography variant="caption">
-                <strong>Publisher:</strong>
+            <div className="book-conclusion-container">
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                <strong>Conclusion:</strong>
               </Typography>
-              <Typography variant="body2">{book.publisher}</Typography>
+              <Typography
+                className="book-conclusion"
+                variant="body2"
+                sx={{ lineHeight: "25px" }}
+              >
+                {book.conclusion}
+              </Typography>
             </div>
-          </Box>
-        </ContentBox>
-      </ModalContainer>
-    </Modal>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "20px",
+              }}
+            >
+              <div>
+                <Typography variant="caption">
+                  <strong>Published Year:</strong>
+                </Typography>
+                <Typography variant="body2">{book.publication_year}</Typography>
+              </div>
+
+              <div>
+                <Typography variant="caption">
+                  <strong>Location:</strong>
+                </Typography>
+                <Typography variant="body2">{book.location}</Typography>
+              </div>
+
+              <div>
+                <Typography variant="caption">
+                  <strong>Publisher:</strong>
+                </Typography>
+                <Typography variant="body2">{book.publisher}</Typography>
+              </div>
+            </Box>
+          </ContentBox>
+        </ModalContainer>
+      </Modal>
+
+      {/* Borrow Confirmation Modal */}
+      <BorrowModal
+        open={borrowModalOpen}
+        onClose={closeBorrowModal}
+        book={book}
+        onSubmit={handleBorrowBookRecord}
+      />
+    </>
   );
 };
 

@@ -196,7 +196,9 @@ const AddEditBooks = () => {
       bookData.totalCopies
     ) {
       try {
-        bookData.publicationYear = formatDate(bookData.publicationYear);
+        bookData.publicationYear = dayjs(bookData.publicationYear).format(
+          "YYYY-MM-DD"
+        );
         if (bookId) {
           await dispatch(updateBooks({ bookId, bookData })).unwrap();
         } else {

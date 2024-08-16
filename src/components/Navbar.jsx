@@ -124,7 +124,7 @@ const Navbar = () => {
                 },
               }}
             >
-              Library
+              Catalog
             </Typography>
             <Menu
               anchorEl={booksMenuAnchorEl}

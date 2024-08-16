@@ -6,6 +6,7 @@ import roleReducer from "../features/role_module/roleSlice";
 import bookReducer from "../features/book_module/bookSlice";
 import authorReducer from "../features/author_module/authorSlice";
 import categoryReducer from "../features/category_module/categorySlice";
+import borrowRecordReducer from "../features/borrowRecord_module/borrowRecordSlice";
 
 // Combine reducers
 const rootReducer = combineReducers({
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   books: bookReducer,
   authors: authorReducer,
   categories: categoryReducer,
+  borrowRecords: borrowRecordReducer,
 });
 
 // Create and export the store
