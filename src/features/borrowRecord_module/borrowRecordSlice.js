@@ -30,6 +30,7 @@ const borrowRecordSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // ADD NEW BORROW BOOK
       .addCase(addNewBorroRecord.pending, (state) => {
         state.loading = true;
       })
@@ -42,6 +43,7 @@ const borrowRecordSlice = createSlice({
         state.error = action.payload;
       })
 
+      // GET ALL LIST OF BORROW BOOK RECORD
       .addCase(getAllBorroRecordList.pending, (state) => {
         state.loading = true;
       })
@@ -57,6 +59,7 @@ const borrowRecordSlice = createSlice({
         state.error = action.payload;
       })
 
+      // GET BORROW BOOK RECORD BY ID
       .addCase(getBorroRecordById.fulfilled, (state, action) => {
         state.loading = false;
         state.currentBorrowRecord = action.payload.data;
@@ -66,6 +69,7 @@ const borrowRecordSlice = createSlice({
         state.error = action.payload;
       })
 
+      // UPDATE BORROW BOOK RECORD
       .addCase(updateBorroRecord.pending, (state) => {
         state.loading = true;
       })
@@ -78,6 +82,7 @@ const borrowRecordSlice = createSlice({
         state.error = action.payload;
       })
 
+      // DELETE BORROW BOOK RECORD
       .addCase(deleteBorroRecord.pending, (state) => {
         state.loading = true;
       })

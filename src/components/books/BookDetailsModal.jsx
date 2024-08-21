@@ -25,10 +25,13 @@ import "./books.css";
 import {
   addNewBorroRecord,
   getBorrowBookRecordStatus,
+  returnBorrowRecord,
 } from "../../features/borrowRecord_module/borrorRecordAction";
+import { getAllBooksList } from "../../features/book_module/bookActions";
 
 // CUSTOM MODAL
 import BorrowModal from "./BorrowModal";
+import ReturnModal from "./ReturnModal";
 
 // Keyframes for animations
 const fadeIn = keyframes`
@@ -75,41 +78,18 @@ const ContentBox = styled(Box)(() => ({
 
 const BookDetailsModal = ({ open, onClose, book }) => {
   const [isReserved, setIsReserved] = useState(false);
-  const [borrowModalOpen, setBorrowModalOpen] = useState(false);
-  const [checkReturn, setCheckReturn] = useState(false);
   const [borrowStatus, setBorrowStatus] = useState(null);
+  const [checkReturn, setCheckReturn] = useState(false);
+
+  const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("");
 
   const dispatch = useDispatch();
 
   const userId = localStorage.getItem("userId");
 
-  // OPEN BORROW MODEL
-  const openBorrowModal = () => {
-    setBorrowModalOpen(true);
-  };
-
-  // CLOSE BORROW MODEL
-  const closeBorrowModal = () => {
-    setBorrowModalOpen(false);
-  };
-
-  const handleBorrowBookRecord = async (borrowDates) => {
-    try {
-      const borrowData = {
-        userId: userId,
-        bookId: book.id,
-        borrowDate: borrowDates.borrowDate,
-        dueDate: borrowDates.dueDate,
-      };
-      const response = await dispatch(addNewBorroRecord(borrowData));
-      if (response.payload.statusType === "SUCCESS") {
-        handlecheckReturn();
-      }
-    } catch (error) {
-      console.log("ERROR IN BORROW BOOK RECORD ::: ", error);
-    }
-  };
-
+  // CHECK THE STATUS OF BOOK (BORROW, RETURN, RESERVED)
   const handlecheckReturn = async () => {
     try {
       const borrowData = {
@@ -117,13 +97,13 @@ const BookDetailsModal = ({ open, onClose, book }) => {
         bookId: book.id,
       };
       const response = await dispatch(getBorrowBookRecordStatus(borrowData));
-
       const resultResponse = response.payload;
-      if (resultResponse.message === "NOT FOUND") {
-        setCheckReturn(false);
-      } else {
+
+      if (resultResponse.statusType === "SUCCESS" && resultResponse.data) {
         setBorrowStatus(resultResponse.data.status);
         setCheckReturn(true);
+      } else if (!resultResponse.data) {
+        setCheckReturn(false);
       }
     } catch (error) {
       console.log("ERROR IN CHECK BORROW BOOK STATUS ::: ", error);
@@ -137,10 +117,144 @@ const BookDetailsModal = ({ open, onClose, book }) => {
     }
   }, [open]);
 
-  const handleReturnBook = () => {};
+  useEffect(() => {
+    dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
+  }, [dispatch]);
+
+  // OPEN BORROW MODEL
+  const openBorrowModal = () => {
+    setModalType("borrow_modal");
+    setIsBorrowModalOpen(true);
+  };
+
+  // CLOSE BORROW MODEL
+  const closeBorrowModal = () => {
+    setModalType("");
+    setIsBorrowModalOpen(false);
+  };
+
+  // FUNCTION TO BORROW A BOOKS
+  const handleBorrowBookRecord = async (borrowRecordData) => {
+    try {
+      const borrowData = {
+        userId: userId,
+        bookId: book.id,
+        borrowDate: borrowRecordData.borrowDate,
+        dueDate: borrowRecordData.dueDate,
+        status: borrowRecordData.status,
+      };
+      const response = await dispatch(addNewBorroRecord(borrowData));
+      if (response.payload.statusType === "SUCCESS") {
+        handlecheckReturn();
+      }
+    } catch (error) {
+      console.log("ERROR IN BORROW BOOK RECORD ::: ", error);
+    }
+  };
+
+  // OPEN RETURN MODEL
+  const openReturnModal = () => {
+    setModalType("return_modal");
+    setIsReturnModalOpen(true);
+  };
+
+  // CLOSE RETURN MODEL
+  const closeReturnModal = () => {
+    setModalType("");
+    setIsReturnModalOpen(false);
+  };
+
+  // FUNCTION TO RETURN THE BORROW BOOKS
+  const handleReturnBorrowBook = async (returnRecordData) => {
+    try {
+      const returnData = {
+        userId: userId,
+        bookId: book.id,
+        returnDate: returnRecordData.returnDate,
+        status: returnRecordData.status,
+      };
+      const response = await dispatch(returnBorrowRecord(returnData));
+      if (response.payload.statusType === "SUCCESS") {
+        handlecheckReturn();
+      }
+    } catch (error) {
+      console.log("ERROR IN RETURN BOOK RECORD ::: ", error);
+    }
+  };
 
   const handleReserveBook = () => {
     setIsReserved(!isReserved);
+  };
+
+  const renderActionButton = () => {
+    if (checkReturn) {
+      switch (borrowStatus) {
+        case "borrowed":
+          return (
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={openReturnModal}
+            >
+              <ArrowCircleUpIcon />
+              &nbsp;<Typography>Return</Typography>
+            </Button>
+          );
+
+        case "returned":
+        case "none":
+          if (book.available_copies > 0) {
+            return (
+              <Button
+                color="success"
+                variant="outlined"
+                onClick={openBorrowModal}
+              >
+                <ArrowCircleDownIcon />
+                &nbsp;<Typography>Borrow</Typography>
+              </Button>
+            );
+          } else {
+            return (
+              <Button
+                color="secondary"
+                variant="outlined"
+                onClick={handleReserveBook}
+              >
+                {isReserved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                &nbsp;
+                <Typography sx={{ marginLeft: "5px" }}>
+                  {isReserved ? "Reserved" : "Reserve"}
+                </Typography>
+              </Button>
+            );
+          }
+
+        default:
+          return null;
+      }
+    } else if (book.available_copies > 0) {
+      return (
+        <Button color="success" variant="outlined" onClick={openBorrowModal}>
+          <ArrowCircleDownIcon />
+          &nbsp;<Typography>Borrow</Typography>
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          color="secondary"
+          variant="outlined"
+          onClick={handleReserveBook}
+        >
+          {isReserved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          &nbsp;
+          <Typography sx={{ marginLeft: "5px" }}>
+            {isReserved ? "Reserved" : "Reserve"}
+          </Typography>
+        </Button>
+      );
+    }
   };
 
   if (!book) return null;
@@ -160,36 +274,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
             alignItems="center"
             mb={4}
           >
-            {checkReturn && borrowStatus === "borrowed" ? (
-              <Button
-                color="primary"
-                variant="outlined"
-                onClick={handleReturnBook}
-              >
-                <ArrowCircleUpIcon />
-                &nbsp;<Typography>Return</Typography>
-              </Button>
-            ) : !checkReturn && book.available_copies > 0 ? (
-              <Button
-                color="success"
-                variant="outlined"
-                onClick={openBorrowModal}
-              >
-                <ArrowCircleDownIcon />
-                <Typography>Borrow</Typography>
-              </Button>
-            ) : (
-              <Button
-                color="secondary"
-                variant="outlined"
-                onClick={handleReserveBook}
-              >
-                {isReserved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                <Typography sx={{ marginLeft: "5px" }}>
-                  {isReserved ? "Reserved" : "Reserve"}
-                </Typography>
-              </Button>
-            )}
+            {renderActionButton()}
             <Typography id="book-details-title" variant="h7" component="h3">
               ISBN: {book.isbn}
             </Typography>
@@ -298,10 +383,20 @@ const BookDetailsModal = ({ open, onClose, book }) => {
 
       {/* Borrow Confirmation Modal */}
       <BorrowModal
-        open={borrowModalOpen}
+        type={modalType}
+        open={isBorrowModalOpen}
         onClose={closeBorrowModal}
         book={book}
         onSubmit={handleBorrowBookRecord}
+      />
+
+      {/* Render the ReturnBookModal */}
+      <ReturnModal
+        type={modalType}
+        open={isReturnModalOpen}
+        onClose={closeReturnModal}
+        onConfirm={handleReturnBorrowBook}
+        book={book}
       />
     </>
   );

@@ -163,12 +163,6 @@ const AddEditBooks = () => {
     );
   };
 
-  // Custom date formatting function
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 

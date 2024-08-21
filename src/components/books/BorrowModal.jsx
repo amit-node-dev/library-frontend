@@ -34,7 +34,7 @@ const BorrowModalContainer = styled(Paper)(() => ({
   overflowY: "auto",
 }));
 
-const BorrowBookModal = ({ open, onClose, onSubmit, book }) => {
+const BorrowBookModal = ({ type, open, onClose, onSubmit, book }) => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [totalDays, setTotalDays] = useState(0);
 
@@ -51,13 +51,14 @@ const BorrowBookModal = ({ open, onClose, onSubmit, book }) => {
 
   const handleSubmit = () => {
     const [startDate, endDate] = dateRange;
-    if (startDate && endDate) {
+    if (startDate && endDate && type === "borrow_modal") {
       const formattedStartDate = dayjs(startDate).format("YYYY-MM-DD");
       const formattedEndDate = dayjs(endDate).format("YYYY-MM-DD");
 
       onSubmit({
         borrowDate: formattedStartDate,
         dueDate: formattedEndDate,
+        status: "borrowed",
       });
       onClose();
     }
