@@ -133,10 +133,10 @@ export const returnBorrowRecord = createAsyncThunk(
 // GET ALL BOOKS LIST
 export const getAllBorroRecordList = createAsyncThunk(
   "borrowRecords/getAllBorroRecordList",
-  async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
+  async ({ page = 1, pageSize = 5, status = "" }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`/books`, {
-        params: { page, pageSize },
+      const response = await apiClient.get(`/borrowing_records`, {
+        params: { page, pageSize, status },
       });
 
       if (response.status === 200) {

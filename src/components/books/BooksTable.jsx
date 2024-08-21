@@ -168,15 +168,6 @@ const BooksTable = () => {
       width: 150,
     },
     {
-      field: "author",
-      headerName: "AUTHOR",
-      width: 150,
-      renderCell: (params) =>
-        params.row.author
-          ? params.row.author?.firstname + " " + params.row.author?.lastname
-          : "N/A",
-    },
-    {
       field: "category",
       headerName: "CATEGORY",
       width: 150,

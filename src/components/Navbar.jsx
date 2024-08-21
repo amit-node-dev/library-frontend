@@ -25,6 +25,7 @@ import BookIcon from "@mui/icons-material/Book";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import SettingsIcon from "@mui/icons-material/Settings";
+import ArticleIcon from "@mui/icons-material/Article";
 
 // LOGO
 import BrandLogo from "../images/brandLogo.gif";
@@ -32,8 +33,8 @@ import BrandLogo from "../images/brandLogo.gif";
 const Navbar = () => {
   const navigate = useNavigate();
 
+  const [catalogMenuAnchorEl, setCatalogMenuAnchorEl] = useState(null);
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
-  const [booksMenuAnchorEl, setBooksMenuAnchorEl] = useState(null);
   const [roleName, setRoleName] = useState("");
 
   const handleLogout = async () => {
@@ -111,7 +112,7 @@ const Navbar = () => {
         >
           <Box>
             <Typography
-              onClick={(event) => handleMenuOpen(event, setBooksMenuAnchorEl)}
+              onClick={(event) => handleMenuOpen(event, setCatalogMenuAnchorEl)}
               sx={{
                 cursor: "pointer",
                 color: "#ffffff",
@@ -127,9 +128,9 @@ const Navbar = () => {
               Catalog
             </Typography>
             <Menu
-              anchorEl={booksMenuAnchorEl}
-              open={Boolean(booksMenuAnchorEl)}
-              onClose={() => handleMenuClose(setBooksMenuAnchorEl)}
+              anchorEl={catalogMenuAnchorEl}
+              open={Boolean(catalogMenuAnchorEl)}
+              onClose={() => handleMenuClose(setCatalogMenuAnchorEl)}
               sx={{
                 "& .MuiPaper-root": {
                   borderRadius: 2,
@@ -143,7 +144,7 @@ const Navbar = () => {
               <MenuItem
                 component={Link}
                 to="/books"
-                onClick={() => handleMenuClose(setBooksMenuAnchorEl)}
+                onClick={() => handleMenuClose(setCatalogMenuAnchorEl)}
                 sx={{
                   "&:hover": {
                     backgroundColor: "#dedede",
@@ -155,6 +156,22 @@ const Navbar = () => {
                   <BookIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="Books" />
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/borrowing_records"
+                onClick={() => handleMenuClose(setCatalogMenuAnchorEl)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#dedede",
+                    color: "#343a40",
+                  },
+                }}
+              >
+                <ListItemIcon>
+                  <ArticleIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Borrow Records" />
               </MenuItem>
             </Menu>
           </Box>
@@ -233,7 +250,7 @@ const Navbar = () => {
               <MenuItem
                 component={Link}
                 to="/authors"
-                onClick={() => handleMenuClose(setBooksMenuAnchorEl)}
+                onClick={() => handleMenuClose(setProfileMenuAnchorEl)}
                 sx={{
                   "&:hover": {
                     backgroundColor: "#dedede",

@@ -21,6 +21,9 @@ import Dashboard from "./components/dashboard/Dashboard";
 import BookMainPage from "./components/books/MainPage";
 import AddEditBooks from "./components/books/AddEditBooks";
 
+// BORROW RECORDS
+import BorrowRecordMainPage from "./components/borrowrecords/MainPage";
+
 // AUTHORS
 import AuthorMainPage from "./components/authors/MainPage";
 import AddEditAuthors from "./components/authors/AddEditAuthors";
@@ -44,6 +47,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/mobile_otp_based" element={<MobileOTPBased />} />
+
+        {/* DASHBOARD */}
         <Route
           path="/dashboard"
           element={
@@ -54,6 +59,8 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        {/* BOOKS */}
         <Route
           path="/books"
           element={
@@ -84,36 +91,20 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        {/* BORROW RECORDS */}
         <Route
-          path="/authors"
+          path="/borrowing_records"
           element={
             <PrivateRoute>
               <Layout>
-                <AuthorMainPage />
+                <BorrowRecordMainPage />
               </Layout>
             </PrivateRoute>
           }
         />
-        <Route
-          path="/authors/add_authors"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <AddEditAuthors />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/authors/:authorId"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <AddEditAuthors />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
+
+        {/* USERS */}
         <Route
           path="/users"
           element={
@@ -144,6 +135,8 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        {/* ROLES */}
         <Route
           path="/roles"
           element={
@@ -174,6 +167,40 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        {/* AUTHORS */}
+        <Route
+          path="/authors"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AuthorMainPage />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/authors/add_authors"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AddEditAuthors />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/authors/:authorId"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AddEditAuthors />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* ABOUT */}
         <Route
           path="/about"
           element={
