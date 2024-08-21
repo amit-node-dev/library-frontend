@@ -102,6 +102,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       if (resultResponse.statusType === "SUCCESS" && resultResponse.data) {
         setBorrowStatus(resultResponse.data.status);
         setCheckReturn(true);
+        localStorage.setItem("recordId", resultResponse.data.recordId);
       } else if (!resultResponse.data) {
         setCheckReturn(false);
       }
@@ -116,10 +117,6 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       handlecheckReturn();
     }
   }, [open]);
-
-  useEffect(() => {
-    dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
-  }, [dispatch]);
 
   // OPEN BORROW MODEL
   const openBorrowModal = () => {
@@ -145,7 +142,10 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       };
       const response = await dispatch(addNewBorroRecord(borrowData));
       if (response.payload.statusType === "SUCCESS") {
+        setBorrowStatus("borrowed");
         handlecheckReturn();
+        dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
+        closeBorrowModal();
       }
     } catch (error) {
       console.log("ERROR IN BORROW BOOK RECORD ::: ", error);
@@ -168,6 +168,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
   const handleReturnBorrowBook = async (returnRecordData) => {
     try {
       const returnData = {
+        recordId: localStorage.getItem("recordId"),
         userId: userId,
         bookId: book.id,
         returnDate: returnRecordData.returnDate,
@@ -175,7 +176,10 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       };
       const response = await dispatch(returnBorrowRecord(returnData));
       if (response.payload.statusType === "SUCCESS") {
+        setBorrowStatus("returned");
         handlecheckReturn();
+        dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
+        closeReturnModal();
       }
     } catch (error) {
       console.log("ERROR IN RETURN BOOK RECORD ::: ", error);
@@ -200,9 +204,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
               &nbsp;<Typography>Return</Typography>
             </Button>
           );
-
         case "returned":
-        case "none":
           if (book.available_copies > 0) {
             return (
               <Button
@@ -327,27 +329,42 @@ const BookDetailsModal = ({ open, onClose, book }) => {
               <Typography variant="h6" sx={{ mb: 1 }}>
                 <strong>Story:</strong>
               </Typography>
-              <Typography
-                className="book-description"
-                variant="body2"
-                sx={{ mb: 2, lineHeight: "25px" }}
-              >
-                {book.description}
-              </Typography>
+              {borrowStatus === "borrowed" ? (
+                <Typography
+                  className="book-description"
+                  variant="body2"
+                  sx={{ mb: 2, lineHeight: "25px" }}
+                >
+                  {book.description}
+                </Typography>
+              ) : (
+                <Typography
+                  className="book-professional-message"
+                  variant="body2"
+                  sx={{ mb: 2, lineHeight: "25px", color: "grey" }}
+                >
+                  To read the full story, please borrow this book. If you're
+                  interested, consider purchasing it for a more in-depth
+                  experience.
+                </Typography>
+              )}
             </div>
 
-            <div className="book-conclusion-container">
-              <Typography variant="h6" sx={{ mb: 1 }}>
-                <strong>Conclusion:</strong>
-              </Typography>
-              <Typography
-                className="book-conclusion"
-                variant="body2"
-                sx={{ lineHeight: "25px" }}
-              >
-                {book.conclusion}
-              </Typography>
-            </div>
+            {borrowStatus === "borrowed" && (
+              <div className="book-conclusion-container">
+                <Typography variant="h6" sx={{ mb: 1 }}>
+                  <strong>Conclusion:</strong>
+                </Typography>
+
+                <Typography
+                  className="book-conclusion"
+                  variant="body2"
+                  sx={{ lineHeight: "25px" }}
+                >
+                  {book.conclusion}
+                </Typography>
+              </div>
+            )}
 
             <Box
               sx={{
@@ -386,8 +403,8 @@ const BookDetailsModal = ({ open, onClose, book }) => {
         type={modalType}
         open={isBorrowModalOpen}
         onClose={closeBorrowModal}
-        book={book}
         onSubmit={handleBorrowBookRecord}
+        book={book}
       />
 
       {/* Render the ReturnBookModal */}

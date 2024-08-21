@@ -50,7 +50,7 @@ const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
     }
   }, [dispatch, book, type]);
 
-  const handleSubmitReturn = () => {
+  const handleSubmit = () => {
     const dueDate = dayjs(currentBorrowRecord.due_date).format("YYYY-MM-DD");
     const returnDate = dayjs(new Date()).format("YYYY-MM-DD");
 
@@ -93,11 +93,7 @@ const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
           <Button variant="contained" color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmitReturn}
-          >
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
             Yes
           </Button>
         </Box>
