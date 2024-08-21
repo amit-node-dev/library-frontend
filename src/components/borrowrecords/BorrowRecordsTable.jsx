@@ -14,6 +14,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Chip,
 } from "@mui/material";
 
 // ACTIONS & STORES
@@ -63,7 +64,7 @@ const BorrowRecordsTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "ID", width: 50 },
+    { field: "id", headerName: "RECORD-ID", width: 120 },
     {
       field: "bookname",
       headerName: "BOOKNAME",
@@ -84,26 +85,34 @@ const BorrowRecordsTable = () => {
       field: "status",
       headerName: "STATUS",
       width: 150,
+      renderCell: (params) => (
+        <Chip
+          size="small"
+          label={params.value === "returned" ? "Returned" : "Borrowed"}
+          color={params.value === "returned" ? "success" : "warning"}
+          variant="contained"
+        />
+      ),
     },
     {
       field: "fine_amount",
       headerName: "FINE AMOUNT",
-      width: 150,
+      width: 200,
     },
     {
       field: "borrow_date",
       headerName: "BORROW DATE",
-      width: 200,
+      width: 250,
     },
     {
       field: "due_date",
       headerName: "DUE DATE",
-      width: 200,
+      width: 250,
     },
     {
       field: "return_date",
       headerName: "RETURN DATE",
-      width: 200,
+      width: 250,
     },
   ];
 

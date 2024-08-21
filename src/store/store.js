@@ -7,6 +7,7 @@ import bookReducer from "../features/book_module/bookSlice";
 import authorReducer from "../features/author_module/authorSlice";
 import categoryReducer from "../features/category_module/categorySlice";
 import borrowRecordReducer from "../features/borrowRecord_module/borrowRecordSlice";
+import reservationReducer from "../features/reservation_module/reservationSlice";
 
 // Combine reducers
 const rootReducer = combineReducers({
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   authors: authorReducer,
   categories: categoryReducer,
   borrowRecords: borrowRecordReducer,
+  reservations: reservationReducer,
 });
 
 // Create and export the store

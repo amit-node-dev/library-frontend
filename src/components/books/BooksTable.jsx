@@ -155,7 +155,7 @@ const BooksTable = () => {
     {
       field: "bookname",
       headerName: "NAME",
-      width: 150,
+      width: 200,
     },
     {
       field: "publisher",
@@ -165,7 +165,7 @@ const BooksTable = () => {
     {
       field: "publication_year",
       headerName: "PUBLICATION YEAR",
-      width: 150,
+      width: 200,
     },
     {
       field: "category",

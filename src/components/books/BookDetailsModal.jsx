@@ -32,6 +32,7 @@ import { getAllBooksList } from "../../features/book_module/bookActions";
 // CUSTOM MODAL
 import BorrowModal from "./BorrowModal";
 import ReturnModal from "./ReturnModal";
+import ReservationModal from "./ReservationModal";
 
 // Keyframes for animations
 const fadeIn = keyframes`
@@ -83,6 +84,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
 
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+  const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
 
   const dispatch = useDispatch();
@@ -186,8 +188,36 @@ const BookDetailsModal = ({ open, onClose, book }) => {
     }
   };
 
-  const handleReserveBook = () => {
-    setIsReserved(!isReserved);
+  // OPEN RETURN MODEL
+  const openReservationModal = () => {
+    setModalType("reservation_modal");
+    setIsReservationModalOpen(true);
+  };
+
+  // CLOSE RETURN MODEL
+  const closeReservationModal = () => {
+    setModalType("");
+    setIsReservationModalOpen(false);
+  };
+
+  const handleReserveBook = async (returnReservedData) => {
+    try {
+      const returnData = {
+        userId: userId,
+        bookId: book.id,
+        reservationDate: returnReservedData.reservationDate,
+        status: returnReservedData.status,
+      };
+      const response = await dispatch(returnBorrowRecord(returnData));
+      if (response.payload.statusType === "SUCCESS") {
+        setIsReserved(!isReserved);
+        handlecheckReturn();
+        dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
+        closeReturnModal();
+      }
+    } catch (error) {
+      console.log("ERROR IN RESERVED BOOK RECORD ::: ", error);
+    }
   };
 
   const renderActionButton = () => {
@@ -221,7 +251,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
               <Button
                 color="secondary"
                 variant="outlined"
-                onClick={handleReserveBook}
+                onClick={openReservationModal}
               >
                 {isReserved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                 &nbsp;
@@ -247,7 +277,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
         <Button
           color="secondary"
           variant="outlined"
-          onClick={handleReserveBook}
+          onClick={openReservationModal}
         >
           {isReserved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
           &nbsp;
@@ -407,12 +437,21 @@ const BookDetailsModal = ({ open, onClose, book }) => {
         book={book}
       />
 
-      {/* Render the ReturnBookModal */}
+      {/* Render the Return Modal */}
       <ReturnModal
         type={modalType}
         open={isReturnModalOpen}
         onClose={closeReturnModal}
         onConfirm={handleReturnBorrowBook}
+        book={book}
+      />
+
+      {/* Render the Reservation Modal */}
+      <ReservationModal
+        type={modalType}
+        open={isReservationModalOpen}
+        onClose={closeReservationModal}
+        onConfirm={handleReserveBook}
         book={book}
       />
     </>
