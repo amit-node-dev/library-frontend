@@ -37,15 +37,14 @@ const ReservationModalContainer = styled(Paper)(() => ({
 
 const ReservationModal = ({ type, open, onClose, onConfirm, book }) => {
   const handleReservation = () => {
-    if (book.available_copies > 0) {
-      toast.info("The book is available, no need to reserve it.");
+    if (book.available_copies <= 0) {
       onConfirm({
         reservationDate: dayjs(new Date()).format("YYYY-MM-DD"),
-        status: "waiting",
+        status: "reserved",
       });
       onClose();
     } else {
-      toast.error("The book is currently borrowed. Reserving it now.");
+      toast.error("The book is available, no need to reserve it.");
       onClose();
     }
   };

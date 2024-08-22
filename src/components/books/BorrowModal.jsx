@@ -91,6 +91,7 @@ const BorrowBookModal = ({ type, open, onClose, onSubmit, book }) => {
               startText="Borrow Date"
               endText="Due Date"
               value={dateRange}
+              minDate={dayjs()}
               onChange={handleDateChange}
               renderInput={(startProps, endProps) => (
                 <>

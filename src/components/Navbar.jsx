@@ -26,6 +26,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ArticleIcon from "@mui/icons-material/Article";
+import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 
 // LOGO
 import BrandLogo from "../images/brandLogo.gif";
@@ -116,12 +117,26 @@ const Navbar = () => {
               sx={{
                 cursor: "pointer",
                 color: "#ffffff",
-                fontSize: "1rem",
+                fontSize: "0.9rem",
                 fontWeight: 500,
                 position: "relative",
                 "&:hover": {
                   color: "#adb5bd",
                   transform: "scale(1.1)",
+                  "&::after": {
+                    width: "100%",
+                  },
+                },
+                "&::after": {
+                  content: '""',
+                  display: "block",
+                  width: 0,
+                  height: "2px",
+                  background: "#007bff",
+                  transition: "width 0.3s",
+                  position: "absolute",
+                  bottom: "-2px",
+                  left: 0,
                 },
               }}
             >
@@ -141,6 +156,7 @@ const Navbar = () => {
                 },
               }}
             >
+              {/* BOOKS */}
               <MenuItem
                 component={Link}
                 to="/books"
@@ -157,6 +173,8 @@ const Navbar = () => {
                 </ListItemIcon>
                 <ListItemText primary="Books" />
               </MenuItem>
+
+              {/* BORROW RECORDS */}
               <MenuItem
                 component={Link}
                 to="/borrowing_records"
@@ -171,7 +189,25 @@ const Navbar = () => {
                 <ListItemIcon>
                   <ArticleIcon fontSize="small" />
                 </ListItemIcon>
-                <ListItemText primary="Borrow Records" />
+                <ListItemText primary="Borrow" />
+              </MenuItem>
+
+              {/* RESERAVATIONS */}
+              <MenuItem
+                component={Link}
+                to="/reservations"
+                onClick={() => handleMenuClose(setCatalogMenuAnchorEl)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#dedede",
+                    color: "#343a40",
+                  },
+                }}
+              >
+                <ListItemIcon>
+                  <BookmarkAddedIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Reservation" />
               </MenuItem>
             </Menu>
           </Box>
@@ -190,12 +226,26 @@ const Navbar = () => {
               sx={{
                 cursor: "pointer",
                 color: "#ffffff",
-                fontSize: "1rem",
+                fontSize: "0.9rem",
                 fontWeight: 500,
                 position: "relative",
                 "&:hover": {
                   color: "#adb5bd",
                   transform: "scale(1.1)",
+                  "&::after": {
+                    width: "100%",
+                  },
+                },
+                "&::after": {
+                  content: '""',
+                  display: "block",
+                  width: 0,
+                  height: "2px",
+                  background: "#007bff",
+                  transition: "width 0.3s",
+                  position: "absolute",
+                  bottom: "-2px",
+                  left: 0,
                 },
               }}
             >
@@ -279,7 +329,7 @@ const Navbar = () => {
             to="/about"
             sx={{
               color: "#ffffff",
-              fontSize: "1rem",
+              fontSize: "0.9rem",
               fontWeight: 500,
               textDecoration: "none",
               position: "relative",

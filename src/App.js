@@ -24,6 +24,9 @@ import AddEditBooks from "./components/books/AddEditBooks";
 // BORROW RECORDS
 import BorrowRecordMainPage from "./components/borrowrecords/MainPage";
 
+// RESERVATION RECORDS
+import ReservationMainPage from "./components/reservationrecords/MainPage";
+
 // AUTHORS
 import AuthorMainPage from "./components/authors/MainPage";
 import AddEditAuthors from "./components/authors/AddEditAuthors";
@@ -99,6 +102,18 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <BorrowRecordMainPage />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* RESERVATION RECORDS */}
+        <Route
+          path="/reservations"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <ReservationMainPage />
               </Layout>
             </PrivateRoute>
           }

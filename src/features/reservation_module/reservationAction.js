@@ -43,6 +43,32 @@ export const createReservation = createAsyncThunk(
   }
 );
 
+// GET RESERVATION STATUS
+export const getReservedBookStatus = createAsyncThunk(
+  "reservations/getReservedBookStatus",
+  async (reservationData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(
+        `/reservations/get_reservation_status`,
+        reservationData
+      );
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        console.log("ERROR MSG ", errorMsg);
+        toast.error(`${errorMsg}`);
+        return error.response.data;
+      } else {
+        toast.error("Failed to fetch book details");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
 // GET ALL LIST OF RESERVATIONS
 export const getAllReservationList = createAsyncThunk(
   "reservations/getAllReservationList",
