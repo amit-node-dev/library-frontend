@@ -21,6 +21,7 @@ import {
   getAllAuthorsListPagination,
 } from "../../features/author_module/authorActions";
 import { setPage, setPageSize } from "../../features/author_module/authorSlice";
+import dayjs from "dayjs";
 
 const AuthorsTable = () => {
   const { authors, loading, error, total, page, pageSize } = useSelector(
@@ -74,37 +75,37 @@ const AuthorsTable = () => {
     }
   };
 
-  // Custom date formatting function
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
-
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "Id", width: 200 },
+    { field: "id", headerName: "AUTHOR ID", width: 200 },
     {
       field: "fullname",
-      headerName: "Fullname",
+      headerName: "FULLNAME",
       width: 300,
       renderCell: (params) => params.row.firstname + " " + params.row.lastname,
     },
-    { field: "email", headerName: "Email Id", width: 300 },
+    { field: "email", headerName: "EMAIL ID", width: 300 },
     {
       field: "createdAt",
-      headerName: "Created at",
+      headerName: "CREATED DATE",
       width: 250,
-      renderCell: (params) => formatDate(params.row.createdAt),
+      renderCell: (params) =>
+        params.row.createdAt
+          ? dayjs(params.row.createdAt).format("YYYY-MM-DD")
+          : "N/A",
     },
     {
       field: "updatedAt",
-      headerName: "Updated at",
+      headerName: "UPDATED DATE",
       width: 250,
-      renderCell: (params) => formatDate(params.row.updatedAt),
+      renderCell: (params) =>
+        params.row.updatedAt
+          ? dayjs(params.row.updatedAt).format("YYYY-MM-DD")
+          : "N/A",
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: "ACTIONS",
       width: 300,
       renderCell: (params) => (
         <div className="actions-container">

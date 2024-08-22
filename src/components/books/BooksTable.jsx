@@ -190,7 +190,7 @@ const BooksTable = () => {
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: "ACTIONS",
       width: 200,
       renderCell: ActionRenderer,
     },

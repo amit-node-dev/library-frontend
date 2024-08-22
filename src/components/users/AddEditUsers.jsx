@@ -93,7 +93,7 @@ const AddEditUsers = () => {
         country: currentUser.country || "",
         state: currentUser.state || "",
         city: currentUser.city || "",
-        role: currentUser.roleId || "",
+        role: currentUser.role_id || "",
       });
       if (currentUser.country) {
         setStates(State.getStatesOfCountry(currentUser.country));
@@ -195,15 +195,8 @@ const AddEditUsers = () => {
     handleConfirmPasswordBlur();
     handleRoleBlur();
 
-    const {
-      firstname,
-      lastname,
-      email,
-      password,
-      confirmPassword,
-      role,
-      oldpassword,
-    } = userData;
+    const { firstname, lastname, email, password, confirmPassword, role } =
+      userData;
 
     const isValidForm =
       firstname &&

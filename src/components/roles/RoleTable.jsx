@@ -21,6 +21,7 @@ import {
   getAllRolesListPagination,
 } from "../../features/role_module/roleActions";
 import { setPage, setPageSize } from "../../features/role_module/roleSlice";
+import dayjs from "dayjs";
 
 const RoleTable = () => {
   const { roles, loading, error, total, page, pageSize } = useSelector(
@@ -72,36 +73,36 @@ const RoleTable = () => {
     }
   };
 
-  // Custom date formatting function
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
-
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "Id", width: 250 },
+    { field: "id", headerName: "ROLE ID", width: 250 },
     {
       field: "name",
-      headerName: "Role Name",
+      headerName: "ROLE NAME",
       width: 350,
       renderCell: (params) => params.row.name,
     },
     {
       field: "createdAt",
-      headerName: "Created Date",
+      headerName: "CREATED DATE",
       width: 350,
-      renderCell: (params) => formatDate(params.row.createdAt),
+      renderCell: (params) =>
+        params.row.createdAt
+          ? dayjs(params.row.createdAt).format("YYYY-MM-DD")
+          : "N/A",
     },
     {
       field: "updatedAt",
-      headerName: "Updated Date",
+      headerName: "UPDATED DATE",
       width: 350,
-      renderCell: (params) => formatDate(params.row.updatedAt),
+      renderCell: (params) =>
+        params.row.updatedAt
+          ? dayjs(params.row.updatedAt).format("YYYY-MM-DD")
+          : "N/A",
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: "ACTIONS",
       width: 350,
       renderCell: (params) => (
         <div className="actions-container">

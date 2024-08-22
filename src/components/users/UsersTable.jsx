@@ -16,6 +16,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Chip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -32,6 +33,7 @@ import {
 } from "../../features/user_module/userActions";
 import { getAllRolesList } from "../../features/role_module/roleActions";
 import { setPage, setPageSize } from "../../features/user_module/userSlice";
+import dayjs from "dayjs";
 
 const UsersTable = () => {
   const { users, loading, error, total, page, pageSize } = useSelector(
@@ -48,7 +50,6 @@ const UsersTable = () => {
   const [selectedRole, setSelectedRole] = useState("");
 
   const roleId = localStorage.getItem("roleId");
-  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     dispatch(getAllUsersList({ page, pageSize }));
@@ -93,12 +94,6 @@ const UsersTable = () => {
     }
   };
 
-  // Custom date formatting function
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
-
   const ActionRenderer = (params) => {
     return (
       <div className="actions-container">
@@ -123,35 +118,71 @@ const UsersTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "Id", width: 200 },
+    { field: "id", headerName: "USER ID", width: 200 },
     {
       field: "fullname",
-      headerName: "Fullname",
+      headerName: "FULLNAME",
       width: 250,
       renderCell: (params) => params.row.firstname + " " + params.row.lastname,
     },
-    { field: "email", headerName: "Email Id", width: 250 },
+    { field: "email", headerName: "EMAIL ID", width: 250 },
     {
       field: "role",
-      headerName: "Role",
+      headerName: "ROLE",
       width: 250,
-      renderCell: (params) => (params.row.role ? params.row.role.name : "N/A"),
+      renderCell: (params) => {
+        let chipColor;
+        let chipLabel;
+        switch (params.row.role.name) {
+          case "super_admin":
+            chipColor = "success";
+            chipLabel = "Super Admin";
+            break;
+          case "admin":
+            chipColor = "secondary";
+            chipLabel = "Admin";
+            break;
+          case "customer":
+            chipColor = "warning";
+            chipLabel = "Customer";
+            break;
+          default:
+            chipColor = "default";
+            chipLabel = "Unknown";
+            break;
+        }
+
+        return (
+          <Chip
+            size="small"
+            label={chipLabel}
+            color={chipColor}
+            variant="contained"
+          />
+        );
+      },
     },
     {
       field: "createdAt",
-      headerName: "Created Date",
+      headerName: "CREATED DATE",
       width: 250,
-      renderCell: (params) => formatDate(params.row.createdAt),
+      renderCell: (params) =>
+        params.row.createdAt
+          ? dayjs(params.row.createdAt).format("YYYY-MM-DD")
+          : "N/A",
     },
     {
       field: "updatedAt",
-      headerName: "Updated Date",
+      headerName: "UPDATED DATE",
       width: 250,
-      renderCell: (params) => formatDate(params.row.updatedAt),
+      renderCell: (params) =>
+        params.row.updatedAt
+          ? dayjs(params.row.updatedAt).format("YYYY-MM-DD")
+          : "N/A",
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: "ACTIONS",
       width: 150,
       renderCell: ActionRenderer,
     },
