@@ -18,6 +18,7 @@ import {
   MenuItem,
   Grid,
   Fab,
+  Tooltip,
 } from "@mui/material";
 
 // ACTIONS & STORES
@@ -283,17 +284,23 @@ const AddEditUsers = () => {
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-            <Typography variant="h4" gutterBottom>
+            <Typography
+              variant="h4"
+              gutterBottom
+              sx={{ fontFamily: "cursive" }}
+            >
               {userId ? "Edit User" : "Add User"}
             </Typography>
-            <Fab
-              size="small"
-              color="warning"
-              aria-label="add"
-              sx={{ marginRight: "2rem" }}
-            >
-              <ArrowBack onClick={handleBack} />
-            </Fab>
+            <Tooltip title="Back">
+              <Fab
+                size="small"
+                color="warning"
+                aria-label="add"
+                sx={{ marginRight: "2rem" }}
+              >
+                <ArrowBack onClick={handleBack} />
+              </Fab>
+            </Tooltip>
           </Box>
           <Box
             component="form"

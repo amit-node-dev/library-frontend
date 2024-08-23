@@ -132,7 +132,9 @@ const BorrowRecordsTable = () => {
   return (
     <div className="borrow-container">
       <div className="borrow-header">
-        <Typography variant="h4">Borrow Records</Typography>
+        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+          Borrow Records
+        </Typography>
         <div className="borrow-util">
           <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
             <InputLabel id="status-select-label">By Status</InputLabel>

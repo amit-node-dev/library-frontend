@@ -18,6 +18,7 @@ import {
   Fab,
   Grid,
   Autocomplete,
+  Tooltip,
 } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -252,17 +253,23 @@ const AddEditBooks = () => {
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-            <Typography variant="h4" gutterBottom>
+            <Typography
+              variant="h4"
+              gutterBottom
+              sx={{ fontFamily: "cursive" }}
+            >
               {bookId ? "Edit Book" : "Add Book"}
             </Typography>
-            <Fab
-              size="small"
-              color="warning"
-              aria-label="add"
-              sx={{ marginRight: "2rem" }}
-            >
-              <ArrowBack onClick={handleBack} />
-            </Fab>
+            <Tooltip title="Back">
+              <Fab
+                size="small"
+                color="warning"
+                aria-label="add"
+                sx={{ marginRight: "2rem" }}
+              >
+                <ArrowBack onClick={handleBack} />
+              </Fab>
+            </Tooltip>
           </Box>
           <PerfectScrollbar>
             <Box

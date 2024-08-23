@@ -29,7 +29,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 
 // LOGO
-import BrandLogo from "../images/brandLogo.gif";
+import BrandLogo from "../images/brand-logo.png";
 
 const Navbar = () => {
   const navigate = useNavigate();

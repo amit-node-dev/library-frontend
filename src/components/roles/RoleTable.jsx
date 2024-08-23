@@ -6,7 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 
 // MUI CONTENTS
-import { Box, IconButton, Typography, Pagination, Fab } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Typography,
+  Pagination,
+  Fab,
+  Tooltip,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -106,21 +113,25 @@ const RoleTable = () => {
       width: 350,
       renderCell: (params) => (
         <div className="actions-container">
-          <IconButton
-            color="primary"
-            disabled={roleId !== "1"}
-            onClick={() => handleEdit(params.row.id)}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            color="error"
-            disabled={roleId !== "1"}
-            onClick={() => handleDelete(params.row.id)}
-            style={{ marginLeft: 10 }}
-          >
-            <DeleteIcon />
-          </IconButton>
+          <Tooltip title="Edit">
+            <IconButton
+              color="primary"
+              disabled={roleId !== "1"}
+              onClick={() => handleEdit(params.row.id)}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton
+              color="error"
+              disabled={roleId !== "1"}
+              onClick={() => handleDelete(params.row.id)}
+              style={{ marginLeft: 10 }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
         </div>
       ),
     },
@@ -133,19 +144,21 @@ const RoleTable = () => {
   return (
     <div className="role-table-container">
       <div className="role-header">
-        <Typography variant="h4" className="table-title">
+        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
           Roles
         </Typography>
         <div className="role-util">
           {roleId === "1" && (
-            <Fab
-              size="small"
-              color="warning"
-              aria-label="add"
-              sx={{ marginRight: "2rem" }}
-            >
-              <AddIcon onClick={handleAddRoles} />
-            </Fab>
+            <Tooltip title="Add">
+              <Fab
+                size="small"
+                color="warning"
+                aria-label="add"
+                sx={{ marginRight: "2rem" }}
+              >
+                <AddIcon onClick={handleAddRoles} />
+              </Fab>
+            </Tooltip>
           )}
           <input
             type="text"

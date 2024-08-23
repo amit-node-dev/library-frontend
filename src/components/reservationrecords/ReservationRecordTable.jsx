@@ -112,7 +112,9 @@ const ReservationRecordTable = () => {
   return (
     <div className="reservation-container">
       <div className="reservation-header">
-        <Typography variant="h4">Reservation Records</Typography>
+        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+          Reservation Records
+        </Typography>
         <div className="reservation-util">
           <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
             <InputLabel id="status-select-label">By Status</InputLabel>

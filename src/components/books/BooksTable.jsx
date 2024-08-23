@@ -16,6 +16,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
@@ -67,7 +68,7 @@ const BooksTable = () => {
   useEffect(() => {
     let filtered = books;
     if (searchQuery) {
-      filtered = books.filter((book) =>
+      filtered = books?.filter((book) =>
         `${book.isbn} ${book.bookname} ${book.publisher} ${book.category.name} ${book.location}`
           .toLowerCase()
           .includes(searchQuery.toLowerCase())
@@ -123,24 +124,30 @@ const BooksTable = () => {
   // Custom renderer for actions
   const ActionRenderer = (params) => (
     <div className="actions-container">
-      <IconButton color="secondary" onClick={() => handleView(params.row)}>
-        <VisibilityIcon />
-      </IconButton>
-      <IconButton
-        color="primary"
-        disabled={roleId !== "1"}
-        onClick={() => handleEdit(params.row.id)}
-      >
-        <EditIcon />
-      </IconButton>
-      <IconButton
-        color="error"
-        disabled={roleId !== "1"}
-        onClick={() => handleDelete(params.row.id)}
-        style={{ marginLeft: 10 }}
-      >
-        <DeleteIcon />
-      </IconButton>
+      <Tooltip title="View">
+        <IconButton color="secondary" onClick={() => handleView(params.row)}>
+          <VisibilityIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Edit">
+        <IconButton
+          color="primary"
+          disabled={roleId !== "1"}
+          onClick={() => handleEdit(params.row.id)}
+        >
+          <EditIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Delete">
+        <IconButton
+          color="error"
+          disabled={roleId !== "1"}
+          onClick={() => handleDelete(params.row.id)}
+          style={{ marginLeft: 10 }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
     </div>
   );
 
@@ -203,7 +210,9 @@ const BooksTable = () => {
   return (
     <div className="book-container">
       <div className="book-header">
-        <Typography variant="h4">List Of Books</Typography>
+        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+          List Of Books
+        </Typography>
         <div className="book-util">
           <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
             <InputLabel id="category-select-label">By Category</InputLabel>
@@ -239,14 +248,16 @@ const BooksTable = () => {
             </Select>
           </FormControl>
           {roleId === "1" && (
-            <Fab
-              size="small"
-              color="warning"
-              aria-label="add"
-              sx={{ marginRight: "2rem" }}
-            >
-              <AddIcon onClick={handleAddBook} />
-            </Fab>
+            <Tooltip title="Add">
+              <Fab
+                size="small"
+                color="warning"
+                aria-label="add"
+                sx={{ marginRight: "2rem" }}
+              >
+                <AddIcon onClick={handleAddBook} />
+              </Fab>
+            </Tooltip>
           )}
 
           <input

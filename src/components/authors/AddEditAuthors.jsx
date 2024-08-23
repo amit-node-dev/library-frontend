@@ -14,6 +14,7 @@ import {
   Container,
   Fab,
   Grid,
+  Tooltip,
 } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 
@@ -119,17 +120,23 @@ const AddEditAuthors = () => {
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-            <Typography variant="h4" gutterBottom>
+            <Typography
+              variant="h4"
+              gutterBottom
+              sx={{ fontFamily: "cursive" }}
+            >
               {authorId ? "Edit Author" : "Add Author"}
             </Typography>
-            <Fab
-              size="small"
-              color="warning"
-              aria-label="add"
-              sx={{ marginRight: "2rem" }}
-            >
-              <ArrowBack onClick={handleBack} />
-            </Fab>
+            <Tooltip title="Back">
+              <Fab
+                size="small"
+                color="warning"
+                aria-label="add"
+                sx={{ marginRight: "2rem" }}
+              >
+                <ArrowBack onClick={handleBack} />
+              </Fab>
+            </Tooltip>
           </Box>
           <Box
             component="form"
@@ -192,16 +199,21 @@ const AddEditAuthors = () => {
               </Grid>
             </Grid>
             <Box
-              sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 2,
+                animation: "slideInUp 0.5s ease-out",
+              }}
             >
               <Button
                 variant="contained"
                 type="submit"
                 color="primary"
                 sx={{
-                  backgroundColor: "#007bff",
+                  backgroundColor: "#28a745",
                   "&:hover": {
-                    backgroundColor: "#0056b3",
+                    backgroundColor: "#218838",
                     transform: "scale(1.05)",
                   },
                   transition: "background-color 0.3s ease, transform 0.3s ease",
@@ -215,13 +227,14 @@ const AddEditAuthors = () => {
                 color="secondary"
                 className="reset-button"
                 sx={{
-                  borderColor: "#f50057",
-                  color: "#f50057",
+                  ml: 2,
+                  color: "#dc3545",
+                  borderColor: "#dc3545",
                   "&:hover": {
-                    borderColor: "#c51162",
-                    color: "#c51162",
+                    backgroundColor: "#f8d7da",
+                    transform: "scale(1.05)",
                   },
-                  transition: "border-color 0.3s ease, color 0.3s ease",
+                  transition: "background-color 0.3s ease, transform 0.3s ease",
                 }}
               >
                 Reset

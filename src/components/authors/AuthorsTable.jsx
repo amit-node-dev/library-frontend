@@ -6,7 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 
 // MUI CONTENTS
-import { Box, IconButton, Typography, Pagination, Fab } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Typography,
+  Pagination,
+  Fab,
+  Tooltip,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -109,21 +116,26 @@ const AuthorsTable = () => {
       width: 300,
       renderCell: (params) => (
         <div className="actions-container">
-          <IconButton
-            color="primary"
-            disabled={roleId !== "1"}
-            onClick={() => handleEdit(params.row.id)}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            color="error"
-            disabled={roleId !== "1"}
-            onClick={() => handleDelete(params.row.id)}
-            style={{ marginLeft: 10 }}
-          >
-            <DeleteIcon />
-          </IconButton>
+          <Tooltip title="Edit">
+            <IconButton
+              color="primary"
+              disabled={roleId !== "1"}
+              onClick={() => handleEdit(params.row.id)}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Delete">
+            <IconButton
+              color="error"
+              disabled={roleId !== "1"}
+              onClick={() => handleDelete(params.row.id)}
+              style={{ marginLeft: 10 }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
         </div>
       ),
     },
@@ -136,19 +148,21 @@ const AuthorsTable = () => {
   return (
     <div className="authors-table-container">
       <div className="author-header">
-        <Typography variant="h4" className="table-title">
+        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
           Authors
         </Typography>
         <div className="author-util">
           {roleId === "1" && (
-            <Fab
-              size="small"
-              color="warning"
-              aria-label="add"
-              sx={{ marginRight: "2rem" }}
-            >
-              <AddIcon onClick={handleAddAuthors} />
-            </Fab>
+            <Tooltip title="Add">
+              <Fab
+                size="small"
+                color="warning"
+                aria-label="add"
+                sx={{ marginRight: "2rem" }}
+              >
+                <AddIcon onClick={handleAddAuthors} />
+              </Fab>
+            </Tooltip>
           )}
           <input
             type="text"

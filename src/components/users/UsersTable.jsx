@@ -17,6 +17,7 @@ import {
   Select,
   MenuItem,
   Chip,
+  Tooltip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -94,24 +95,31 @@ const UsersTable = () => {
     }
   };
 
+  const userIdFromLocalStorage = parseInt(localStorage.getItem("userId"));
+  const checkUser = users?.some((user) => user.id === userIdFromLocalStorage);
+
   const ActionRenderer = (params) => {
     return (
       <div className="actions-container">
-        <IconButton
-          color="primary"
-          onClick={() => handleEdit(params.row.id)}
-          disabled={roleId !== "1"}
-        >
-          <EditIcon />
-        </IconButton>
-        <IconButton
-          color="error"
-          onClick={() => handleDelete(params.row.id)}
-          style={{ marginLeft: 10 }}
-          disabled={roleId !== "1"}
-        >
-          <DeleteIcon />
-        </IconButton>
+        <Tooltip title="Edit">
+          <IconButton
+            color="primary"
+            onClick={() => handleEdit(params.row.id)}
+            disabled={roleId !== "1"}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete">
+          <IconButton
+            color="error"
+            onClick={() => handleDelete(params.row.id)}
+            style={{ marginLeft: 10 }}
+            disabled={roleId !== "1"}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
       </div>
     );
   };
@@ -195,7 +203,7 @@ const UsersTable = () => {
   return (
     <div className="users-table-container">
       <div className="user-header">
-        <Typography variant="h4" className="table-title">
+        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
           Users
         </Typography>
         <div className="user-util">
@@ -216,14 +224,16 @@ const UsersTable = () => {
             </Select>
           </FormControl>
           {roleId === "1" && (
-            <Fab
-              size="small"
-              color="warning"
-              aria-label="add"
-              sx={{ marginRight: "2rem" }}
-            >
-              <AddIcon onClick={handleAddUsers} />
-            </Fab>
+            <Tooltip title="Add">
+              <Fab
+                size="small"
+                color="warning"
+                aria-label="add"
+                sx={{ marginRight: "2rem" }}
+              >
+                <AddIcon onClick={handleAddUsers} />
+              </Fab>
+            </Tooltip>
           )}
           <input
             type="text"
