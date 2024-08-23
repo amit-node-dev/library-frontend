@@ -152,8 +152,6 @@ const BookDetailsModal = ({ open, onClose, book }) => {
     }
   }, [open]);
 
-  console.log("BOOK ", book);
-
   // OPEN BORROW MODEL
   const openBorrowModal = () => {
     setModalType("borrow_modal");

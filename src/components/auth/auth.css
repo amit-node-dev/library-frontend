@@ -86,7 +86,7 @@
      font-weight: bold;
 }
 
-.password-strength {
+/* .password-strength {
      margin: 5px;
      font-size: 13px;
      font-weight: 700;
@@ -95,7 +95,7 @@
      color: #929292;
      background-color: #dedede;
      padding: 3px;
-}
+} */
 
 button {
      transition: background-color 0.3s ease, transform 0.3s ease;

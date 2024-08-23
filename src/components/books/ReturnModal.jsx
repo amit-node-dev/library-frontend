@@ -43,12 +43,13 @@ const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
   const dispatch = useDispatch();
 
   const { currentBorrowRecord } = useSelector((state) => state.borrowRecords);
+  const recordId = localStorage.getItem("recordId");
 
   useEffect(() => {
     if (type === "return_modal" && book.id) {
-      dispatch(getBorroRecordById(book.id));
+      dispatch(getBorroRecordById(recordId));
     }
-  }, [dispatch, book, type]);
+  }, [dispatch, book, type, recordId]);
 
   const handleSubmit = () => {
     const dueDate = dayjs(currentBorrowRecord.due_date).format("YYYY-MM-DD");

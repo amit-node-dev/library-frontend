@@ -79,7 +79,7 @@ const BorrowRecordsTable = () => {
       width: 200,
       renderCell: (params) =>
         params.row.users
-          ? `${params.row.users.firstname} ${params.row.users.lastname}`
+          ? `${params.row.users?.firstname} ${params.row.users?.lastname}`
           : "N/A",
     },
     {
@@ -94,11 +94,6 @@ const BorrowRecordsTable = () => {
           variant="contained"
         />
       ),
-    },
-    {
-      field: "fine_amount",
-      headerName: "FINE AMOUNT",
-      width: 200,
     },
     {
       field: "borrow_date",
@@ -172,7 +167,7 @@ const BorrowRecordsTable = () => {
               density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
-              getRowId={(row) => row.id + row.user_id + row.book_id}
+              getRowId={(row) => row.id + row.user_id + row.users.firstname}
               columns={columns}
               pageSize={pageSize}
               rowsPerPageOptions={[5, 10, 20]}

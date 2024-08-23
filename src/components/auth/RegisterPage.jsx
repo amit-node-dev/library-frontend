@@ -39,6 +39,7 @@ const RegisterPage = () => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [passwordStrength, setPasswordStrength] = useState("");
+  const [strengthBG, setStrengthBG] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -85,15 +86,19 @@ const RegisterPage = () => {
       case 0:
       case 1:
         strengthMessage = "Weak";
+        setStrengthBG("#f73b3b");
         break;
       case 2:
         strengthMessage = "Fair";
+        setStrengthBG("#f7963b");
         break;
       case 3:
         strengthMessage = "Good";
+        setStrengthBG("#e1f73b");
         break;
       case 4:
         strengthMessage = "Strong";
+        setStrengthBG("#5df73b");
         break;
       default:
         strengthMessage = "";
@@ -246,7 +251,22 @@ const RegisterPage = () => {
               }}
             />
             {password.length > 0 && (
-              <div className="password-strength">{passwordStrength}</div>
+              <div
+                className="password-strength"
+                style={{
+                  margin: "5px",
+                  fontSize: "13px",
+                  fontWeight: "700",
+                  display: "flex",
+                  justifyContent: "center",
+                  color: "#333332",
+                  backgroundColor: strengthBG,
+                  padding: "3px",
+                  borderRadius: "20px",
+                }}
+              >
+                {passwordStrength}
+              </div>
             )}
           </div>
           <div className="form-group">
