@@ -141,7 +141,7 @@ const UsersTable = () => {
       renderCell: (params) => {
         let chipColor;
         let chipLabel;
-        switch (params.row.role.name) {
+        switch (params.row.role?.name) {
           case "super_admin":
             chipColor = "success";
             chipLabel = "Super Admin";

@@ -128,6 +128,7 @@ const RegisterPage = () => {
         const response = await dispatch(registerUser(userData)).unwrap();
         if (response.statusType === "SUCCESS") {
           navigate("/login");
+          localStorage.clear();
         }
       }
     }
