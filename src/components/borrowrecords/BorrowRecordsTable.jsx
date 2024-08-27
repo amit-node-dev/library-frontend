@@ -206,7 +206,7 @@ const BorrowRecordsTable = () => {
             count={Math.ceil(total / pageSize)}
             page={page}
             onChange={handlePageChange}
-            color="primary"
+            color="warning"
             sx={{
               margin: "20px auto",
               display: "flex",

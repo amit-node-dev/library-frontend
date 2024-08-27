@@ -7,26 +7,35 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
 import apiClient from "../utils/apiClient";
 
-// MUI IMPORTS
+// MUI LAYOUT IMPORTS
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+
+// MUI INPUT & DISPLAY IMPORTS
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+import Badge from "@mui/material/Badge";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+
+// MUI COLORS
 import { deepOrange } from "@mui/material/colors";
+
+// MUI ICONS IMPORTS
 import BookIcon from "@mui/icons-material/Book";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ArticleIcon from "@mui/icons-material/Article";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 // LOGO
 import BrandLogo from "../images/brand-logo.png";
@@ -357,6 +366,12 @@ const Navbar = () => {
           </Typography>
         </Box>
         <Box display="flex" alignItems="center">
+          <Box sx={{ marginRight: "20px", cursor: "pointer" }}>
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon color="action" />
+            </Badge>
+          </Box>
+
           <Avatar
             sx={{
               bgcolor: deepOrange[300],
@@ -392,8 +407,8 @@ const Navbar = () => {
             sx={{
               backgroundColor: "#dc3545",
               color: "#ffffff",
-              borderRadius: 4,
-              padding: "0.5rem 1rem",
+              borderRadius: 5,
+              padding: "0.4rem 0.9rem",
               fontSize: "0.6rem",
               transition:
                 "background-color 0.3s, transform 0.3s, box-shadow 0.3s",
@@ -417,6 +432,7 @@ const Navbar = () => {
             }}
             onClick={handleLogout}
           >
+            <ArrowBackIcon fontSize="small" />
             Logout
           </Button>
         </Box>
