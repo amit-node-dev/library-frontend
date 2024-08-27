@@ -38,26 +38,19 @@ const AuthorsTable = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredAuthors, setFilteredAuthors] = useState([]);
   const [sortModel, setSortModel] = useState([]);
 
   const roleId = localStorage.getItem("roleId");
 
   useEffect(() => {
-    dispatch(getAllAuthorsListPagination({ page, pageSize }));
-  }, [dispatch, page, pageSize]);
-
-  useEffect(() => {
-    let filtered = authors;
-    if (searchQuery) {
-      filtered = authors.filter((author) =>
-        `${author.firstname} ${author.lastname} ${author.email}`
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
-      );
-    }
-    setFilteredAuthors(filtered);
-  }, [searchQuery, authors]);
+    dispatch(
+      getAllAuthorsListPagination({
+        page,
+        pageSize,
+        searchQuery,
+      })
+    );
+  }, [dispatch, page, pageSize, searchQuery]);
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -190,7 +183,7 @@ const AuthorsTable = () => {
             }}
           >
             <DataGrid
-              rows={filteredAuthors}
+              rows={authors}
               density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
@@ -233,7 +226,7 @@ const AuthorsTable = () => {
             count={Math.ceil(total / pageSize)}
             page={page}
             onChange={handlePageChange}
-            color="primary"
+            color="warning"
             sx={{
               margin: "20px auto",
               display: "flex",

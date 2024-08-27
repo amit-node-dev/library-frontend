@@ -43,10 +43,10 @@ export const addNewAuthors = createAsyncThunk(
 // GET ALL AUTHORS LIST WITH PAGINATION
 export const getAllAuthorsListPagination = createAsyncThunk(
   "authors/getAllAuthorsListPagination",
-  async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
+  async ({ page = 1, pageSize = 5, searchQuery = "" }, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`/authors`, {
-        params: { page, pageSize },
+        params: { page, pageSize, search: searchQuery },
       });
       if (response.status === 200) {
         return response.data.data;

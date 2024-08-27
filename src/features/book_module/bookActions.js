@@ -44,10 +44,25 @@ export const addNewBooks = createAsyncThunk(
 // GET ALL BOOKS LIST
 export const getAllBooksList = createAsyncThunk(
   "books/getAllBooksList",
-  async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
+  async (
+    {
+      page = 1,
+      pageSize = 5,
+      searchQuery = "",
+      selectedCategory = "",
+      selectedAuthor = "",
+    },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await apiClient.get(`/books`, {
-        params: { page, pageSize },
+        params: {
+          page,
+          pageSize,
+          search: searchQuery,
+          category: selectedCategory,
+          author: selectedAuthor,
+        },
       });
 
       if (response.status === 200) {

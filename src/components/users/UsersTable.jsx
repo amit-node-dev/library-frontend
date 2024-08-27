@@ -46,31 +46,22 @@ const UsersTable = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [sortModel, setSortModel] = useState([]);
   const [selectedRole, setSelectedRole] = useState("");
 
   const roleId = localStorage.getItem("roleId");
 
   useEffect(() => {
-    dispatch(getAllUsersList({ page, pageSize }));
+    dispatch(
+      getAllUsersList({
+        page,
+        pageSize,
+        searchQuery,
+        selectedRole,
+      })
+    );
     dispatch(getAllRolesList());
-  }, [dispatch, page, pageSize]);
-
-  useEffect(() => {
-    let filtered = users;
-    if (searchQuery) {
-      filtered = users.filter((user) =>
-        `${user.firstname} ${user.lastname} ${user.email} ${user.role.name}`
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
-      );
-    }
-    if (selectedRole) {
-      filtered = filtered.filter((user) => user.roleId === selectedRole);
-    }
-    setFilteredUsers(filtered);
-  }, [searchQuery, selectedRole, users]);
+  }, [dispatch, page, pageSize, searchQuery, selectedRole]);
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -95,8 +86,8 @@ const UsersTable = () => {
     }
   };
 
-  const userIdFromLocalStorage = parseInt(localStorage.getItem("userId"));
-  const checkUser = users?.some((user) => user.id === userIdFromLocalStorage);
+  // const userIdFromLocalStorage = parseInt(localStorage.getItem("userId"));
+  // const checkUser = users?.some((user) => user.id === userIdFromLocalStorage);
 
   const ActionRenderer = (params) => {
     return (
@@ -261,7 +252,7 @@ const UsersTable = () => {
             }}
           >
             <DataGrid
-              rows={filteredUsers}
+              rows={users}
               density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
@@ -306,7 +297,7 @@ const UsersTable = () => {
             count={Math.ceil(total / pageSize)}
             page={page}
             onChange={handlePageChange}
-            color="primary"
+            color="warning"
             sx={{
               margin: "20px auto",
               display: "flex",

@@ -50,7 +50,6 @@ const BooksTable = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredBooks, setFilteredBooks] = useState([]);
   const [sortModel, setSortModel] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,31 +59,18 @@ const BooksTable = () => {
   const roleId = localStorage.getItem("roleId");
 
   useEffect(() => {
-    dispatch(getAllBooksList({ page, pageSize }));
+    dispatch(
+      getAllBooksList({
+        page,
+        pageSize,
+        searchQuery,
+        selectedCategory,
+        selectedAuthor,
+      })
+    );
     dispatch(getAllCategoryList());
     dispatch(getAllAuthorsList());
-  }, [dispatch, page, pageSize]);
-
-  useEffect(() => {
-    let filtered = books;
-    if (searchQuery) {
-      filtered = books?.filter((book) =>
-        `${book.isbn} ${book.bookname} ${book.publisher} ${book.category.name} ${book.location}`
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
-      );
-    }
-    if (selectedCategory) {
-      filtered = filtered.filter(
-        (book) => book.category_id === selectedCategory
-      );
-    }
-
-    if (selectedAuthor) {
-      filtered = filtered.filter((book) => book.author_id === selectedAuthor);
-    }
-    setFilteredBooks(filtered);
-  }, [searchQuery, selectedCategory, selectedAuthor, books]);
+  }, [dispatch, page, pageSize, searchQuery, selectedCategory, selectedAuthor]);
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -286,7 +272,7 @@ const BooksTable = () => {
             }}
           >
             <DataGrid
-              rows={filteredBooks}
+              rows={books}
               density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
@@ -329,7 +315,7 @@ const BooksTable = () => {
             count={Math.ceil(total / pageSize)}
             page={page}
             onChange={handlePageChange}
-            color="primary"
+            color="warning"
             sx={{
               margin: "20px auto",
               display: "flex",

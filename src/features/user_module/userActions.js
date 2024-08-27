@@ -126,10 +126,18 @@ export const addUser = createAsyncThunk(
 // GET ALL LIST OF USERS
 export const getAllUsersList = createAsyncThunk(
   "users/getAllUsersList",
-  async ({ page = 1, pageSize = 5 }, { rejectWithValue }) => {
+  async (
+    { page = 1, pageSize = 5, searchQuery = "", selectedRole = "" },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await apiClient.get(`/users`, {
-        params: { page, pageSize },
+        params: {
+          page,
+          pageSize,
+          search: searchQuery,
+          role: selectedRole,
+        },
       });
       if (response.status === 200) {
         return response.data.data;
