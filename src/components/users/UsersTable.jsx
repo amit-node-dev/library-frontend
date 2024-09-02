@@ -49,6 +49,9 @@ const UsersTable = () => {
   const [sortModel, setSortModel] = useState([]);
   const [selectedRole, setSelectedRole] = useState("");
 
+  const startEntry = (page - 1) * pageSize + 1;
+  const endEntry = Math.min(page * pageSize, total);
+
   const roleId = localStorage.getItem("roleId");
 
   useEffect(() => {
@@ -289,21 +292,38 @@ const UsersTable = () => {
               }}
             />
           </Box>
-          <Pagination
-            showFirstButton
-            showLastButton
-            shape="rounded"
-            variant="outlined"
-            count={Math.ceil(total / pageSize)}
-            page={page}
-            onChange={handlePageChange}
-            color="warning"
+          <Box
             sx={{
-              margin: "20px auto",
               display: "flex",
-              justifyContent: "center",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "20px",
             }}
-          />
+          >
+            <Typography
+              variant="caption"
+              gutterBottom
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              Showing {startEntry} - {endEntry} from {total} entries
+            </Typography>
+            <Pagination
+              showFirstButton
+              showLastButton
+              shape="rounded"
+              variant="outlined"
+              count={Math.ceil(total / pageSize)}
+              page={page}
+              onChange={handlePageChange}
+              color="warning"
+              sx={{
+                margin: "0",
+                display: "flex",
+                justifyContent: "right",
+                animation: "fadeIn 1s ease-in-out",
+              }}
+            />
+          </Box>
         </>
       )}
     </div>
