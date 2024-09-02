@@ -167,7 +167,7 @@ const BorrowRecordsTable = () => {
               density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
-              getRowId={(row) => row.id + row.user_id + row.users.firstname}
+              getRowId={(row) => row.id + row.user_id + row.book_id}
               columns={columns}
               pageSize={pageSize}
               rowsPerPageOptions={[5, 10, 20]}

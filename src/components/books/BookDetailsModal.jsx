@@ -104,15 +104,29 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       const response = await dispatch(getBorrowBookRecordStatus(borrowData));
       const resultResponse = response.payload;
 
-      if (resultResponse.statusType === "SUCCESS" && resultResponse.data) {
-        setCheckStatus(resultResponse.data.status);
-        setCheckReturn(true);
-        localStorage.setItem("recordId", resultResponse.data.recordId);
-      } else if (!resultResponse.data) {
+      if (resultResponse.statusType === "SUCCESS") {
+        const data = resultResponse.data;
+
+        if (data) {
+          setCheckStatus(data.status);
+          setCheckReturn(true);
+          localStorage.setItem("recordId", data.recordId);
+          if (data.status === "borrowed" && book.available_copies === 0) {
+            setCheckReturn(true);
+          }
+        } else {
+          setCheckReturn(false);
+          setCheckStatus(null);
+        }
+      } else {
+        console.warn("Unexpected status type:", resultResponse.statusType);
         setCheckReturn(false);
+        setCheckStatus(null);
       }
     } catch (error) {
       console.log("ERROR IN CHECK BORROW BOOK STATUS ::: ", error);
+      setCheckReturn(false);
+      setCheckStatus(null);
     }
   };
 
@@ -144,10 +158,9 @@ const BookDetailsModal = ({ open, onClose, book }) => {
   useEffect(() => {
     if (open) {
       setCheckReturn(false);
+      handlecheckBorrowStatus();
       if (book.available_copies <= 0) {
         handlecheckReservationStatus();
-      } else {
-        handlecheckBorrowStatus();
       }
     }
   }, [open]);
@@ -251,6 +264,8 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       console.log("ERROR IN RESERVED BOOK RECORD ::: ", error);
     }
   };
+
+  console.log("STATUS", checkStatus);
 
   const renderActionButton = () => {
     if (checkReturn) {

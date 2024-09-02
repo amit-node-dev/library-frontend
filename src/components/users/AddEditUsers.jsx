@@ -80,6 +80,8 @@ const AddEditUsers = () => {
     }
   }, [dispatch, userId]);
 
+  console.log("CURRENT USER ", currentUser);
+
   useEffect(() => {
     if (userId && currentUser) {
       setUserData({

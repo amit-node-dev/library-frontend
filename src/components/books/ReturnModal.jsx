@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 // THIRD PARTY IMPORTS
 import { toast } from "react-toastify";
@@ -14,6 +14,7 @@ import {
   IconButton,
   Divider,
   Button,
+  Checkbox,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/system";
@@ -45,6 +46,10 @@ const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
   const { currentBorrowRecord } = useSelector((state) => state.borrowRecords);
   const recordId = localStorage.getItem("recordId");
 
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
+  const [isFine, setIsFine] = useState(false);
+  const [isCheck, setIsCheck] = useState(false);
+
   useEffect(() => {
     if (type === "return_modal" && book.id) {
       dispatch(getBorroRecordById(recordId));
@@ -56,7 +61,17 @@ const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
     const returnDate = dayjs(new Date()).format("YYYY-MM-DD");
 
     if (returnDate > dueDate) {
-      toast.warning("Fine! You have passed the due date. ");
+      setIsFine(true);
+
+      if (isCheck) {
+        onConfirm({
+          returnDate: returnDate,
+          status: "returned",
+        });
+        onClose();
+      } else {
+        toast.warning("Fine! You have passed the due date. ");
+      }
     } else {
       onConfirm({
         returnDate: returnDate,
@@ -89,6 +104,21 @@ const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
             Are you sure you want to return this book?
           </Typography>
         </Box>
+
+        {isFine && (
+          <>
+            <Box>
+              <Typography variant="body2" sx={{ marginBottom: "20px" }}>
+                <Checkbox
+                  {...label}
+                  color="secondary"
+                  onChange={(e) => setIsCheck(e.target.checked)}
+                />
+                Fine Amount: 150₹
+              </Typography>
+            </Box>
+          </>
+        )}
 
         <Box mt={4} display="flex" justifyContent="space-between">
           <Button variant="contained" color="secondary" onClick={onClose}>
