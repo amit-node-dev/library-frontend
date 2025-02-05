@@ -142,7 +142,7 @@ const BooksTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "ID", width: 50 },
+    { field: "id", headerName: "Id", width: 50 },
     {
       field: "isbn",
       headerName: "ISBN",
@@ -150,43 +150,43 @@ const BooksTable = () => {
     },
     {
       field: "bookname",
-      headerName: "NAME",
-      width: 200,
+      headerName: "Book Name",
+      width: 250,
     },
     {
       field: "publisher",
-      headerName: "PUBLISHER",
-      width: 200,
+      headerName: "Publisher",
+      width: 250,
     },
     {
       field: "publication_year",
-      headerName: "PUBLICATION YEAR",
+      headerName: "Publication Year",
       width: 200,
     },
     {
       field: "category",
-      headerName: "CATEGORY",
+      headerName: "Category",
       width: 150,
       renderCell: (params) => params.row.category?.name,
     },
     {
       field: "total_copies",
-      headerName: "TOTAL BOOKS",
+      headerName: "Total Copies",
       width: 150,
     },
     {
       field: "available_copies",
-      headerName: "AVAILABLE BOOKS",
+      headerName: "Available Copies",
       width: 150,
     },
     {
       field: "location",
-      headerName: "LOCATION",
+      headerName: "Location",
       width: 150,
     },
     {
       field: "actions",
-      headerName: "ACTIONS",
+      headerName: "Actions",
       width: 200,
       renderCell: ActionRenderer,
     },
@@ -199,7 +199,7 @@ const BooksTable = () => {
   return (
     <div className="book-container">
       <div className="book-header">
-        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+        <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
           List Of Books
         </Typography>
         <div className="book-util">
@@ -276,7 +276,7 @@ const BooksTable = () => {
           >
             <DataGrid
               rows={books}
-              density="standard"
+              density="compact"
               disableRowSelectionOnClick={true}
               hideFooter={true}
               getRowId={(row) => row.id + row.bookname}
@@ -290,6 +290,8 @@ const BooksTable = () => {
               sortingMode="server"
               sortModel={sortModel}
               onSortModelChange={(model) => setSortModel(model)}
+              rowHeight={65}
+              columnHeaderHeight={50}
               autoHeight
               sx={{
                 "& .MuiDataGrid-columnHeaders": {
@@ -307,6 +309,12 @@ const BooksTable = () => {
                 "& .actions-container > *:hover": {
                   color: "#007bff",
                 },
+                "& .MuiDataGrid-cell": {
+                  padding: "4px",
+                },
+                "& .MuiDataGrid-row": {
+                  minHeight: "35px !important",
+                },
               }}
             />
           </Box>
@@ -315,7 +323,7 @@ const BooksTable = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "20px",
+              marginTop: "40px",
             }}
           >
             <Typography

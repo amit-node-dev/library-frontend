@@ -159,7 +159,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/roles/add_roles"
+          path="/roles/add-role"
           element={
             <PrivateRoute>
               <Layout>
@@ -191,7 +191,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/authors/add_authors"
+          path="/authors/add-author"
           element={
             <PrivateRoute>
               <Layout>

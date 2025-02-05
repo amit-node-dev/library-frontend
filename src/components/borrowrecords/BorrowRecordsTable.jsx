@@ -68,17 +68,17 @@ const BorrowRecordsTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "RECORD-ID", width: 120 },
+    { field: "id", headerName: "Id", width: 120 },
     {
       field: "bookname",
-      headerName: "BOOKNAME",
+      headerName: "Book Name",
       width: 200,
       renderCell: (params) =>
         params.row.books ? params.row.books.bookname : "N/A",
     },
     {
       field: "user",
-      headerName: "USER",
+      headerName: "Borrowed User",
       width: 200,
       renderCell: (params) =>
         params.row.users
@@ -87,7 +87,7 @@ const BorrowRecordsTable = () => {
     },
     {
       field: "status",
-      headerName: "STATUS",
+      headerName: "Status",
       width: 150,
       renderCell: (params) => (
         <Chip
@@ -100,7 +100,7 @@ const BorrowRecordsTable = () => {
     },
     {
       field: "borrow_date",
-      headerName: "BORROW DATE",
+      headerName: "Borrow At",
       width: 250,
       renderCell: (params) =>
         params.row.borrow_date
@@ -109,7 +109,7 @@ const BorrowRecordsTable = () => {
     },
     {
       field: "due_date",
-      headerName: "DUE DATE",
+      headerName: "Due Date At",
       width: 250,
       renderCell: (params) =>
         params.row.due_date
@@ -118,7 +118,7 @@ const BorrowRecordsTable = () => {
     },
     {
       field: "return_date",
-      headerName: "RETURN DATE",
+      headerName: "Return At",
       width: 250,
       renderCell: (params) =>
         params.row.return_date
@@ -130,7 +130,7 @@ const BorrowRecordsTable = () => {
   return (
     <div className="borrow-container">
       <div className="borrow-header">
-        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+        <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
           Borrow Records
         </Typography>
         <div className="borrow-util">
@@ -181,6 +181,8 @@ const BorrowRecordsTable = () => {
               sortingMode="server"
               sortModel={sortModel}
               onSortModelChange={(model) => setSortModel(model)}
+              rowHeight={65}
+              columnHeaderHeight={50}
               autoHeight
               sx={{
                 "& .MuiDataGrid-columnHeaders": {
@@ -198,6 +200,12 @@ const BorrowRecordsTable = () => {
                 "& .actions-container > *:hover": {
                   color: "#007bff",
                 },
+                "& .MuiDataGrid-cell": {
+                  padding: "4px",
+                },
+                "& .MuiDataGrid-row": {
+                  minHeight: "35px !important",
+                },
               }}
             />
           </Box>
@@ -206,7 +214,7 @@ const BorrowRecordsTable = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "20px",
+              marginTop: "40px",
             }}
           >
             <Typography

@@ -80,17 +80,17 @@ const AuthorsTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "AUTHOR ID", width: 200 },
+    { field: "id", headerName: "Id", width: 200 },
     {
       field: "fullname",
-      headerName: "FULLNAME",
+      headerName: "Fullname",
       width: 300,
       renderCell: (params) => params.row.firstname + " " + params.row.lastname,
     },
-    { field: "email", headerName: "EMAIL ID", width: 300 },
+    { field: "email", headerName: "Email Id", width: 300 },
     {
       field: "createdAt",
-      headerName: "CREATED DATE",
+      headerName: "Created At",
       width: 250,
       renderCell: (params) =>
         params.row.createdAt
@@ -99,7 +99,7 @@ const AuthorsTable = () => {
     },
     {
       field: "updatedAt",
-      headerName: "UPDATED DATE",
+      headerName: "Updated At",
       width: 250,
       renderCell: (params) =>
         params.row.updatedAt
@@ -108,7 +108,7 @@ const AuthorsTable = () => {
     },
     {
       field: "actions",
-      headerName: "ACTIONS",
+      headerName: "Actions",
       width: 300,
       renderCell: (params) => (
         <div className="actions-container">
@@ -138,13 +138,13 @@ const AuthorsTable = () => {
   ];
 
   const handleAddAuthors = () => {
-    navigate("/authors/add_authors");
+    navigate("/authors/add-author");
   };
 
   return (
     <div className="authors-table-container">
       <div className="author-header">
-        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+        <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
           Authors
         </Typography>
         <div className="author-util">
@@ -187,7 +187,7 @@ const AuthorsTable = () => {
           >
             <DataGrid
               rows={authors}
-              density="standard"
+              density="compact"
               disableRowSelectionOnClick={true}
               hideFooter={true}
               getRowId={(row) => row.id + row.firstname + row.lastname}
@@ -201,6 +201,8 @@ const AuthorsTable = () => {
               sortingMode="server"
               sortModel={sortModel}
               onSortModelChange={(model) => setSortModel(model)}
+              rowHeight={65}
+              columnHeaderHeight={50}
               autoHeight
               sx={{
                 "& .MuiDataGrid-columnHeaders": {
@@ -218,6 +220,12 @@ const AuthorsTable = () => {
                 "& .actions-container > *:hover": {
                   color: "#007bff",
                 },
+                "& .MuiDataGrid-cell": {
+                  padding: "4px",
+                },
+                "& .MuiDataGrid-row": {
+                  minHeight: "35px !important",
+                },
               }}
             />
           </Box>
@@ -226,7 +234,7 @@ const AuthorsTable = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "20px",
+              marginTop: "40px",
             }}
           >
             <Typography

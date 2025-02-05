@@ -71,17 +71,17 @@ const ReservationRecordTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "RESERVATION-ID", width: 250 },
+    { field: "id", headerName: "Id", width: 200 },
     {
       field: "bookname",
-      headerName: "BOOKNAME",
+      headerName: "Book Name",
       width: 350,
       renderCell: (params) =>
         params.row.books ? params.row.books.bookname : "N/A",
     },
     {
       field: "user",
-      headerName: "USER",
+      headerName: "Reserved User",
       width: 350,
       renderCell: (params) =>
         params.row.users
@@ -90,7 +90,7 @@ const ReservationRecordTable = () => {
     },
     {
       field: "status",
-      headerName: "STATUS",
+      headerName: "Status",
       width: 350,
       renderCell: (params) => (
         <Chip
@@ -103,7 +103,7 @@ const ReservationRecordTable = () => {
     },
     {
       field: "reservation_date",
-      headerName: "RESERVATION DATE",
+      headerName: "Reserved Till",
       width: 350,
       renderCell: (params) =>
         params.row.reservation_date
@@ -115,7 +115,7 @@ const ReservationRecordTable = () => {
   return (
     <div className="reservation-container">
       <div className="reservation-header">
-        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+        <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
           Reservation Records
         </Typography>
         <div className="reservation-util">
@@ -152,7 +152,7 @@ const ReservationRecordTable = () => {
           >
             <DataGrid
               rows={reservations}
-              density="standard"
+              density="compact"
               disableRowSelectionOnClick={true}
               hideFooter={true}
               getRowId={(row) => row.id + row.user_id + row.book_id}
@@ -166,6 +166,8 @@ const ReservationRecordTable = () => {
               sortingMode="server"
               sortModel={sortModel}
               onSortModelChange={(model) => setSortModel(model)}
+              rowHeight={65}
+              columnHeaderHeight={50}
               autoHeight
               sx={{
                 "& .MuiDataGrid-columnHeaders": {
@@ -183,6 +185,12 @@ const ReservationRecordTable = () => {
                 "& .actions-container > *:hover": {
                   color: "#007bff",
                 },
+                "& .MuiDataGrid-cell": {
+                  padding: "4px",
+                },
+                "& .MuiDataGrid-row": {
+                  minHeight: "35px !important",
+                },
               }}
             />
           </Box>
@@ -191,7 +199,7 @@ const ReservationRecordTable = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "20px",
+              marginTop: "40px",
             }}
           >
             <Typography

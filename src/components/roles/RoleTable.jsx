@@ -141,7 +141,7 @@ const RoleTable = () => {
   ];
 
   const handleAddRoles = () => {
-    navigate("/roles/add_roles");
+    navigate("/roles/add-role");
   };
 
   return (
