@@ -81,10 +81,10 @@ const userSlice = createSlice({
       })
       .addCase(getAllUsersList.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload.users;
+        state.users = action.payload.items;
         state.total = action.payload.total;
         state.page = action.payload.page;
-        state.pageSize = action.payload.pageSize;
+        state.pageSize = action.payload.itemsPerPage;
       })
       .addCase(getAllUsersList.rejected, (state, action) => {
         state.loading = false;

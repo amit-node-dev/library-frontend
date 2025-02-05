@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export const getToken = () => localStorage.getItem("token");
+export const getToken = () => localStorage.getItem("accessToken");
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080/api/v1",
+  baseURL: process.env.REACT_APP_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -17,9 +17,7 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default apiClient;

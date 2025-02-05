@@ -9,14 +9,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../features/user_module/userActions";
 
 // MATERIAL-UI IMPORTS
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Divider } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  InputAdornment,
+  IconButton,
+  Divider,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 // CSS
 import "./auth.css";
@@ -58,13 +59,14 @@ const LoginPage = () => {
       handlePasswordBlur();
 
       if (email && password) {
-        const userData = {
-          email,
-          password,
-        };
-        const response = await dispatch(loginUser(userData)).unwrap();
-        if (response.statusType === "SUCCESS") {
-          localStorage.setItem("token", response.data.token);
+        const response = await dispatch(
+          loginUser({
+            email,
+            password,
+          })
+        ).unwrap();
+        if (response.statusType === true) {
+          localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("firstname", response.data.firstname);
           localStorage.setItem("lastname", response.data.lastname);
           localStorage.setItem("email", response.data.email);

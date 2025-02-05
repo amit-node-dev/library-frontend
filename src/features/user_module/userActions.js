@@ -9,7 +9,7 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/auth/register_user`, userData);
+      const response = await apiClient.post(`/auth/register-user`, userData);
       if (response.status === 201) {
         toast.success(response.data.message);
         return response.data;
@@ -31,9 +31,12 @@ export const registerUser = createAsyncThunk(
 // LOGIN USER
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async (userData, { rejectWithValue }) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/auth/login`, userData);
+      const response = await apiClient.post(`/auth/login`, {
+        email,
+        password,
+      });
       if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;
@@ -56,7 +59,7 @@ export const sendOTP = createAsyncThunk(
   "auth/sendOTP",
   async (mobileNumber, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/auth/send_otp`, {
+      const response = await apiClient.post(`/auth/send-otp`, {
         mobileNumber: mobileNumber,
       });
       if (response.status === 200) {
@@ -81,7 +84,7 @@ export const verifyOTP = createAsyncThunk(
   "auth/verifyOTP",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/auth/verify_otp`, userData);
+      const response = await apiClient.post(`/auth/verify-otp`, userData);
       if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;

@@ -7,35 +7,37 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
 import apiClient from "../utils/apiClient";
 
-// MUI LAYOUT IMPORTS
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-
 // MUI INPUT & DISPLAY IMPORTS
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Badge from "@mui/material/Badge";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  IconButton,
+  Avatar,
+  Button,
+  Badge,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+} from "@mui/material";
 
 // MUI COLORS
 import { deepOrange } from "@mui/material/colors";
 
 // MUI ICONS IMPORTS
-import BookIcon from "@mui/icons-material/Book";
-import PersonIcon from "@mui/icons-material/Person";
-import GroupIcon from "@mui/icons-material/Group";
-import SettingsIcon from "@mui/icons-material/Settings";
-import ArticleIcon from "@mui/icons-material/Article";
-import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {
+  Book as BookIcon,
+  Person as PersonIcon,
+  Group as GroupIcon,
+  Settings as SettingsIcon,
+  Article as ArticleIcon,
+  BookmarkAdded as BookmarkAddedIcon,
+  Notifications as NotificationsIcon,
+  ArrowBack as ArrowBackIcon,
+} from "@mui/icons-material";
 
 // LOGO
 import BrandLogo from "../images/brand-logo.png";
@@ -48,7 +50,7 @@ const Navbar = () => {
   const [roleName, setRoleName] = useState("");
 
   const handleLogout = async () => {
-    await apiClient.post(`http://localhost:8080/api/v1/auth/logout`);
+    await apiClient.post(`/auth/logout`);
     localStorage.clear();
     toast.success("Thank You! For Visiting Us.");
     navigate("/login");
