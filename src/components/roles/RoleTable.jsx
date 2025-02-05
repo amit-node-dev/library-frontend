@@ -85,16 +85,16 @@ const RoleTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "ROLE ID", width: 250 },
+    { field: "id", headerName: "Id", width: 250 },
     {
       field: "name",
-      headerName: "ROLE NAME",
+      headerName: "Role name",
       width: 350,
       renderCell: (params) => params.row.name,
     },
     {
       field: "createdAt",
-      headerName: "CREATED DATE",
+      headerName: "Created At",
       width: 350,
       renderCell: (params) =>
         params.row.createdAt
@@ -103,7 +103,7 @@ const RoleTable = () => {
     },
     {
       field: "updatedAt",
-      headerName: "UPDATED DATE",
+      headerName: "Updated At",
       width: 350,
       renderCell: (params) =>
         params.row.updatedAt
@@ -112,7 +112,7 @@ const RoleTable = () => {
     },
     {
       field: "actions",
-      headerName: "ACTIONS",
+      headerName: "Actions",
       width: 350,
       renderCell: (params) => (
         <div className="actions-container">
@@ -147,7 +147,7 @@ const RoleTable = () => {
   return (
     <div className="role-table-container">
       <div className="role-header">
-        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+        <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
           Roles
         </Typography>
         <div className="role-util">
@@ -190,7 +190,7 @@ const RoleTable = () => {
           >
             <DataGrid
               rows={filteredRoles}
-              density="standard"
+              density="compact"
               disableRowSelectionOnClick={true}
               hideFooter={true}
               getRowId={(row) => (row ? row.id + row.name : "")}
@@ -204,6 +204,8 @@ const RoleTable = () => {
               sortingMode="server"
               sortModel={sortModel}
               onSortModelChange={(model) => setSortModel(model)}
+              rowHeight={65}
+              columnHeaderHeight={50}
               autoHeight
               sx={{
                 "& .MuiDataGrid-columnHeaders": {
@@ -221,6 +223,12 @@ const RoleTable = () => {
                 "& .actions-container > *:hover": {
                   color: "#007bff",
                 },
+                "& .MuiDataGrid-cell": {
+                  padding: "4px",
+                },
+                "& .MuiDataGrid-row": {
+                  minHeight: "35px !important",
+                },
               }}
             />
           </Box>
@@ -229,7 +237,7 @@ const RoleTable = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "20px",
+              marginTop: "40px",
             }}
           >
             <Typography

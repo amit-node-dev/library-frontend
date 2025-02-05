@@ -127,7 +127,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/users/add_users"
+          path="/users/add-user"
           element={
             <PrivateRoute>
               <Layout>

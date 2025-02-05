@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
 
 // THRID PARTY CONTENTS
 import { useDispatch, useSelector } from "react-redux";
@@ -34,7 +35,6 @@ import {
 } from "../../features/user_module/userActions";
 import { getAllRolesList } from "../../features/role_module/roleActions";
 import { setPage, setPageSize } from "../../features/user_module/userSlice";
-import dayjs from "dayjs";
 
 const UsersTable = () => {
   const { users, loading, error, total, page, pageSize } = useSelector(
@@ -89,9 +89,6 @@ const UsersTable = () => {
     }
   };
 
-  // const userIdFromLocalStorage = parseInt(localStorage.getItem("userId"));
-  // const checkUser = users?.some((user) => user.id === userIdFromLocalStorage);
-
   const ActionRenderer = (params) => {
     return (
       <div className="actions-container">
@@ -120,18 +117,19 @@ const UsersTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "USER ID", width: 200 },
+    { field: "id", headerName: "Id", width: 150 },
     {
       field: "fullname",
-      headerName: "FULLNAME",
+      headerName: "Fullname",
       width: 250,
       renderCell: (params) => params.row.firstname + " " + params.row.lastname,
     },
-    { field: "email", headerName: "EMAIL ID", width: 250 },
+    { field: "email", headerName: "Email Id", width: 250 },
+    { field: "mobileNumber", headerName: "Mobile No", width: 200 },
     {
       field: "role",
-      headerName: "ROLE",
-      width: 250,
+      headerName: "Role",
+      width: 150,
       renderCell: (params) => {
         let chipColor;
         let chipLabel;
@@ -166,8 +164,8 @@ const UsersTable = () => {
     },
     {
       field: "createdAt",
-      headerName: "CREATED DATE",
-      width: 250,
+      headerName: "Created At",
+      width: 200,
       renderCell: (params) =>
         params.row.createdAt
           ? dayjs(params.row.createdAt).format("YYYY-MM-DD")
@@ -175,8 +173,8 @@ const UsersTable = () => {
     },
     {
       field: "updatedAt",
-      headerName: "UPDATED DATE",
-      width: 250,
+      headerName: "Updated At",
+      width: 200,
       renderCell: (params) =>
         params.row.updatedAt
           ? dayjs(params.row.updatedAt).format("YYYY-MM-DD")
@@ -184,20 +182,20 @@ const UsersTable = () => {
     },
     {
       field: "actions",
-      headerName: "ACTIONS",
-      width: 150,
+      headerName: "Actions",
+      width: 250,
       renderCell: ActionRenderer,
     },
   ];
 
   const handleAddUsers = () => {
-    navigate("/users/add_users");
+    navigate("/users/add-user");
   };
 
   return (
     <div className="users-table-container">
       <div className="user-header">
-        <Typography variant="h4" sx={{ fontFamily: "cursive" }}>
+        <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
           Users
         </Typography>
         <div className="user-util">
@@ -248,15 +246,15 @@ const UsersTable = () => {
         <>
           <Box
             sx={{
-              height: "auto",
+              height: "50vh",
               width: "100%",
               margin: "30px auto",
               animation: "fadeIn 1s ease-in-out",
             }}
           >
             <DataGrid
+              density="compact"
               rows={users}
-              density="standard"
               disableRowSelectionOnClick={true}
               hideFooter={true}
               getRowId={(row) =>
@@ -272,6 +270,8 @@ const UsersTable = () => {
               sortingMode="server"
               sortModel={sortModel}
               onSortModelChange={(model) => setSortModel(model)}
+              rowHeight={65}
+              columnHeaderHeight={50}
               autoHeight
               sx={{
                 "& .MuiDataGrid-columnHeaders": {
@@ -289,6 +289,12 @@ const UsersTable = () => {
                 "& .actions-container > *:hover": {
                   color: "#007bff",
                 },
+                "& .MuiDataGrid-cell": {
+                  padding: "4px",
+                },
+                "& .MuiDataGrid-row": {
+                  minHeight: "35px !important",
+                },
               }}
             />
           </Box>
@@ -297,7 +303,7 @@ const UsersTable = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "20px",
+              marginTop: "40px",
             }}
           >
             <Typography

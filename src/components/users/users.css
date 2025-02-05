@@ -18,7 +18,7 @@
      animation: slideIn 0.5s ease-out;
 }
 
-/* AUTHOR TABLE CSS */
+/* USER TABLE CSS */
 .spinner-container {
      display: flex;
      justify-content: center;
@@ -58,7 +58,7 @@
 /* ADD / EDIT PAGE CSS */
 .user-add-edit-container {
      position: relative;
-     padding: 50px;
+     padding: 30px;
      text-align: center;
      background-color: #d1d1d1;
      min-height: 90vh;

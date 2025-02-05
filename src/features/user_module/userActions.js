@@ -130,7 +130,7 @@ export const addUser = createAsyncThunk(
 export const getAllUsersList = createAsyncThunk(
   "users/getAllUsersList",
   async (
-    { page = 1, pageSize = 5, searchQuery = "", selectedRole = "" },
+    { page = 1, pageSize = 10, searchQuery = "", selectedRole = "" },
     { rejectWithValue }
   ) => {
     try {

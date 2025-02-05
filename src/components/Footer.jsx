@@ -7,7 +7,7 @@ const FooterContainer = styled(Box)({
   color: "#fff",
   padding: "1rem 0",
   textAlign: "center",
-  position: "absolute",
+  position: "fixed",
   width: "100%",
   bottom: 0,
 });

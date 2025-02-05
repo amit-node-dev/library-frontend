@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { styled } from "@mui/system";
 import Carousel from "react-material-ui-carousel";
@@ -9,6 +9,9 @@ import pic2 from "../../images/pic2.jpg";
 import pic3 from "../../images/pic3.jpg";
 import pic4 from "../../images/pic4.jpg";
 import pic5 from "../../images/pic5.jpg";
+
+const placeholderImage =
+  "https://via.placeholder.com/1200x800?text=Image+Not+Available";
 
 const slides = [
   {
@@ -64,6 +67,16 @@ const TextOverlay = styled("div")(() => ({
 }));
 
 const Dashboard = () => {
+  const [images, setImages] = useState(slides.map((slide) => slide.image));
+
+  const handleImageError = (index) => {
+    setImages((prevImages) => {
+      const newImages = [...prevImages];
+      newImages[index] = placeholderImage;
+      return newImages;
+    });
+  };
+
   return (
     <Box sx={{ textAlign: "center" }}>
       <Carousel
@@ -82,9 +95,10 @@ const Dashboard = () => {
         {slides.map((slide, index) => (
           <StyledCarouselItem key={index}>
             <img
-              src={slide.image}
+              src={images[index]}
               alt={`slide-${index}`}
               onLoad={(e) => (e.target.style.opacity = 1)}
+              onError={() => handleImageError(index)}
             />
             <TextOverlay>{slide.text}</TextOverlay>
           </StyledCarouselItem>

@@ -89,7 +89,7 @@ const AddEditRole = () => {
 
   return (
     <div className="role-add-edit-container">
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <Box
           sx={{
             mt: 10,
@@ -105,7 +105,7 @@ const AddEditRole = () => {
             <Typography
               variant="h4"
               gutterBottom
-              sx={{ fontFamily: "cursive" }}
+              sx={{ fontFamily: "sans-serif" }}
             >
               {roleId ? "Edit Role" : "Add Role"}
             </Typography>

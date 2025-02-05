@@ -49,6 +49,16 @@ const Navbar = () => {
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const [roleName, setRoleName] = useState("");
 
+  const firstName = localStorage.getItem("firstname") || "";
+  const lastName = localStorage.getItem("lastname") || "";
+  const roleId = parseInt(localStorage.getItem("roleId"), 10) || "";
+  const avatarChar = firstName.charAt(0).toUpperCase() || "-";
+
+  useEffect(() => {
+    const roles = { 1: "Super Admin", 2: "Admin" };
+    setRoleName(roles[roleId] || "Customer");
+  }, [roleId]);
+
   const handleLogout = async () => {
     await apiClient.post(`/auth/logout`);
     localStorage.clear();
@@ -63,33 +73,6 @@ const Navbar = () => {
   const handleMenuClose = (setAnchorEl) => {
     setAnchorEl(null);
   };
-
-  const firstName = localStorage.getItem("firstname") || "";
-  const lastName = localStorage.getItem("lastname") || "";
-  const roleId = parseInt(localStorage.getItem("roleId"), 10) || "";
-  const avatarChar = firstName.charAt(0).toUpperCase() || "-";
-
-  const getRole = () => {
-    try {
-      switch (roleId) {
-        case 1:
-          setRoleName("Super Admin");
-          break;
-        case 2:
-          setRoleName("Admin");
-          break;
-        default:
-          setRoleName("Customer");
-          break;
-      }
-    } catch (error) {
-      console.log("ERROR IN GET ROLE ::: ", error);
-    }
-  };
-
-  useEffect(() => {
-    getRole();
-  }, [roleId]);
 
   return (
     <AppBar

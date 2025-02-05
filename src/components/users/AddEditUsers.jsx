@@ -80,8 +80,6 @@ const AddEditUsers = () => {
     }
   }, [dispatch, userId]);
 
-  console.log("CURRENT USER ", currentUser);
-
   useEffect(() => {
     if (userId && currentUser) {
       setUserData({
@@ -273,7 +271,7 @@ const AddEditUsers = () => {
 
   return (
     <div className="user-add-edit-container">
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <Box
           sx={{
             mt: 5,
@@ -289,7 +287,7 @@ const AddEditUsers = () => {
             <Typography
               variant="h4"
               gutterBottom
-              sx={{ fontFamily: "cursive" }}
+              sx={{ fontFamily: "sans-serif" }}
             >
               {userId ? "Edit User" : "Add User"}
             </Typography>
