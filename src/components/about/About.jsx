@@ -6,148 +6,173 @@ import {
   AccordionSummary,
   AccordionDetails,
   Box,
+  Grid,
+  Card,
+  CardContent,
 } from "@mui/material";
-import { styled, keyframes } from "@mui/system";
+import { styled } from "@mui/system";
 import BackgroundImage from "../../images/background1.jpg";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { motion } from "framer-motion";
 
-// Keyframes for animations
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-const slideIn = keyframes`
-  from {
-    transform: translateY(-100px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-`;
-
-const zoomIn = keyframes`
-  from {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-`;
-
-const bounceIn = keyframes`
-  from, 20%, 40%, 60%, 80%, to {
-    transform: translateY(0);
-  }
-  10%, 30%, 50%, 70%, 90% {
-    transform: translateY(-10px);
-  }
-`;
-
-// Container with background image
+// Styled components for enhanced UI
 const BackgroundContainer = styled(Box)({
   backgroundImage: `url(${BackgroundImage})`,
   backgroundSize: "cover",
   backgroundPosition: "center",
-  height: "90vh",
+  minHeight: "90vh",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  animation: `${fadeIn} 2s ease-in-out`,
 });
 
-const AboutContainer = styled(Container)({
-  backgroundColor: "rgba(255, 255, 255, 0.8)",
-  borderRadius: "8px",
+const GlassmorphicContainer = styled(Container)({
+  background: "rgba(255, 255, 255, 0.2)",
+  borderRadius: "15px",
   padding: "3rem",
-  maxWidth: "800px",
-  animation: `${zoomIn} 1.5s ease-in-out`,
+  maxWidth: "900px",
+  backdropFilter: "blur(10px)",
+  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+  color: "#fff",
+  textAlign: "center",
 });
 
 const AboutHeader = styled(Typography)({
-  marginBottom: "1rem",
   fontWeight: "bold",
-  color: "#333",
+  color: "#fff",
   textAlign: "center",
-  animation: `${slideIn} 1.5s ease-in-out`,
+  marginBottom: "1rem",
 });
 
 const DescriptionText = styled(Typography)({
-  marginBottom: "1rem",
   textAlign: "justify",
   lineHeight: "1.6",
-  color: "#555",
-  animation: `${fadeIn} 3s ease-in-out`,
+  color: "#f1f1f1",
 });
 
-// Styled accordion components
+// Accordion Styling
 const StyledAccordion = styled(Accordion)({
-  marginBottom: "1rem",
+  backgroundColor: "rgba(255, 255, 255, 0.8)",
   boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-  animation: `${bounceIn} 2s ease-in-out`,
-});
-
-const StyledAccordionSummary = styled(AccordionSummary)({
-  backgroundColor: "#f5f5f5",
-  borderRadius: "4px",
-});
-
-const StyledAccordionDetails = styled(AccordionDetails)({
-  backgroundColor: "#ffffff",
 });
 
 const projects = [
-  { name: "Project One", description: "Description for project one." },
-  { name: "Project Two", description: "Description for project two." },
-  { name: "Project Three", description: "Description for project three." },
+  {
+    name: "Book Catalog Management",
+    description: "Track books, authors, and availability.",
+  },
+  {
+    name: "User & Membership Management",
+    description: "Manage student, teacher, and public memberships.",
+  },
+  {
+    name: "Issue & Return System",
+    description: "Automate book lending with due dates and penalties.",
+  },
 ];
 
 const About = () => {
   return (
     <BackgroundContainer>
-      <AboutContainer>
-        <AboutHeader variant="h4">About Us</AboutHeader>
-        <hr />
-        <DescriptionText variant="h6" gutterBottom>
-          Hello! I'm Amit V, a passionate MERN Stack developer.
-        </DescriptionText>
-        <DescriptionText variant="body1" gutterBottom>
-          A library management system is software designed to manage all the
-          functions of a library. It helps librarians maintain the database of
-          new books and the books borrowed by members along with their due
-          dates. This system completely automates all your library’s activities.
-          The best way to maintain, organize, and handle countless books
-          systematically is to implement a library management system software. A
-          library management system is used to maintain library records. It
-          tracks the records of the number of books in the library, how many
-          books are issued, or how many books have been returned or renewed or
-          late fine charges, etc. You can find books in an instant,
-          issue/reissue books quickly, and manage all the data efficiently and
-          orderly using this system. The purpose of a library management system
-          is to provide instant and accurate data regarding any type of book,
-          thereby saving a lot of time and effort.
-        </DescriptionText>
-        <Box sx={{ marginTop: "20px" }}>
-          {projects.map((project, index) => (
-            <StyledAccordion key={index}>
-              <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="h6">{project.name}</Typography>
-              </StyledAccordionSummary>
-              <StyledAccordionDetails>
-                <Typography variant="body2">{project.description}</Typography>
-              </StyledAccordionDetails>
-            </StyledAccordion>
-          ))}
-        </Box>
-      </AboutContainer>
+      <GlassmorphicContainer
+        component={motion.div}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+      >
+        <>
+          <AboutHeader
+            variant="h3"
+            component={motion.div}
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
+            About Us
+          </AboutHeader>
+          <Typography
+            variant="h6"
+            sx={{ color: "#eee", fontStyle: "italic", marginBottom: "1rem" }}
+          >
+            "Empowering Libraries with Technology."
+          </Typography>
+
+          <hr />
+
+          <DescriptionText
+            component={motion.p}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2 }}
+          >
+            A <strong>Library Management System (LMS)</strong> is a digital
+            solution designed to organize and manage library resources
+            efficiently. It streamlines book tracking, user management, lending,
+            and reporting for educational institutions, public libraries, and
+            corporate archives.
+          </DescriptionText>
+
+          {/* LMS Benefits */}
+          <Grid container spacing={3} sx={{ marginTop: "20px" }}>
+            {[
+              {
+                title: "Centralized Book Database",
+                description:
+                  "Keep all records organized and easily accessible.",
+              },
+              {
+                title: "Automated Transactions",
+                description:
+                  "Efficient book issuing, returns, and fine calculation.",
+              },
+              {
+                title: "User-Friendly Access",
+                description:
+                  "Allow students and teachers to search books online.",
+              },
+            ].map((feature, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Card
+                  sx={{
+                    backgroundColor: "rgba(255,255,255,0.8)",
+                    textAlign: "center",
+                    padding: "1rem",
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      {feature.title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {feature.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+
+          {/* Projects & Features Accordion */}
+          <Box sx={{ marginTop: "20px" }}>
+            {projects.map((project, index) => (
+              <StyledAccordion
+                key={index}
+                component={motion.div}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.3 }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography variant="h6">{project.name}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography variant="body2">{project.description}</Typography>
+                </AccordionDetails>
+              </StyledAccordion>
+            ))}
+          </Box>
+        </>
+      </GlassmorphicContainer>
     </BackgroundContainer>
   );
 };

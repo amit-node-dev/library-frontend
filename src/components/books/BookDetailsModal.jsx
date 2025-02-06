@@ -13,30 +13,25 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled, keyframes } from "@mui/system";
+
+import { Blind } from "@mui/icons-material";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
 // CSS
 import "./books.css";
 
 // ACTIONS & STORES
 import {
-  addNewBorroRecord,
+  addNewBorrowRecord,
   getBorrowBookRecordStatus,
   returnBorrowRecord,
 } from "../../features/borrowRecord_module/borrorRecordAction";
 import { getAllBooksList } from "../../features/book_module/bookActions";
-import {
-  createReservation,
-  getReservedBookStatus,
-} from "../../features/reservation_module/reservationAction";
 
 // CUSTOM MODAL
 import BorrowModal from "./BorrowModal";
 import ReturnModal from "./ReturnModal";
-import ReservationModal from "./ReservationModal";
 
 // Keyframes for animations
 const fadeIn = keyframes`
@@ -82,92 +77,51 @@ const ContentBox = styled(Box)(() => ({
 }));
 
 const BookDetailsModal = ({ open, onClose, book }) => {
-  const [checkStatus, setCheckStatus] = useState(null);
-  const [checkReturn, setCheckReturn] = useState(false);
+  const userId = localStorage.getItem("userId");
+  const dispatch = useDispatch();
+
+  const [bookStatus, setBookStatus] = useState(null);
+  const [recordId, setRecordId] = useState(null);
 
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
-  const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
-
-  const dispatch = useDispatch();
-
-  const userId = localStorage.getItem("userId");
-
-  // CHECK THE STATUS OF BOOK (BORROW, RETURN, RESERVED)
-  const handlecheckBorrowStatus = async () => {
-    try {
-      const borrowData = {
-        userId: userId,
-        bookId: book.id,
-      };
-      const response = await dispatch(getBorrowBookRecordStatus(borrowData));
-      const resultResponse = response.payload;
-
-      if (resultResponse.statusType === "SUCCESS") {
-        const data = resultResponse.data;
-
-        if (data) {
-          setCheckStatus(data.status);
-          setCheckReturn(true);
-          localStorage.setItem("recordId", data.recordId);
-          if (data.status === "borrowed" && book.available_copies === 0) {
-            setCheckReturn(true);
-          }
-        } else {
-          setCheckReturn(false);
-          setCheckStatus(null);
-        }
-      } else {
-        console.warn("Unexpected status type:", resultResponse.statusType);
-        setCheckReturn(false);
-        setCheckStatus(null);
-      }
-    } catch (error) {
-      console.log("ERROR IN CHECK BORROW BOOK STATUS ::: ", error);
-      setCheckReturn(false);
-      setCheckStatus(null);
-    }
-  };
-
-  // CHECK THE STATUS OF RESERVATION (RESERVED, UNRESERVED)
-  const handlecheckReservationStatus = async () => {
-    try {
-      const reservationData = {
-        userId: userId,
-        bookId: book.id,
-      };
-      const response = await dispatch(getReservedBookStatus(reservationData));
-      const resultResponse = response.payload;
-
-      if (resultResponse.statusType === "SUCCESS" && resultResponse.data) {
-        setCheckStatus(resultResponse.data.status);
-        setCheckReturn(true);
-        localStorage.setItem(
-          "reservationId",
-          resultResponse.data.reservationId
-        );
-      } else if (!resultResponse.data) {
-        setCheckReturn(false);
-      }
-    } catch (error) {
-      console.log("ERROR IN CHECK BORROW BOOK STATUS ::: ", error);
-    }
-  };
 
   useEffect(() => {
     if (open) {
-      setCheckReturn(false);
-      handlecheckBorrowStatus();
-      if (book.available_copies <= 0) {
-        handlecheckReservationStatus();
-      }
+      setBookStatus(null);
+      setRecordId(null);
+
+      handleCheckBorrowStatus();
     }
-  }, [open]);
+  }, [open, book]);
+
+  // CHECK THE STATUS OF BOOK (BORROW, RETURN, OUT OF STOCK)
+  const handleCheckBorrowStatus = async () => {
+    try {
+      const borrowData = {
+        userId: parseInt(userId),
+        bookId: book.id,
+      };
+      const response = await dispatch(
+        getBorrowBookRecordStatus(borrowData)
+      ).unwrap();
+
+      if (response.statusType === true) {
+        const data = response.data;
+        setBookStatus(data.status);
+        setRecordId(data.recordId);
+      } else {
+        console.warn("Unexpected status type:", response.statusType);
+      }
+    } catch (error) {
+      console.log("ERROR IN CHECK BORROW BOOK STATUS ::: ", error);
+    }
+  };
 
   // OPEN BORROW MODEL
   const openBorrowModal = () => {
-    setModalType("borrow_modal");
+    setModalType("borrow-modal");
     setIsBorrowModalOpen(true);
   };
 
@@ -187,10 +141,10 @@ const BookDetailsModal = ({ open, onClose, book }) => {
         dueDate: borrowRecordData.dueDate,
         status: borrowRecordData.status,
       };
-      const response = await dispatch(addNewBorroRecord(borrowData));
-      if (response.payload.statusType === "SUCCESS") {
-        setCheckStatus("borrowed");
-        handlecheckBorrowStatus();
+      const response = await dispatch(addNewBorrowRecord(borrowData)).unwrap();
+      if (response.statusType === true) {
+        setBookStatus(response.data.status);
+        handleCheckBorrowStatus();
         dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
         closeBorrowModal();
       }
@@ -201,7 +155,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
 
   // OPEN RETURN MODEL
   const openReturnModal = () => {
-    setModalType("return_modal");
+    setModalType("return-modal");
     setIsReturnModalOpen(true);
   };
 
@@ -215,16 +169,17 @@ const BookDetailsModal = ({ open, onClose, book }) => {
   const handleReturnBorrowBook = async (returnRecordData) => {
     try {
       const returnData = {
-        recordId: localStorage.getItem("recordId"),
+        recordId: recordId,
         userId: userId,
         bookId: book.id,
         returnDate: returnRecordData.returnDate,
         status: returnRecordData.status,
       };
-      const response = await dispatch(returnBorrowRecord(returnData));
-      if (response.payload.statusType === "SUCCESS") {
-        setCheckStatus("returned");
-        handlecheckBorrowStatus();
+      const response = await dispatch(returnBorrowRecord(returnData)).unwrap();
+      console.log("RESPONSE ::: ", response);
+      if (response.statusType === true) {
+        setBookStatus(response.data.record.status);
+        handleCheckBorrowStatus();
         dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
         closeReturnModal();
       }
@@ -233,43 +188,9 @@ const BookDetailsModal = ({ open, onClose, book }) => {
     }
   };
 
-  // OPEN RETURN MODEL
-  const openReservationModal = () => {
-    setModalType("reservation_modal");
-    setIsReservationModalOpen(true);
-  };
-
-  // CLOSE RETURN MODEL
-  const closeReservationModal = () => {
-    setModalType("");
-    setIsReservationModalOpen(false);
-  };
-
-  const handleReserveBook = async (returnReservedData) => {
-    try {
-      const reservationData = {
-        userId: userId,
-        bookId: book.id,
-        reservationDate: returnReservedData.reservationDate,
-        status: returnReservedData.status,
-      };
-      const response = await dispatch(createReservation(reservationData));
-      if (response.payload.statusType === "SUCCESS") {
-        setCheckStatus("reserved");
-        handlecheckReservationStatus();
-        dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
-        closeReturnModal();
-      }
-    } catch (error) {
-      console.log("ERROR IN RESERVED BOOK RECORD ::: ", error);
-    }
-  };
-
-  console.log("STATUS", checkStatus);
-
   const renderActionButton = () => {
-    if (checkReturn) {
-      switch (checkStatus) {
+    if (bookStatus) {
+      switch (bookStatus) {
         case "borrowed":
           return (
             <Button
@@ -282,55 +203,16 @@ const BookDetailsModal = ({ open, onClose, book }) => {
             </Button>
           );
         case "returned":
-          if (book.available_copies > 0) {
-            return (
-              <Button
-                color="success"
-                variant="outlined"
-                onClick={openBorrowModal}
-              >
-                <ArrowCircleDownIcon />
-                &nbsp;<Typography>Borrow</Typography>
-              </Button>
-            );
-          } else {
-            return (
-              <Button
-                color="secondary"
-                variant="outlined"
-                onClick={openReservationModal}
-              >
-                {checkStatus === "reserved" ? (
-                  <BookmarkIcon />
-                ) : (
-                  <BookmarkBorderIcon />
-                )}
-                &nbsp;
-                <Typography sx={{ marginLeft: "5px" }}>
-                  {checkStatus === "reserved" ? "Reserved" : "Reserve"}
-                </Typography>
-              </Button>
-            );
-          }
-        case "reserved":
           return (
             <Button
-              color="secondary"
+              color="success"
               variant="outlined"
-              onClick={openReservationModal}
+              onClick={openBorrowModal}
             >
-              {checkStatus === "reserved" ? (
-                <BookmarkIcon />
-              ) : (
-                <BookmarkBorderIcon />
-              )}
-              &nbsp;
-              <Typography sx={{ marginLeft: "5px" }}>
-                {checkStatus === "reserved" ? "Reserved" : "Reserve"}
-              </Typography>
+              <ArrowCircleDownIcon />
+              &nbsp;<Typography>Borrow</Typography>
             </Button>
           );
-
         default:
           return null;
       }
@@ -343,20 +225,9 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       );
     } else {
       return (
-        <Button
-          color="secondary"
-          variant="outlined"
-          onClick={openReservationModal}
-        >
-          {checkStatus === "reserved" ? (
-            <BookmarkIcon />
-          ) : (
-            <BookmarkBorderIcon />
-          )}
-          &nbsp;
-          <Typography sx={{ marginLeft: "5px" }}>
-            {checkStatus === "reserved" ? "Reserved" : "Reserve"}
-          </Typography>
+        <Button color="error" variant="outlined">
+          <Blind />
+          &nbsp;<Typography>Out Of Stock</Typography>
         </Button>
       );
     }
@@ -432,7 +303,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
               <Typography variant="h6" sx={{ mb: 1 }}>
                 <strong>Story:</strong>
               </Typography>
-              {checkStatus === "borrowed" ? (
+              {bookStatus === "borrowed" ? (
                 <Typography
                   className="book-description"
                   variant="body2"
@@ -453,7 +324,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
               )}
             </div>
 
-            {checkStatus === "borrowed" && (
+            {bookStatus === "borrowed" && (
               <div className="book-conclusion-container">
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   <strong>Conclusion:</strong>
@@ -515,17 +386,9 @@ const BookDetailsModal = ({ open, onClose, book }) => {
         type={modalType}
         open={isReturnModalOpen}
         onClose={closeReturnModal}
-        onConfirm={handleReturnBorrowBook}
+        onSubmit={handleReturnBorrowBook}
         book={book}
-      />
-
-      {/* Render the Reservation Modal */}
-      <ReservationModal
-        type={modalType}
-        open={isReservationModalOpen}
-        onClose={closeReservationModal}
-        onConfirm={handleReserveBook}
-        book={book}
+        recordId={recordId}
       />
     </>
   );

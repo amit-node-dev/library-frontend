@@ -49,7 +49,7 @@ export const getReservedBookStatus = createAsyncThunk(
   async (reservationData, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(
-        `/reservations/get_reservation_status`,
+        `/reservations/get-reservation-status`,
         reservationData
       );
       if (response.status === 200) {

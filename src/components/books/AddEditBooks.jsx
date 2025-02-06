@@ -256,7 +256,7 @@ const AddEditBooks = () => {
             <Typography
               variant="h4"
               gutterBottom
-              sx={{ fontFamily: "cursive" }}
+              sx={{ fontFamily: "sans-serif" }}
             >
               {bookId ? "Edit Book" : "Add Book"}
             </Typography>

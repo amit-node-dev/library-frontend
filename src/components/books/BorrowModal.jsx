@@ -51,7 +51,7 @@ const BorrowBookModal = ({ type, open, onClose, onSubmit, book }) => {
 
   const handleSubmit = () => {
     const [startDate, endDate] = dateRange;
-    if (startDate && endDate && type === "borrow_modal") {
+    if (startDate && endDate && type === "borrow-modal") {
       const formattedStartDate = dayjs(startDate).format("YYYY-MM-DD");
       const formattedEndDate = dayjs(endDate).format("YYYY-MM-DD");
 

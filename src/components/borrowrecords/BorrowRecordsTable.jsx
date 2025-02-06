@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 
 // ACTIONS & STORES
-import { getAllBorroRecordList } from "../../features/borrowRecord_module/borrorRecordAction";
+import { getAllBorrowRecordList } from "../../features/borrowRecord_module/borrorRecordAction";
 import { setPage, setPageSize } from "../../features/book_module/bookSlice";
 
 // CSS IMPORTS
@@ -35,17 +35,25 @@ const BorrowRecordsTable = () => {
   const [sortModel, setSortModel] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
 
+  // Calculate pagination entries
   const startEntry = (page - 1) * pageSize + 1;
   const endEntry = Math.min(page * pageSize, total);
 
+  // Fetch borrow records when page, pageSize, or status changes
   useEffect(() => {
-    dispatch(getAllBorroRecordList({ page, pageSize, status: selectedStatus }));
+    dispatch(
+      getAllBorrowRecordList({ page, pageSize, status: selectedStatus })
+    );
   }, [dispatch, page, pageSize, selectedStatus]);
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
     dispatch(
-      getAllBorroRecordList({ page: newPage, pageSize, status: selectedStatus })
+      getAllBorrowRecordList({
+        page: newPage,
+        pageSize,
+        status: selectedStatus,
+      })
     );
   };
 
@@ -54,7 +62,7 @@ const BorrowRecordsTable = () => {
     dispatch(setPageSize(newSize));
     dispatch(setPage(1));
     dispatch(
-      getAllBorroRecordList({
+      getAllBorrowRecordList({
         page: 1,
         pageSize: newSize,
         status: selectedStatus,
@@ -105,7 +113,7 @@ const BorrowRecordsTable = () => {
       renderCell: (params) =>
         params.row.borrow_date
           ? dayjs(params.row.borrow_date).format("YYYY-MM-DD")
-          : "N/A",
+          : "-",
     },
     {
       field: "due_date",
@@ -114,7 +122,7 @@ const BorrowRecordsTable = () => {
       renderCell: (params) =>
         params.row.due_date
           ? dayjs(params.row.due_date).format("YYYY-MM-DD")
-          : "N/A",
+          : "-",
     },
     {
       field: "return_date",
@@ -123,7 +131,7 @@ const BorrowRecordsTable = () => {
       renderCell: (params) =>
         params.row.return_date
           ? dayjs(params.row.return_date).format("YYYY-MM-DD")
-          : "N/A",
+          : "-",
     },
   ];
 
@@ -167,7 +175,7 @@ const BorrowRecordsTable = () => {
           >
             <DataGrid
               rows={borrowRecords}
-              density="standard"
+              density="compact"
               disableRowSelectionOnClick={true}
               hideFooter={true}
               getRowId={(row) => row.id + row.user_id + row.book_id}

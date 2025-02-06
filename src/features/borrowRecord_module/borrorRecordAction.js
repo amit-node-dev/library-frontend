@@ -5,12 +5,12 @@ import "react-toastify/dist/ReactToastify.css";
 import apiClient from "../../utils/apiClient";
 
 // ADD NEW BORROW RECORD OF BOOKS
-export const addNewBorroRecord = createAsyncThunk(
-  "borrowRecords/addNewBorroRecord",
+export const addNewBorrowRecord = createAsyncThunk(
+  "borrowRecords/addNewBorrowRecord ",
   async (borrowRecordData, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(
-        `/borrowing_records/add_borrow_records`,
+        `/borrow-records/add-borrow-record`,
         borrowRecordData
       );
       if (response.status === 201) {
@@ -49,9 +49,10 @@ export const getBorrowBookRecordStatus = createAsyncThunk(
   async (borrowData, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(
-        `/borrowing_records/get_borrow_status`,
+        `/borrow-records/get-borrow-status`,
         borrowData
       );
+
       if (response.status === 200) {
         return response.data;
       }
@@ -70,11 +71,11 @@ export const getBorrowBookRecordStatus = createAsyncThunk(
 );
 
 // GET BOOKS BY ID
-export const getBorroRecordById = createAsyncThunk(
-  "borrowRecords/getBorroRecordById",
-  async (bookId, { rejectWithValue }) => {
+export const getBorrowRecordById = createAsyncThunk(
+  "borrowRecords/getBorrowRecordById",
+  async (recordId, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`/borrowing_records/${bookId}`);
+      const response = await apiClient.get(`/borrow-records/${recordId}`);
       if (response.status === 200) {
         return response.data;
       }
@@ -97,10 +98,11 @@ export const returnBorrowRecord = createAsyncThunk(
   async (returnRecordData, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(
-        `/borrowing_records/return_borrow_records`,
+        `/borrow-records/return-borrow-record`,
         returnRecordData
       );
-      if (response.status === 201) {
+      console.log("RRR ::: ", response);
+      if (response.status === 200) {
         toast.success(response.data.message);
         return response.data;
       }
@@ -130,12 +132,12 @@ export const returnBorrowRecord = createAsyncThunk(
   }
 );
 
-// GET ALL BOOKS LIST
-export const getAllBorroRecordList = createAsyncThunk(
-  "borrowRecords/getAllBorroRecordList",
-  async ({ page = 1, pageSize = 5, status = "" }, { rejectWithValue }) => {
+// GET ALL BORROWED BOOK LIST
+export const getAllBorrowRecordList = createAsyncThunk(
+  "borrowRecords/getAllBorrowRecordList",
+  async ({ page = 1, pageSize = 10, status = "" }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`/borrowing_records`, {
+      const response = await apiClient.get(`/borrow-records`, {
         params: { page, pageSize, status },
       });
 

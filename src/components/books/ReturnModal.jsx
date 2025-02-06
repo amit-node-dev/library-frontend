@@ -21,7 +21,7 @@ import { styled } from "@mui/system";
 import dayjs from "dayjs";
 
 // ACTIONS & STORES
-import { getBorroRecordById } from "../../features/borrowRecord_module/borrorRecordAction";
+import { getBorrowRecordById } from "../../features/borrowRecord_module/borrorRecordAction";
 
 // Styled components for modal
 const ReturnModalContainer = styled(Paper)(() => ({
@@ -40,19 +40,18 @@ const ReturnModalContainer = styled(Paper)(() => ({
   overflowY: "auto",
 }));
 
-const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
+const ReturnModal = ({ type, open, onClose, onSubmit, book, recordId }) => {
   const dispatch = useDispatch();
 
   const { currentBorrowRecord } = useSelector((state) => state.borrowRecords);
-  const recordId = localStorage.getItem("recordId");
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [isFine, setIsFine] = useState(false);
   const [isCheck, setIsCheck] = useState(false);
 
   useEffect(() => {
-    if (type === "return_modal" && book.id) {
-      dispatch(getBorroRecordById(recordId));
+    if (type === "return-modal") {
+      dispatch(getBorrowRecordById(recordId));
     }
   }, [dispatch, book, type, recordId]);
 
@@ -64,7 +63,7 @@ const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
       setIsFine(true);
 
       if (isCheck) {
-        onConfirm({
+        onSubmit({
           returnDate: returnDate,
           status: "returned",
         });
@@ -73,7 +72,7 @@ const ReturnModal = ({ type, open, onClose, onConfirm, book }) => {
         toast.warning("Fine! You have passed the due date. ");
       }
     } else {
-      onConfirm({
+      onSubmit({
         returnDate: returnDate,
         status: "returned",
       });

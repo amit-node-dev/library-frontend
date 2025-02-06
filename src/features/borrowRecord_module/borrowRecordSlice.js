@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  addNewBorroRecord,
-  getAllBorroRecordList,
-  getBorroRecordById,
+  addNewBorrowRecord,
+  getAllBorrowRecordList,
+  getBorrowRecordById,
   updateBorroRecord,
   deleteBorroRecord,
 } from "./borrorRecordAction";
@@ -14,7 +14,7 @@ const initialState = {
   error: null,
   total: 0,
   page: 1,
-  pageSize: 5,
+  pageSize: 10,
 };
 
 const borrowRecordSlice = createSlice({
@@ -31,40 +31,40 @@ const borrowRecordSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // ADD NEW BORROW BOOK
-      .addCase(addNewBorroRecord.pending, (state) => {
+      .addCase(addNewBorrowRecord.pending, (state) => {
         state.loading = true;
       })
-      .addCase(addNewBorroRecord.fulfilled, (state, action) => {
+      .addCase(addNewBorrowRecord.fulfilled, (state, action) => {
         state.loading = false;
         state.borrowRecords.push(action.payload);
       })
-      .addCase(addNewBorroRecord.rejected, (state, action) => {
+      .addCase(addNewBorrowRecord.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
       // GET ALL LIST OF BORROW BOOK RECORD
-      .addCase(getAllBorroRecordList.pending, (state) => {
+      .addCase(getAllBorrowRecordList.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getAllBorroRecordList.fulfilled, (state, action) => {
+      .addCase(getAllBorrowRecordList.fulfilled, (state, action) => {
         state.loading = false;
-        state.borrowRecords = action.payload.borrowRecords;
-        state.total = action.payload.total;
+        state.borrowRecords = action.payload.items;
+        state.total = action.payload.totalCount;
         state.page = action.payload.page;
         state.pageSize = action.payload.pageSize;
       })
-      .addCase(getAllBorroRecordList.rejected, (state, action) => {
+      .addCase(getAllBorrowRecordList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
       // GET BORROW BOOK RECORD BY ID
-      .addCase(getBorroRecordById.fulfilled, (state, action) => {
+      .addCase(getBorrowRecordById.fulfilled, (state, action) => {
         state.loading = false;
         state.currentBorrowRecord = action.payload.data;
       })
-      .addCase(getBorroRecordById.rejected, (state, action) => {
+      .addCase(getBorrowRecordById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

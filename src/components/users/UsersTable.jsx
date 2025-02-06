@@ -246,7 +246,7 @@ const UsersTable = () => {
         <>
           <Box
             sx={{
-              height: "50vh",
+              height: "auto",
               width: "100%",
               margin: "30px auto",
               animation: "fadeIn 1s ease-in-out",
