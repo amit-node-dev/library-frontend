@@ -156,12 +156,17 @@ const BooksTable = () => {
     {
       field: "publisher",
       headerName: "Publisher",
-      width: 250,
+      width: 200,
     },
     {
       field: "publication_year",
       headerName: "Publication Year",
-      width: 200,
+      width: 150,
+    },
+    {
+      field: "points_required",
+      headerName: "Points Required",
+      width: 150,
     },
     {
       field: "category",
@@ -172,7 +177,7 @@ const BooksTable = () => {
     {
       field: "total_copies",
       headerName: "Total Copies",
-      width: 150,
+      width: 120,
     },
     {
       field: "available_copies",
@@ -187,13 +192,13 @@ const BooksTable = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 200,
+      width: 150,
       renderCell: ActionRenderer,
     },
   ];
 
   const handleAddBook = () => {
-    navigate("/books/add_books");
+    navigate("/books/add-book");
   };
 
   return (

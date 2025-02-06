@@ -59,6 +59,7 @@ const AddEditBooks = () => {
     publicationYear: "",
     location: "",
     totalCopies: "",
+    pointsRequired: "",
   });
 
   const [booknameError, setBooknameError] = useState("");
@@ -71,6 +72,7 @@ const AddEditBooks = () => {
   const [publisherError, setPublisherError] = useState("");
   const [locationError, setLocationError] = useState("");
   const [totalCopiesError, setTotalCopiesError] = useState("");
+  const [pointsRequiredError, setPointsRequiredError] = useState("");
 
   useEffect(() => {
     dispatch(getAllCategoryList()).then((response) => {
@@ -104,6 +106,7 @@ const AddEditBooks = () => {
         publicationYear: currentBook.publication_year,
         location: currentBook.location,
         totalCopies: currentBook.total_copies,
+        pointsRequired: currentBook.points_required,
       });
     }
   }, [currentBook, bookId]);
@@ -164,6 +167,12 @@ const AddEditBooks = () => {
     );
   };
 
+  const handlePointsRequiredBlur = () => {
+    setPointsRequiredError(
+      bookData.pointsRequired === "" ? "Points Required is required" : ""
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -177,6 +186,7 @@ const AddEditBooks = () => {
     handlePublisherBlur();
     handleLocationBlur();
     handleTotalCopiesBlur();
+    handlePointsRequiredBlur();
 
     if (
       bookData.bookname &&
@@ -188,7 +198,8 @@ const AddEditBooks = () => {
       bookData.isbn &&
       bookData.publisher &&
       bookData.location &&
-      bookData.totalCopies
+      bookData.totalCopies &&
+      bookData.pointsRequired
     ) {
       try {
         bookData.publicationYear = dayjs(bookData.publicationYear).format(
@@ -219,6 +230,7 @@ const AddEditBooks = () => {
       publicationYear: "",
       location: "",
       totalCopies: "",
+      pointsRequired: "",
     });
     setBooknameError("");
     setTilteError("");
@@ -230,6 +242,7 @@ const AddEditBooks = () => {
     setPublisherError("");
     setLocationError("");
     setTotalCopiesError("");
+    setPointsRequiredError("");
   };
 
   const handleBack = () => {
@@ -457,6 +470,21 @@ const AddEditBooks = () => {
                   </FormControl>
                 </Grid>
               </Grid>
+              <TextField
+                size="small"
+                fullWidth
+                margin="normal"
+                label="Points Required"
+                name="pointsRequired"
+                value={bookData.pointsRequired}
+                onChange={handleChange}
+                onBlur={handlePointsRequiredBlur}
+                error={!!pointsRequiredError}
+                helperText={pointsRequiredError}
+                sx={{
+                  animation: "fadeIn 1s ease-in-out",
+                }}
+              />
               <TextField
                 size="small"
                 fullWidth

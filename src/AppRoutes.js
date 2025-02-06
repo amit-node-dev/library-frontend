@@ -71,7 +71,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/books/add_books"
+          path="/books/add-book"
           element={
             <PrivateRoute>
               <Layout>

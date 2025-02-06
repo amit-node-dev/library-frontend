@@ -41,10 +41,14 @@ import {
 
 // LOGO
 import BrandLogo from "../images/brand-logo.png";
+import { useDispatch } from "react-redux";
+import { currentUserPoints } from "../features/user_module/userActions";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const [points, setPoints] = useState(0);
   const [catalogMenuAnchorEl, setCatalogMenuAnchorEl] = useState(null);
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const [roleName, setRoleName] = useState("");
@@ -53,6 +57,25 @@ const Navbar = () => {
   const lastName = localStorage.getItem("lastname") || "";
   const roleId = parseInt(localStorage.getItem("roleId"), 10) || "";
   const avatarChar = firstName.charAt(0).toUpperCase() || "-";
+  const email = localStorage.getItem("email") || "";
+  const userId = localStorage.getItem("userId") || "";
+
+  useEffect(() => {
+    const fetchPoints = async () => {
+      try {
+        const response = await dispatch(
+          currentUserPoints({ email, userId })
+        ).unwrap();
+        console.log("AAA ", response);
+        if (response?.data) {
+          setPoints(response.data.points);
+        }
+      } catch (error) {
+        console.error("Error fetching points:", error);
+      }
+    };
+    fetchPoints();
+  }, [dispatch, email, userId]);
 
   useEffect(() => {
     const roles = { 1: "Super Admin", 2: "Admin" };
@@ -351,6 +374,18 @@ const Navbar = () => {
           </Typography>
         </Box>
         <Box display="flex" alignItems="center">
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#ffc107",
+              color: "#343a40",
+              borderRadius: "5px",
+              fontWeight: "bold",
+              marginRight: "20px",
+            }}
+          >
+            Points: {points}
+          </Button>
           <Box sx={{ marginRight: "20px", cursor: "pointer" }}>
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon color="action" />

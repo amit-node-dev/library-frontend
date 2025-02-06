@@ -9,6 +9,7 @@ import {
   getUserById,
   updateUsers,
   deleteUsers,
+  currentUserPoints,
 } from "./userActions";
 
 // INITAILS STATE
@@ -123,6 +124,19 @@ const userSlice = createSlice({
         state.users = state.users.filter((user) => user.id !== action.payload);
       })
       .addCase(deleteUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Handle currentUserPoints actions
+      .addCase(currentUserPoints.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(currentUserPoints.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentUser = action.payload;
+      })
+      .addCase(currentUserPoints.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

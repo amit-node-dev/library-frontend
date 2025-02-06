@@ -158,6 +158,7 @@ export const getAllUsersList = createAsyncThunk(
   }
 );
 
+// GET USER BY ID
 export const getUserById = createAsyncThunk(
   "users/getUserById",
   async (userId, { rejectWithValue }) => {
@@ -182,6 +183,7 @@ export const getUserById = createAsyncThunk(
   }
 );
 
+// UPDATE USER
 export const updateUsers = createAsyncThunk(
   "users/updateUsers",
   async ({ userId, userData }, { rejectWithValue }) => {
@@ -207,6 +209,7 @@ export const updateUsers = createAsyncThunk(
   }
 );
 
+// DELETE USER
 export const deleteUsers = createAsyncThunk(
   "users/deleteUsers",
   async (userId, { rejectWithValue }) => {
@@ -226,6 +229,31 @@ export const deleteUsers = createAsyncThunk(
         return error.response.data;
       } else {
         toast.error("Failed to delete user");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// CURRENT USER POINTS
+export const currentUserPoints = createAsyncThunk(
+  "users/currentUserPoints",
+  async ({ email, userId }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/users/get-points`, {
+        email,
+        userId,
+      });
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response;
+      } else {
+        toast.error("Failed to login user");
         return rejectWithValue(error.message);
       }
     }
