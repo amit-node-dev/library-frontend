@@ -20,8 +20,8 @@ import AddEditBooks from "./components/books/AddEditBooks";
 // BORROW RECORDS
 import BorrowRecordMainPage from "./components/borrowrecords/MainPage";
 
-// RESERVATION RECORDS
-import ReservationMainPage from "./components/reservationrecords/MainPage";
+// PENALTIES RECORDS
+import PeanltiesMainPage from "./components/penalties/MainPage";
 
 // AUTHORS
 import AuthorMainPage from "./components/authors/MainPage";
@@ -105,11 +105,11 @@ const AppRoutes = () => {
 
         {/* RESERVATION RECORDS */}
         <Route
-          path="/reservations"
+          path="/penalties"
           element={
             <PrivateRoute>
               <Layout>
-                <ReservationMainPage />
+                <PeanltiesMainPage />
               </Layout>
             </PrivateRoute>
           }

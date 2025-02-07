@@ -34,9 +34,9 @@ import {
   Group as GroupIcon,
   Settings as SettingsIcon,
   Article as ArticleIcon,
-  BookmarkAdded as BookmarkAddedIcon,
   Notifications as NotificationsIcon,
   ArrowBack as ArrowBackIcon,
+  CurrencyExchange,
 } from "@mui/icons-material";
 
 // LOGO
@@ -66,7 +66,6 @@ const Navbar = () => {
         const response = await dispatch(
           currentUserPoints({ email, userId })
         ).unwrap();
-        console.log("AAA ", response);
         if (response?.data) {
           setPoints(response.data.points);
         }
@@ -209,10 +208,10 @@ const Navbar = () => {
                 <ListItemText primary="Borrow" />
               </MenuItem>
 
-              {/* RESERAVATIONS */}
+              {/* PENALTIES */}
               <MenuItem
                 component={Link}
-                to="/reservations"
+                to="/penalties"
                 onClick={() => handleMenuClose(setCatalogMenuAnchorEl)}
                 sx={{
                   "&:hover": {
@@ -222,9 +221,9 @@ const Navbar = () => {
                 }}
               >
                 <ListItemIcon>
-                  <BookmarkAddedIcon fontSize="small" />
+                  <CurrencyExchange fontSize="small" />
                 </ListItemIcon>
-                <ListItemText primary="Reservation" />
+                <ListItemText primary="Penalties" />
               </MenuItem>
             </Menu>
           </Box>

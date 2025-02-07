@@ -113,7 +113,7 @@ const ReturnModal = ({ type, open, onClose, onSubmit, book, recordId }) => {
                   color="secondary"
                   onChange={(e) => setIsCheck(e.target.checked)}
                 />
-                Fine Amount: 150₹
+                Fine Amount: 30% of the books points will be fined.
               </Typography>
             </Box>
           </>

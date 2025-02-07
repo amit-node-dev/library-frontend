@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
 
 // THIRD PARTY IMPORTS
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import dayjs from "dayjs";
 
 // MUI IMPORTS
 import { DataGrid } from "@mui/x-data-grid";
@@ -15,19 +15,21 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Chip,
 } from "@mui/material";
 
 // ACTIONS & STORES
-import { getAllBorrowRecordList } from "../../features/borrowRecord_module/borrorRecordAction";
-import { setPage, setPageSize } from "../../features/book_module/bookSlice";
+import { getAllReservationList } from "../../features/reservation_module/reservationAction";
+import {
+  setPage,
+  setPageSize,
+} from "../../features/reservation_module/reservationSlice";
 
 // CSS IMPORTS
-import "./borrowrecords.css";
+import "./penalties.css";
 
-const BorrowRecordsTable = () => {
-  const { borrowRecords, loading, error, total, page, pageSize } = useSelector(
-    (state) => state.borrowRecords
+const PenaltiesTable = () => {
+  const { reservations, loading, error, total, page, pageSize } = useSelector(
+    (state) => state.reservations
   );
 
   const dispatch = useDispatch();
@@ -35,25 +37,17 @@ const BorrowRecordsTable = () => {
   const [sortModel, setSortModel] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
 
-  // Calculate pagination entries
   const startEntry = (page - 1) * pageSize + 1;
   const endEntry = Math.min(page * pageSize, total);
 
-  // Fetch borrow records when page, pageSize, or status changes
   useEffect(() => {
-    dispatch(
-      getAllBorrowRecordList({ page, pageSize, status: selectedStatus })
-    );
+    dispatch(getAllReservationList({ page, pageSize, status: selectedStatus }));
   }, [dispatch, page, pageSize, selectedStatus]);
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
     dispatch(
-      getAllBorrowRecordList({
-        page: newPage,
-        pageSize,
-        status: selectedStatus,
-      })
+      getAllReservationList({ page: newPage, pageSize, status: selectedStatus })
     );
   };
 
@@ -62,7 +56,7 @@ const BorrowRecordsTable = () => {
     dispatch(setPageSize(newSize));
     dispatch(setPage(1));
     dispatch(
-      getAllBorrowRecordList({
+      getAllReservationList({
         page: 1,
         pageSize: newSize,
         status: selectedStatus,
@@ -80,68 +74,37 @@ const BorrowRecordsTable = () => {
     {
       field: "bookname",
       headerName: "Book Name",
-      width: 250,
+      width: 350,
       renderCell: (params) =>
         params.row.books ? params.row.books.bookname : "N/A",
     },
     {
       field: "user",
-      headerName: "Borrowed User",
-      width: 250,
+      headerName: "Booked User",
+      width: 350,
       renderCell: (params) =>
         params.row.users
-          ? `${params.row.users?.firstname} ${params.row.users?.lastname}`
+          ? `${params.row.users.firstname} ${params.row.users.lastname}`
           : "N/A",
     },
     {
-      field: "status",
-      headerName: "Status",
-      width: 250,
-      renderCell: (params) => (
-        <Chip
-          size="small"
-          label={params.value === "returned" ? "Returned" : "Borrowed"}
-          color={params.value === "returned" ? "success" : "warning"}
-          variant="contained"
-        />
-      ),
-    },
-    {
-      field: "borrow_date",
-      headerName: "Borrow At",
-      width: 250,
+      field: "reservation_date",
+      headerName: "Fine",
+      width: 350,
       renderCell: (params) =>
-        params.row.borrow_date
-          ? dayjs(params.row.borrow_date).format("YYYY-MM-DD")
-          : "-",
-    },
-    {
-      field: "due_date",
-      headerName: "Due Date At",
-      width: 250,
-      renderCell: (params) =>
-        params.row.due_date
-          ? dayjs(params.row.due_date).format("YYYY-MM-DD")
-          : "-",
-    },
-    {
-      field: "return_date",
-      headerName: "Return At",
-      width: 250,
-      renderCell: (params) =>
-        params.row.return_date
-          ? dayjs(params.row.return_date).format("YYYY-MM-DD")
-          : "-",
+        params.row.reservation_date
+          ? dayjs(params.row.reservation_date).format("YYYY-MM-DD")
+          : "N/A",
     },
   ];
 
   return (
-    <div className="borrow-container">
-      <div className="borrow-header">
+    <div className="penalties-container">
+      <div className="penalties-header">
         <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
-          Borrow Records
+          Penalty Records
         </Typography>
-        <div className="borrow-util">
+        <div className="penalties-util">
           <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
             <InputLabel id="status-select-label">By Status</InputLabel>
             <Select
@@ -151,8 +114,8 @@ const BorrowRecordsTable = () => {
               onChange={handleStatusChange}
             >
               <MenuItem value="">Select Status</MenuItem>
-              <MenuItem value="borrowed">Borrowed</MenuItem>
-              <MenuItem value="returned">Returned</MenuItem>
+              <MenuItem value="reserved">Reserved</MenuItem>
+              <MenuItem value="unreserved">Unreserved</MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -174,7 +137,7 @@ const BorrowRecordsTable = () => {
             }}
           >
             <DataGrid
-              rows={borrowRecords}
+              rows={reservations}
               density="compact"
               disableRowSelectionOnClick={true}
               hideFooter={true}
@@ -255,4 +218,4 @@ const BorrowRecordsTable = () => {
   );
 };
 
-export default BorrowRecordsTable;
+export default PenaltiesTable;
