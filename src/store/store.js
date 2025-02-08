@@ -8,6 +8,7 @@ import authorReducer from "../features/author_module/authorSlice";
 import categoryReducer from "../features/category_module/categorySlice";
 import borrowRecordReducer from "../features/borrowRecord_module/borrowRecordSlice";
 import reservationReducer from "../features/reservation_module/reservationSlice";
+import penaltiesReducer from "../features/penalties_module/penaltiesSlice";
 
 // Combine reducers
 const rootReducer = combineReducers({
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   categories: categoryReducer,
   borrowRecords: borrowRecordReducer,
   reservations: reservationReducer,
+  penalties: penaltiesReducer,
 });
 
 // Create and export the store

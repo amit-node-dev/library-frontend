@@ -7,48 +7,38 @@ import { ClipLoader } from "react-spinners";
 
 // MUI IMPORTS
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  Box,
-  Typography,
-  Pagination,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Box, Typography, Pagination } from "@mui/material";
 
 // ACTIONS & STORES
-import { getAllReservationList } from "../../features/reservation_module/reservationAction";
+import { getAllPenaltiesList } from "../../features/penalties_module/penaltiesAction";
 import {
   setPage,
   setPageSize,
-} from "../../features/reservation_module/reservationSlice";
+} from "../../features/penalties_module/penaltiesSlice";
 
 // CSS IMPORTS
 import "./penalties.css";
 
 const PenaltiesTable = () => {
-  const { reservations, loading, error, total, page, pageSize } = useSelector(
-    (state) => state.reservations
+  const { penalties, loading, error, total, page, pageSize } = useSelector(
+    (state) => state.penalties
   );
 
   const dispatch = useDispatch();
 
   const [sortModel, setSortModel] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const startEntry = (page - 1) * pageSize + 1;
   const endEntry = Math.min(page * pageSize, total);
 
   useEffect(() => {
-    dispatch(getAllReservationList({ page, pageSize, status: selectedStatus }));
-  }, [dispatch, page, pageSize, selectedStatus]);
+    dispatch(getAllPenaltiesList({ page, pageSize, searchQuery }));
+  }, [dispatch, page, pageSize, searchQuery]);
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
-    dispatch(
-      getAllReservationList({ page: newPage, pageSize, status: selectedStatus })
-    );
+    dispatch(getAllPenaltiesList({ page: newPage, pageSize }));
   };
 
   const handlePageSizeChange = (event) => {
@@ -56,16 +46,11 @@ const PenaltiesTable = () => {
     dispatch(setPageSize(newSize));
     dispatch(setPage(1));
     dispatch(
-      getAllReservationList({
+      getAllPenaltiesList({
         page: 1,
         pageSize: newSize,
-        status: selectedStatus,
       })
     );
-  };
-
-  const handleStatusChange = (event) => {
-    setSelectedStatus(event.target.value);
   };
 
   // Define columns with custom renderers
@@ -76,24 +61,28 @@ const PenaltiesTable = () => {
       headerName: "Book Name",
       width: 350,
       renderCell: (params) =>
-        params.row.books ? params.row.books.bookname : "N/A",
+        params.row.bookname ? params.row.bookname : "N/A",
     },
     {
-      field: "user",
+      field: "fullname",
       headerName: "Booked User",
       width: 350,
       renderCell: (params) =>
-        params.row.users
-          ? `${params.row.users.firstname} ${params.row.users.lastname}`
-          : "N/A",
+        params.row.fullname ? params.row.fullname : "N/A",
     },
     {
-      field: "reservation_date",
-      headerName: "Fine",
+      field: "fine",
+      headerName: "Fine Amount",
       width: 350,
+      renderCell: (params) => (params.row.fine ? params.row.fine : "N/A"),
+    },
+    {
+      field: "createdAt",
+      headerName: "Date",
+      width: 200,
       renderCell: (params) =>
-        params.row.reservation_date
-          ? dayjs(params.row.reservation_date).format("YYYY-MM-DD")
+        params.row.createdAt
+          ? dayjs(params.row.createdAt).format("YYYY-MM-DD")
           : "N/A",
     },
   ];
@@ -105,19 +94,13 @@ const PenaltiesTable = () => {
           Penalty Records
         </Typography>
         <div className="penalties-util">
-          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
-            <InputLabel id="status-select-label">By Status</InputLabel>
-            <Select
-              labelId="status-select-label"
-              id="status-select"
-              value={selectedStatus}
-              onChange={handleStatusChange}
-            >
-              <MenuItem value="">Select Status</MenuItem>
-              <MenuItem value="reserved">Reserved</MenuItem>
-              <MenuItem value="unreserved">Unreserved</MenuItem>
-            </Select>
-          </FormControl>
+          <input
+            type="text"
+            className="book-search-input"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       </div>
       {loading ? (
@@ -137,7 +120,7 @@ const PenaltiesTable = () => {
             }}
           >
             <DataGrid
-              rows={reservations}
+              rows={penalties}
               density="compact"
               disableRowSelectionOnClick={true}
               hideFooter={true}
