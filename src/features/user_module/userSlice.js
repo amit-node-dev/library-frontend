@@ -16,6 +16,7 @@ import {
 const initialState = {
   users: [],
   currentUser: null,
+  points: 0,
   loading: false,
   error: null,
   total: 0,
@@ -33,6 +34,9 @@ const userSlice = createSlice({
     },
     setPageSize(state, action) {
       state.pageSize = action.payload;
+    },
+    setPoints: (state, action) => {
+      state.points = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -134,7 +138,7 @@ const userSlice = createSlice({
       })
       .addCase(currentUserPoints.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentUser = action.payload;
+        state.points = action.payload.data.points;
       })
       .addCase(currentUserPoints.rejected, (state, action) => {
         state.loading = false;
@@ -143,6 +147,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { setPage, setPageSize } = userSlice.actions;
+export const { setPage, setPageSize, setPoints } = userSlice.actions;
 
 export default userSlice.reducer;

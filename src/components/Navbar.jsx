@@ -22,6 +22,12 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Popper,
+  Grow,
+  Paper,
+  ClickAwayListener,
+  List,
+  ListItem,
 } from "@mui/material";
 
 // MUI COLORS
@@ -41,14 +47,24 @@ import {
 
 // LOGO
 import BrandLogo from "../images/brand-logo.png";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { currentUserPoints } from "../features/user_module/userActions";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [points, setPoints] = useState(0);
+  // Get points from Redux store
+  const points = useSelector((state) => state.users.points);
+
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: "Your book request is approved" },
+    { id: 2, message: "Reminder: Return book by tomorrow" },
+    { id: 3, message: "New book added: JavaScript Essentials" },
+  ]);
+  const [openNotif, setOpenNotif] = useState(false);
+  const anchorRef = React.useRef(null);
+
   const [catalogMenuAnchorEl, setCatalogMenuAnchorEl] = useState(null);
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const [roleName, setRoleName] = useState("");
@@ -61,19 +77,7 @@ const Navbar = () => {
   const userId = localStorage.getItem("userId") || "";
 
   useEffect(() => {
-    const fetchPoints = async () => {
-      try {
-        const response = await dispatch(
-          currentUserPoints({ email, userId })
-        ).unwrap();
-        if (response?.data) {
-          setPoints(response.data.points);
-        }
-      } catch (error) {
-        console.error("Error fetching points:", error);
-      }
-    };
-    fetchPoints();
+    dispatch(currentUserPoints({ email, userId }));
   }, [dispatch, email, userId]);
 
   useEffect(() => {
@@ -94,6 +98,10 @@ const Navbar = () => {
 
   const handleMenuClose = (setAnchorEl) => {
     setAnchorEl(null);
+  };
+
+  const toggleNotifications = () => {
+    setOpenNotif((prevOpen) => !prevOpen);
   };
 
   return (
@@ -385,10 +393,50 @@ const Navbar = () => {
           >
             Points: {points}
           </Button>
-          <Box sx={{ marginRight: "20px", cursor: "pointer" }}>
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon color="action" />
-            </Badge>
+
+          {/* NOTIFICATIONS DROPDOWN */}
+          <Box sx={{ position: "relative", marginRight: "20px" }}>
+            <IconButton ref={anchorRef} onClick={toggleNotifications}>
+              <Badge badgeContent={notifications.length} color="secondary">
+                <NotificationsIcon color="action" />
+              </Badge>
+            </IconButton>
+            <Popper
+              open={openNotif}
+              anchorEl={anchorRef.current}
+              role={undefined}
+              placement="bottom-end"
+              transition
+              disablePortal
+            >
+              {({ TransitionProps }) => (
+                <Grow {...TransitionProps}>
+                  <Paper
+                    sx={{
+                      width: 250,
+                      boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    <ClickAwayListener onClickAway={() => setOpenNotif(false)}>
+                      <List>
+                        {notifications.length > 0 ? (
+                          notifications.map((notif) => (
+                            <ListItem key={notif.id} divider>
+                              <ListItemText primary={notif.message} />
+                            </ListItem>
+                          ))
+                        ) : (
+                          <ListItem>
+                            <ListItemText primary="No new notifications" />
+                          </ListItem>
+                        )}
+                      </List>
+                    </ClickAwayListener>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
           </Box>
 
           <Avatar

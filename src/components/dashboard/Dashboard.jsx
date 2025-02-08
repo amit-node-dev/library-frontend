@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import { styled } from "@mui/system";
+import { styled, keyframes } from "@mui/system";
 import Carousel from "react-material-ui-carousel";
 
 // IMAGES
@@ -27,6 +27,17 @@ const slides = [
   },
 ];
 
+// ANIMATIONS
+const fadeIn = keyframes`
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+`;
+
+const slideInText = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
 const StyledCarouselItem = styled("div")(() => ({
   position: "relative",
   display: "flex",
@@ -38,15 +49,7 @@ const StyledCarouselItem = styled("div")(() => ({
   "& img": {
     width: "100%",
     height: "auto",
-    animation: "fadeIn 2s ease-in-out",
-  },
-  "@keyframes fadeIn": {
-    "0%": { opacity: 0 },
-    "100%": { opacity: 1 },
-  },
-  "@keyframes fadeSlideIn": {
-    "0%": { opacity: 0, transform: "translateX(-100%)" },
-    "100%": { opacity: 1, transform: "translateX(0)" },
+    animation: `${fadeIn} 1.5s ease-in-out`,
   },
 }));
 
@@ -55,15 +58,12 @@ const TextOverlay = styled("div")(() => ({
   bottom: "20px",
   left: "20px",
   color: "#fff",
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  padding: "10px 20px",
-  borderRadius: "5px",
-  fontSize: "1.2rem",
-  animation: "textFadeIn 2s ease-in-out",
-  "@keyframes textFadeIn": {
-    "0%": { opacity: 0, transform: "translateY(20px)" },
-    "100%": { opacity: 1, transform: "translateY(0)" },
-  },
+  backgroundColor: "rgba(0, 0, 0, 0.6)",
+  padding: "12px 24px",
+  borderRadius: "8px",
+  fontSize: "1.3rem",
+  fontWeight: "bold",
+  animation: `${slideInText} 1.2s ease-in-out`,
 }));
 
 const Dashboard = () => {
@@ -81,7 +81,7 @@ const Dashboard = () => {
     <Box sx={{ textAlign: "center" }}>
       <Carousel
         animation="slide"
-        interval={3000}
+        interval={5000}
         autoPlay={true}
         indicators={false}
         navButtonsAlwaysVisible={true}
@@ -89,6 +89,7 @@ const Dashboard = () => {
           style: {
             backgroundColor: "cornflowerblue",
             color: "white",
+            borderRadius: "50%",
           },
         }}
       >
@@ -97,7 +98,6 @@ const Dashboard = () => {
             <img
               src={images[index]}
               alt={`slide-${index}`}
-              onLoad={(e) => (e.target.style.opacity = 1)}
               onError={() => handleImageError(index)}
             />
             <TextOverlay>{slide.text}</TextOverlay>

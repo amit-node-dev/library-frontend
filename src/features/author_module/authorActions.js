@@ -9,10 +9,7 @@ export const addNewAuthors = createAsyncThunk(
   "authors/addNewAuthors",
   async (authorsData, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(
-        `/authors/add_authors`,
-        authorsData
-      );
+      const response = await apiClient.post(`/authors/add-author`, authorsData);
       if (response.status === 201) {
         toast.success(response.data.message);
         return response.data;

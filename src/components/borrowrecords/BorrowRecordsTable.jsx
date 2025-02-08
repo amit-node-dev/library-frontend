@@ -135,6 +135,8 @@ const BorrowRecordsTable = () => {
     },
   ];
 
+  console.log(borrowRecords);
+
   return (
     <div className="borrow-container">
       <div className="borrow-header">
@@ -178,7 +180,9 @@ const BorrowRecordsTable = () => {
               density="compact"
               disableRowSelectionOnClick={true}
               hideFooter={true}
-              getRowId={(row) => row.id + row.user_id + row.book_id}
+              getRowId={(row) =>
+                row.id + row.book_id + parseInt(row.users?.mobileNumber)
+              }
               columns={columns}
               pageSize={pageSize}
               rowsPerPageOptions={[5, 10, 20]}

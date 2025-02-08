@@ -28,11 +28,13 @@ const AddEditAuthors = () => {
     firstname: "",
     lastname: "",
     email: "",
+    biography: "",
   });
 
   const [firstnameError, setFirstnameError] = useState("");
   const [lastnameError, setLastnameError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [biographyError, setBiographyError] = useState("");
 
   useEffect(() => {
     if (authorId) {
@@ -46,6 +48,7 @@ const AddEditAuthors = () => {
         firstname: currentAuthor.firstname,
         lastname: currentAuthor.lastname,
         email: currentAuthor.email,
+        biography: currentAuthor.biography,
       });
     }
   }, [currentAuthor, authorId]);
@@ -72,6 +75,12 @@ const AddEditAuthors = () => {
     setEmailError(authorData.email === "" ? "Email Id is required" : "");
   };
 
+  const handleBiographyBlur = () => {
+    setBiographyError(
+      authorData.biography === "" ? "Biography is required" : ""
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -94,10 +103,12 @@ const AddEditAuthors = () => {
       firstname: "",
       lastname: "",
       email: "",
+      biography: "",
     });
     setFirstnameError("");
     setLastnameError("");
     setEmailError("");
+    setBiographyError("");
   };
 
   const handleBack = () => {
@@ -123,7 +134,7 @@ const AddEditAuthors = () => {
             <Typography
               variant="h4"
               gutterBottom
-              sx={{ fontFamily: "cursive" }}
+              sx={{ fontFamily: "sans-serif" }}
             >
               {authorId ? "Edit Author" : "Add Author"}
             </Typography>
@@ -192,6 +203,25 @@ const AddEditAuthors = () => {
                   onBlur={handleEmailBlur}
                   error={!!emailError}
                   helperText={emailError}
+                  sx={{
+                    animation: "fadeIn 1s ease-in-out",
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  margin="normal"
+                  label="Biography"
+                  name="biography"
+                  value={authorData.biography}
+                  onChange={handleChange}
+                  onBlur={handleBiographyBlur}
+                  error={!!biographyError}
+                  helperText={biographyError}
+                  multiline
+                  rows={4}
                   sx={{
                     animation: "fadeIn 1s ease-in-out",
                   }}

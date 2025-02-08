@@ -33,13 +33,13 @@ const GlassmorphicContainer = styled(Container)({
   maxWidth: "900px",
   backdropFilter: "blur(10px)",
   boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
-  color: "#fff",
+  color: "#1c1c1b",
   textAlign: "center",
 });
 
 const AboutHeader = styled(Typography)({
   fontWeight: "bold",
-  color: "#fff",
+  color: "#1c1c1b",
   textAlign: "center",
   marginBottom: "1rem",
 });
@@ -47,12 +47,12 @@ const AboutHeader = styled(Typography)({
 const DescriptionText = styled(Typography)({
   textAlign: "justify",
   lineHeight: "1.6",
-  color: "#f1f1f1",
+  color: "#1c1c1b",
 });
 
 // Accordion Styling
 const StyledAccordion = styled(Accordion)({
-  backgroundColor: "rgba(255, 255, 255, 0.8)",
+  backgroundColor: "rgba(255, 255, 255, 0.2)",
   boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
 });
 
@@ -92,7 +92,7 @@ const About = () => {
           </AboutHeader>
           <Typography
             variant="h6"
-            sx={{ color: "#eee", fontStyle: "italic", marginBottom: "1rem" }}
+            sx={{ color: "#1c1c1b", fontStyle: "italic", marginBottom: "1rem" }}
           >
             "Empowering Libraries with Technology."
           </Typography>
@@ -134,7 +134,7 @@ const About = () => {
               <Grid item xs={12} md={4} key={index}>
                 <Card
                   sx={{
-                    backgroundColor: "rgba(255,255,255,0.8)",
+                    backgroundColor: "rgba(255, 255, 255, 0.2)",
                     textAlign: "center",
                     padding: "1rem",
                   }}
