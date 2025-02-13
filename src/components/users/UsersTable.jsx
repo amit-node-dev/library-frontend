@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 // THRID PARTY CONTENTS
 import { useDispatch, useSelector } from "react-redux";
@@ -67,6 +71,76 @@ const UsersTable = () => {
     );
     dispatch(getAllRolesList());
   }, [dispatch, page, pageSize, searchQuery, selectedRole]);
+
+  // Function to export data as PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Users List", 14, 15);
+
+    const tableColumn = [
+      "Id",
+      "Full Name",
+      "Role",
+      "Email Id",
+      "Mobile No",
+      "Created Date",
+      "Updated Date",
+    ];
+
+    const tableRows = users.map((user) => [
+      user.id,
+      user.firstname + " " + user.lastname,
+      user.role?.name,
+      user.email,
+      user.mobileNumber,
+      user.createdAt,
+      user.updatedAt,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("users_list.pdf");
+  };
+
+  // Function to export data as Excel
+  const handleExportExcel = () => {
+    const data = users.map((user) => ({
+      Id: user.id,
+      "Full Name": user.firstname + " " + user.lastname,
+      Role: user.role?.name,
+      "Email Id": user.email,
+      "Mobile No": user.mobileNumber,
+      "Created At": user.createdAt,
+      "Updated At": user.updatedAt,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelData = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    saveAs(excelData, "users_list.xlsx");
+  };
+
+  // Handle export selection
+  const handleExport = (format) => {
+    if (format === "pdf") {
+      handleExportPDF();
+    } else if (format === "excel") {
+      handleExportExcel();
+    }
+  };
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -188,7 +262,7 @@ const UsersTable = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 250,
+      width: 300,
       renderCell: ActionRenderer,
     },
   ];
@@ -204,6 +278,21 @@ const UsersTable = () => {
           Users
         </Typography>
         <div className="user-util">
+          {/* Export Button */}
+          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
+            <InputLabel id="export-select-label">Export</InputLabel>
+            <Select
+              labelId="export-select-label"
+              id="export-select"
+              onChange={(e) => handleExport(e.target.value)}
+              defaultValue=""
+            >
+              <MenuItem value="">Select Format</MenuItem>
+              <MenuItem value="pdf">Export as PDF</MenuItem>
+              <MenuItem value="excel">Export as Excel</MenuItem>
+            </Select>
+          </FormControl>
+
           <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
             <InputLabel id="role-select-label">By Role</InputLabel>
             <Select
@@ -279,8 +368,8 @@ const UsersTable = () => {
               columnHeaderHeight={50}
               autoHeight
               sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#f5f5f5",
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "#a9a9a9",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   borderTop: "1px solid #ddd",

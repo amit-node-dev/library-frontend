@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 // THRID PARTY CONTENTS
 import { useDispatch, useSelector } from "react-redux";
@@ -13,6 +17,10 @@ import {
   Pagination,
   Fab,
   Tooltip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -59,6 +67,62 @@ const RoleTable = () => {
     }
     setFilteredRoles(filtered);
   }, [searchQuery, roles]);
+
+  // Function to export data as PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Roles List", 14, 15);
+
+    const tableColumn = ["Id", "Role Name", "Created Date", "Updated Date"];
+
+    const tableRows = roles.map((role) => [
+      role.id,
+      role.name,
+      role.createdAt,
+      role.updatedAt,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("roles_list.pdf");
+  };
+
+  // Function to export data as Excel
+  const handleExportExcel = () => {
+    const data = roles.map((role) => ({
+      Id: role.id,
+      "Role Name": role.name,
+      "Created At": role.createdAt,
+      "Updated At": role.updatedAt,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Roles List");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelData = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    saveAs(excelData, "roles_list.xlsx");
+  };
+
+  // Handle export selection
+  const handleExport = (format) => {
+    if (format === "pdf") {
+      handleExportPDF();
+    } else if (format === "excel") {
+      handleExportExcel();
+    }
+  };
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -113,7 +177,7 @@ const RoleTable = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 350,
+      width: 400,
       renderCell: (params) => (
         <div className="actions-container">
           <Tooltip title="Edit">
@@ -151,6 +215,21 @@ const RoleTable = () => {
           Roles
         </Typography>
         <div className="role-util">
+          {/* Export Button */}
+          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
+            <InputLabel id="export-select-label">Export</InputLabel>
+            <Select
+              labelId="export-select-label"
+              id="export-select"
+              onChange={(e) => handleExport(e.target.value)}
+              defaultValue=""
+            >
+              <MenuItem value="">Select Format</MenuItem>
+              <MenuItem value="pdf">Export as PDF</MenuItem>
+              <MenuItem value="excel">Export as Excel</MenuItem>
+            </Select>
+          </FormControl>
+
           {roleId === "1" && (
             <Tooltip title="Add">
               <Fab
@@ -208,8 +287,8 @@ const RoleTable = () => {
               columnHeaderHeight={50}
               autoHeight
               sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#f5f5f5",
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "#a9a9a9",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   borderTop: "1px solid #ddd",

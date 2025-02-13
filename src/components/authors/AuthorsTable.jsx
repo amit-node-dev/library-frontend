@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 // THIRD PARTY COMPONENTS
 import { useDispatch, useSelector } from "react-redux";
@@ -13,6 +17,10 @@ import {
   Pagination,
   Fab,
   Tooltip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -54,6 +62,70 @@ const AuthorsTable = () => {
       })
     );
   }, [dispatch, page, pageSize, searchQuery]);
+
+  // Function to export data as PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Users List", 14, 15);
+
+    const tableColumn = [
+      "Id",
+      "Full Name",
+      "Email Id",
+      "Created Date",
+      "Updated Date",
+    ];
+
+    const tableRows = authors.map((author) => [
+      author.id,
+      author.firstname + " " + author.lastname,
+      author.email,
+      author.createdAt,
+      author.updatedAt,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("authors_list.pdf");
+  };
+
+  // Function to export data as Excel
+  const handleExportExcel = () => {
+    const data = authors.map((author) => ({
+      Id: author.id,
+      "Full Name": author.firstname + " " + author.lastname,
+      "Email Id": author.email,
+      "Created At": author.createdAt,
+      "Updated At": author.updatedAt,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Authors List");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelData = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    saveAs(excelData, "authors_list.xlsx");
+  };
+
+  // Handle export selection
+  const handleExport = (format) => {
+    if (format === "pdf") {
+      handleExportPDF();
+    } else if (format === "excel") {
+      handleExportExcel();
+    }
+  };
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -109,7 +181,7 @@ const AuthorsTable = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 300,
+      width: 400,
       renderCell: (params) => (
         <div className="actions-container">
           <Tooltip title="Edit">
@@ -148,6 +220,21 @@ const AuthorsTable = () => {
           Authors
         </Typography>
         <div className="author-util">
+          {/* Export Button */}
+          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
+            <InputLabel id="export-select-label">Export</InputLabel>
+            <Select
+              labelId="export-select-label"
+              id="export-select"
+              onChange={(e) => handleExport(e.target.value)}
+              defaultValue=""
+            >
+              <MenuItem value="">Select Format</MenuItem>
+              <MenuItem value="pdf">Export as PDF</MenuItem>
+              <MenuItem value="excel">Export as Excel</MenuItem>
+            </Select>
+          </FormControl>
+
           {roleId === "1" && (
             <Tooltip title="Add">
               <Fab
@@ -205,8 +292,8 @@ const AuthorsTable = () => {
               columnHeaderHeight={50}
               autoHeight
               sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#f5f5f5",
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "#a9a9a9",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   borderTop: "1px solid #ddd",

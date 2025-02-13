@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 // THIRD PARTY IMPORTS
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +11,15 @@ import { ClipLoader } from "react-spinners";
 
 // MUI IMPORTS
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Typography, Pagination } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Pagination,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 
 // ACTIONS & STORES
 import { getAllPenaltiesList } from "../../features/penalties_module/penaltiesAction";
@@ -39,6 +51,64 @@ const PenaltiesTable = () => {
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
     dispatch(getAllPenaltiesList({ page: newPage, pageSize }));
+  };
+
+  // Function to export data as PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Borrow Records List", 14, 15);
+
+    const tableColumn = ["Id", "Book Name", "Full Name", "Fine Amount", "Date"];
+
+    const tableRows = penalties.map((penality) => [
+      penality.id,
+      penality.bookname,
+      penality.fullname,
+      penality.fine,
+      penality.createdAt,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("penalties_list.pdf");
+  };
+
+  // Function to export data as Excel
+  const handleExportExcel = () => {
+    const data = penalties.map((penality) => ({
+      Id: penality.id,
+      "Book Name": penality.bookname,
+      "Full Name": penality.fullname,
+      "Fine Amount": penality.fine,
+      Date: penality.createdAt,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Penalties List");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelData = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    saveAs(excelData, "penalties_list.xlsx");
+  };
+
+  // Handle export selection
+  const handleExport = (format) => {
+    if (format === "pdf") {
+      handleExportPDF();
+    } else if (format === "excel") {
+      handleExportExcel();
+    }
   };
 
   const handlePageSizeChange = (event) => {
@@ -79,7 +149,7 @@ const PenaltiesTable = () => {
     {
       field: "createdAt",
       headerName: "Date",
-      width: 200,
+      width: 450,
       renderCell: (params) =>
         params.row.createdAt
           ? dayjs(params.row.createdAt).format("YYYY-MM-DD")
@@ -94,6 +164,21 @@ const PenaltiesTable = () => {
           Penalty Records
         </Typography>
         <div className="penalties-util">
+          {/* Export Button */}
+          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
+            <InputLabel id="export-select-label">Export</InputLabel>
+            <Select
+              labelId="export-select-label"
+              id="export-select"
+              onChange={(e) => handleExport(e.target.value)}
+              defaultValue=""
+            >
+              <MenuItem value="">Select Format</MenuItem>
+              <MenuItem value="pdf">Export as PDF</MenuItem>
+              <MenuItem value="excel">Export as Excel</MenuItem>
+            </Select>
+          </FormControl>
+
           <input
             type="text"
             className="book-search-input"
@@ -139,8 +224,8 @@ const PenaltiesTable = () => {
               columnHeaderHeight={50}
               autoHeight
               sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#f5f5f5",
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "#a9a9a9",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   borderTop: "1px solid #ddd",

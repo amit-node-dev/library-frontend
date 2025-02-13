@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 // THIRD PARTY IMPORTS
 import { useDispatch, useSelector } from "react-redux";
@@ -74,6 +78,85 @@ const BooksTable = () => {
     dispatch(getAllCategoryList());
     dispatch(getAllAuthorsList());
   }, [dispatch, page, pageSize, searchQuery, selectedCategory, selectedAuthor]);
+
+  // Function to export data as PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Books List", 14, 15);
+
+    const tableColumn = [
+      "Id",
+      "ISBN",
+      "Book Name",
+      "Publisher",
+      "Publication Year",
+      "Points Required",
+      "Category",
+      "Total Copies",
+      "Available Copies",
+      "Location",
+    ];
+
+    const tableRows = books.map((book) => [
+      book.id,
+      book.isbn,
+      book.bookname,
+      book.publisher,
+      book.publication_year,
+      book.points_required,
+      book.category?.name || "N/A",
+      book.total_copies,
+      book.available_copies,
+      book.location,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("books_list.pdf");
+  };
+
+  // Function to export data as Excel
+  const handleExportExcel = () => {
+    const data = books.map((book) => ({
+      Id: book.id,
+      ISBN: book.isbn,
+      "Book Name": book.bookname,
+      Publisher: book.publisher,
+      "Publication Year": book.publication_year,
+      "Points Required": book.points_required,
+      Category: book.category?.name || "N/A",
+      "Total Copies": book.total_copies,
+      "Available Copies": book.available_copies,
+      Location: book.location,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Books");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelData = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    saveAs(excelData, "books_list.xlsx");
+  };
+
+  // Handle export selection
+  const handleExport = (format) => {
+    if (format === "pdf") {
+      handleExportPDF();
+    } else if (format === "excel") {
+      handleExportExcel();
+    }
+  };
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -214,9 +297,25 @@ const BooksTable = () => {
     <div className="book-container">
       <div className="book-header">
         <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
-          List Of Books
+          List of Books
         </Typography>
         <div className="book-util">
+          {/* Export Button */}
+          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
+            <InputLabel id="export-select-label">Export</InputLabel>
+            <Select
+              labelId="export-select-label"
+              id="export-select"
+              onChange={(e) => handleExport(e.target.value)}
+              defaultValue=""
+            >
+              <MenuItem value="">Select Format</MenuItem>
+              <MenuItem value="pdf">Export as PDF</MenuItem>
+              <MenuItem value="excel">Export as Excel</MenuItem>
+            </Select>
+          </FormControl>
+
+          {/* Category Filters */}
           <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
             <InputLabel id="category-select-label">By Category</InputLabel>
             <Select
@@ -234,6 +333,7 @@ const BooksTable = () => {
             </Select>
           </FormControl>
 
+          {/* Author Filters */}
           <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
             <InputLabel id="author-select-label">By Author</InputLabel>
             <Select
@@ -308,8 +408,8 @@ const BooksTable = () => {
               columnHeaderHeight={50}
               autoHeight
               sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#f5f5f5",
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "#a9a9a9",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   borderTop: "1px solid #ddd",

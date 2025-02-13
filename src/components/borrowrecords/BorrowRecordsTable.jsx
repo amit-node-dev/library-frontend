@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 // THIRD PARTY IMPORTS
 import { useDispatch, useSelector } from "react-redux";
@@ -45,6 +49,77 @@ const BorrowRecordsTable = () => {
       getAllBorrowRecordList({ page, pageSize, status: selectedStatus })
     );
   }, [dispatch, page, pageSize, selectedStatus]);
+
+  // Function to export data as PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Borrow Records List", 14, 15);
+
+    const tableColumn = [
+      "Id",
+      "Book Name",
+      "Booked User",
+      "Status",
+      "Borrow At",
+      "Due Date At",
+      "Return At",
+    ];
+
+    const tableRows = borrowRecords.map((borrowRecord) => [
+      borrowRecord.id,
+      borrowRecord.books.bookname,
+      borrowRecord.users?.firstname + " " + borrowRecord.users?.lastname,
+      borrowRecord.status,
+      borrowRecord.borrow_date,
+      borrowRecord.due_date,
+      borrowRecord.return_date,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("borrow_records_list.pdf");
+  };
+
+  // Function to export data as Excel
+  const handleExportExcel = () => {
+    const data = borrowRecords.map((borrowRecord) => ({
+      Id: borrowRecord.id,
+      "Book Name": borrowRecord.books.bookname,
+      "Booked User":
+        borrowRecord.users?.firstname + " " + borrowRecord.users?.lastname,
+      Status: borrowRecord.status,
+      "Borrow At": borrowRecord.borrow_date,
+      "Due Date At": borrowRecord.due_date,
+      "Return At": borrowRecord.return_date,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Borrow_Records");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelData = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    saveAs(excelData, "books_list.xlsx");
+  };
+
+  // Handle export selection
+  const handleExport = (format) => {
+    if (format === "pdf") {
+      handleExportPDF();
+    } else if (format === "excel") {
+      handleExportExcel();
+    }
+  };
 
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
@@ -135,8 +210,6 @@ const BorrowRecordsTable = () => {
     },
   ];
 
-  console.log(borrowRecords);
-
   return (
     <div className="borrow-container">
       <div className="borrow-header">
@@ -144,6 +217,21 @@ const BorrowRecordsTable = () => {
           Borrow Records
         </Typography>
         <div className="borrow-util">
+          {/* Export Button */}
+          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
+            <InputLabel id="export-select-label">Export</InputLabel>
+            <Select
+              labelId="export-select-label"
+              id="export-select"
+              onChange={(e) => handleExport(e.target.value)}
+              defaultValue=""
+            >
+              <MenuItem value="">Select Format</MenuItem>
+              <MenuItem value="pdf">Export as PDF</MenuItem>
+              <MenuItem value="excel">Export as Excel</MenuItem>
+            </Select>
+          </FormControl>
+
           <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
             <InputLabel id="status-select-label">By Status</InputLabel>
             <Select
@@ -197,8 +285,8 @@ const BorrowRecordsTable = () => {
               columnHeaderHeight={50}
               autoHeight
               sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#f5f5f5",
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "#a9a9a9",
                 },
                 "& .MuiDataGrid-footerContainer": {
                   borderTop: "1px solid #ddd",
