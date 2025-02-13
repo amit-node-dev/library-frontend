@@ -142,52 +142,61 @@ const BooksTable = () => {
 
   // Define columns with custom renderers
   const columns = [
-    { field: "id", headerName: "Id", width: 50 },
+    { field: "id", headerName: "Id", width: 70, sortable: false },
     {
       field: "isbn",
       headerName: "ISBN",
       width: 150,
+      sortable: false,
     },
     {
       field: "bookname",
       headerName: "Book Name",
       width: 250,
+      sortable: false,
     },
     {
       field: "publisher",
       headerName: "Publisher",
       width: 200,
+      sortable: false,
     },
     {
       field: "publication_year",
       headerName: "Publication Year",
       width: 150,
+      sortable: false,
     },
     {
       field: "points_required",
       headerName: "Points Required",
       width: 150,
+      sortable: false,
     },
     {
       field: "category",
       headerName: "Category",
       width: 150,
+      sortable: false,
       renderCell: (params) => params.row.category?.name,
     },
     {
       field: "total_copies",
       headerName: "Total Copies",
       width: 120,
+      sortable: false,
     },
     {
       field: "available_copies",
       headerName: "Available Copies",
       width: 150,
+      sortable: false,
     },
     {
       field: "location",
       headerName: "Location",
       width: 150,
+      sortable: false,
     },
     {
       field: "actions",

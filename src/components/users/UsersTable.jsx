@@ -42,6 +42,8 @@ const UsersTable = () => {
   );
   const { roles } = useSelector((state) => state.roles);
 
+  const userId = localStorage.getItem("userId") || "";
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -90,6 +92,7 @@ const UsersTable = () => {
   };
 
   const ActionRenderer = (params) => {
+    const isCurrentUser = params.row.id.toString() === userId;
     return (
       <div className="actions-container">
         <Tooltip title="Edit">
@@ -101,12 +104,14 @@ const UsersTable = () => {
             <EditIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
+        <Tooltip
+          title={isCurrentUser ? "You cannot delete yourself" : "Delete"}
+        >
           <IconButton
             color="error"
             onClick={() => handleDelete(params.row.id)}
             style={{ marginLeft: 10 }}
-            disabled={roleId !== "1"}
+            disabled={roleId !== "1" || isCurrentUser}
           >
             <DeleteIcon />
           </IconButton>

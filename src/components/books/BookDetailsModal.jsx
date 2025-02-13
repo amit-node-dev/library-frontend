@@ -145,7 +145,7 @@ const BookDetailsModal = ({ open, onClose, book }) => {
       if (response.statusType === true) {
         setBookStatus(response.data.status);
         handleCheckBorrowStatus();
-        dispatch(getAllBooksList({ page: 1, pageSize: 5 }));
+        dispatch(getAllBooksList({ page: 1, pageSize: 10 }));
         closeBorrowModal();
       }
     } catch (error) {

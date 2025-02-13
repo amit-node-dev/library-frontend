@@ -28,6 +28,7 @@ import {
   ClickAwayListener,
   List,
   ListItem,
+  keyframes,
 } from "@mui/material";
 
 // MUI COLORS
@@ -43,6 +44,7 @@ import {
   Notifications as NotificationsIcon,
   ArrowBack as ArrowBackIcon,
   CurrencyExchange,
+  Refresh as RefreshIcon,
 } from "@mui/icons-material";
 
 // LOGO
@@ -68,6 +70,7 @@ const Navbar = () => {
   const [catalogMenuAnchorEl, setCatalogMenuAnchorEl] = useState(null);
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const [roleName, setRoleName] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const firstName = localStorage.getItem("firstname") || "";
   const lastName = localStorage.getItem("lastname") || "";
@@ -80,10 +83,28 @@ const Navbar = () => {
     dispatch(currentUserPoints({ email, userId }));
   }, [dispatch, email, userId]);
 
+  const handleRefreshPoints = async () => {
+    if (isRefreshing) return;
+
+    setIsRefreshing(true);
+    try {
+      await dispatch(currentUserPoints({ email, userId })).unwrap();
+    } catch (error) {
+      toast.error("Failed to refresh points");
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 500);
+    }
+  };
+
   useEffect(() => {
     const roles = { 1: "Super Admin", 2: "Admin" };
     setRoleName(roles[roleId] || "Customer");
   }, [roleId]);
+
+  const rotateAnimation = keyframes`
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  `;
 
   const handleLogout = async () => {
     await apiClient.post(`/auth/logout`);
@@ -380,6 +401,7 @@ const Navbar = () => {
             About
           </Typography>
         </Box>
+
         <Box display="flex" alignItems="center">
           <Button
             variant="contained"
@@ -392,6 +414,18 @@ const Navbar = () => {
             }}
           >
             Points: {points}
+            <IconButton
+              size="small"
+              onClick={handleRefreshPoints}
+              sx={{
+                color: "#343a40",
+                animation: isRefreshing
+                  ? `${rotateAnimation} 0.5s linear`
+                  : "none",
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
           </Button>
 
           {/* NOTIFICATIONS DROPDOWN */}
