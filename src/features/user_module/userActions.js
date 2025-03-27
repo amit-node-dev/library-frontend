@@ -31,8 +31,9 @@ export const registerUser = createAsyncThunk(
 // LOGIN USER
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async ({ email, password }, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
     try {
+      const {email, password} = formData
       const response = await apiClient.post(`/auth/login`, {
         email,
         password,

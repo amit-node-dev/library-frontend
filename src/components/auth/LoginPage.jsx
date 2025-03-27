@@ -1,14 +1,6 @@
-// REACT IMPORTS
 import React, { useState } from "react";
-
-// THIRD PARTY IMPORTS
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-
-// ACTIONS & STORES
-import { loginUser } from "../../features/user_module/userActions";
-
-// MATERIAL-UI IMPORTS
 import {
   TextField,
   Button,
@@ -16,127 +8,189 @@ import {
   InputAdornment,
   IconButton,
   Divider,
+  Box,
+  Paper,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import loginImage from "../../images/loginPage.jpg";
 
-// CSS
-import "./auth.css";
-import loginPage from "../../images/loginPage.jpg";
+import { loginUser } from "../../features/user_module/userActions";
+import { validateEmail, validatePassword } from "../../utils/validations";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+  
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  
+  const [touched, setTouched] = useState({
+    email: false,
+    password: false,
+  });
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleEmailBlur = () => {
-    setEmailError(email === "" ? "Email Id is required" : "");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Validate on change if field was touched
+    if (touched[name]) {
+      validateField(name, value);
+    }
   };
 
-  const handlePasswordBlur = () => {
-    setPasswordError(password === "" ? "Password is required" : "");
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched((prev) => ({
+      ...prev,
+      [name]: true,
+    }));
+    validateField(name, formData[name]);
   };
 
-  const handleClickShowPassword = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+  const validateField = (name, value) => {
+    let error = "";
+    
+    switch (name) {
+      case "email":
+        error = validateEmail(value);
+        break;
+      case "password":
+        error = validatePassword(value);
+        break;
+      default:
+        break;
+    }
+    
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
   };
 
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
+  const validateForm = () => {
+    const newErrors = {
+      email: validateEmail(formData.email),
+      password: validatePassword(formData.password),
+    };
+    
+    setErrors(newErrors);
+    setTouched({
+      email: true,
+      password: true,
+    });
+
+    return !Object.values(newErrors).some((error) => error);
   };
 
-  const handleSubmitLoginForm = async (e) => {
+  const handleSubmit = (e) => {
+    setLoading(false)
     e.preventDefault();
-    try {
-      setEmailError("");
-      setPasswordError("");
-
-      handleEmailBlur();
-      handlePasswordBlur();
-
-      if (email && password) {
-        const response = await dispatch(
-          loginUser({
-            email,
-            password,
-          })
-        ).unwrap();
-        if (response.statusType === true) {
-          localStorage.setItem("accessToken", response.data.accessToken);
-          localStorage.setItem("firstname", response.data.firstname);
-          localStorage.setItem("lastname", response.data.lastname);
-          localStorage.setItem("email", response.data.email);
-          localStorage.setItem("roleId", response.data.roleId);
-          localStorage.setItem("userId", response.data.userId);
-
-          navigate("/dashboard");
-        }
-      }
-    } catch (error) {
-      console.log("ERROR IN HANDLE SUBMIT ::: ", error);
+    
+    if (validateForm()) {
+      dispatch(loginUser(formData));
     }
   };
 
-  const handleOpenOTPBasedLogin = () => {
-    try {
-      navigate("/mobile_otp_based");
-    } catch (error) {
-      console.log("ERROR IN HANDLE OTP BASED LOGIN ::: ", error);
-    }
-  };
-
-  const handleReset = () => {
-    setEmail("");
-    setEmailError("");
-    setPassword("");
-    setPasswordError("");
+  const handleOTPLogin = () => {
+    navigate("/mobile-login");
   };
 
   return (
-    <div className="main-container">
-      <div className="image-container">
-        <img src={loginPage} alt="Login Page" className="login-image" />
-      </div>
-      <div className="form-wrapper">
-        <form className="form-container" onSubmit={handleSubmitLoginForm}>
-          <div className="form-group">
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5",
+      }}
+    >
+      {/* Image Section */}
+      <Box
+        sx={{
+          flex: 1,
+          display: { xs: "none", md: "flex" },
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundImage: `url(${loginImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+
+      {/* Form Section */}
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          p: 4,
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            width: "100%",
+            maxWidth: 450,
+            borderRadius: 2,
+          }}
+        >
+          <Typography variant="h4" component="h1" gutterBottom align="center">
+            Welcome Back
+          </Typography>
+          
+          <Typography variant="body2" color="textSecondary" align="center" mb={4}>
+            Please sign in to continue
+          </Typography>
+
+          <form onSubmit={handleSubmit}>
             <TextField
-              id="email"
-              label="Email Id"
-              placeholder="Enter Email Id"
-              variant="standard"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={handleEmailBlur}
-              error={!!emailError}
-              helperText={emailError}
               fullWidth
               margin="normal"
+              label="Email Address"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.email && !!errors.email}
+              helperText={touched.email && errors.email}
+              autoComplete="email"
             />
-          </div>
-          <div className="form-group">
+
             <TextField
-              id="password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              variant="standard"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onBlur={handlePasswordBlur}
-              error={!!passwordError}
-              helperText={passwordError}
               fullWidth
               margin="normal"
+              label="Password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.password && !!errors.password}
+              helperText={touched.password && errors.password}
+              autoComplete="current-password"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -144,53 +198,59 @@ const LoginPage = () => {
                 ),
               }}
             />
-          </div>
-          <div className="form-button">
-            <Button
-              type="submit"
-              size="small"
-              variant="contained"
-              color="success"
-              fullWidth
-              style={{ marginTop: "1rem", marginRight: "5px" }}
-            >
-              Login
-            </Button>
-            <Button
-              type="reset"
-              size="small"
-              variant="contained"
-              color="error"
-              fullWidth
-              style={{ marginTop: "1rem", marginLeft: "5px" }}
-              onClick={handleReset}
-            >
-              Reset
-            </Button>
-          </div>
-          <hr />
-          <div className="center-text" style={{ marginBottom: "2rem" }}>
-            <Typography align="center" variant="caption" component="h4">
-              If you don't have an account
-            </Typography>
-            <Link to="/register" className="register-link">
-              Register
-            </Link>
-          </div>
 
-          <Divider />
-          <Button
-            onClick={handleOpenOTPBasedLogin}
-            variant="contained"
-            color="primary"
-            fullWidth
-            style={{ marginTop: "2rem" }}
-          >
-            Use Mobile Number
-          </Button>
-        </form>
-      </div>
-    </div>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+              <Link to="/forgot-password" style={{ textDecoration: "none" }}>
+                <Typography variant="body2" color="primary">
+                  Forgot Password?
+                </Typography>
+              </Link>
+            </Box>
+
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ mt: 2, mb: 2, height: 48 }}
+            >
+              {loading ? <CircularProgress size={24} /> : "Sign In"}
+            </Button>
+
+            <Divider sx={{ my: 3 }}>
+              <Typography variant="body2" color="textSecondary">
+                OR
+              </Typography>
+            </Divider>
+
+            <Button
+              fullWidth
+              variant="outlined"
+              color="primary"
+              onClick={handleOTPLogin}
+              sx={{ mb: 2, height: 48 }}
+            >
+              Login with Mobile OTP
+            </Button>
+
+            <Box sx={{ textAlign: "center", mt: 3 }}>
+              <Typography variant="body2">
+                Don't have an account?{" "}
+                <Link to="/register" style={{ textDecoration: "none" }}>
+                  <Typography
+                    variant="body2"
+                    component="span"
+                    color="primary"
+                  >
+                    Sign Up
+                  </Typography>
+                </Link>
+              </Typography>
+            </Box>
+          </form>
+        </Paper>
+      </Box>
+    </Box>
   );
 };
 
