@@ -18,9 +18,21 @@ const slides = [
     image: pic1,
     text: "Purpose of a library management system is to manage & track the daily work of the library such as issuing books, return books, due calculations, etc",
   },
-  { image: pic2, text: "Check out the latest updates" },
-  { image: pic3, text: "Discover new features" },
-  { image: pic4, text: "Stay informed" },
+  { 
+    image: pic2, 
+    text: "Check out the latest updates",
+    textPosition: "center" 
+  },
+  { 
+    image: pic3, 
+    text: "Discover new features",
+    textPosition: "right" 
+  },
+  { 
+    image: pic4, 
+    text: "Stay informed",
+    textPosition: "center" 
+  },
   {
     image: pic5,
     text: "RBAC is an approach to restricting system access to authorized users, and to implementing mandatory access control or discretionary access control.",
@@ -28,45 +40,87 @@ const slides = [
 ];
 
 // ANIMATIONS
-const fadeIn = keyframes`
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+const zoomIn = keyframes`
+  from { transform: scale(1.1); }
+  to { transform: scale(1); }
 `;
 
-const slideInText = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
+const slideInFromLeft = keyframes`
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+`;
+
+const slideInFromRight = keyframes`
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+`;
+
+const slideInFromBottom = keyframes`
+  from { opacity: 0; transform: translateY(50px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-const StyledCarouselItem = styled("div")(() => ({
+const StyledCarouselItem = styled("div")({
   position: "relative",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "835px",
-  backgroundColor: "#dedede",
+  height: "calc(100vh - 70px)",
+  minHeight: "600px",
+  maxHeight: "900px",
   overflow: "hidden",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "#1a1a1a",
+});
+
+const ImageWrapper = styled("div")({
+  position: "absolute",
+  width: "100%",
+  height: "100%",
   "& img": {
     width: "100%",
-    height: "auto",
-    animation: `${fadeIn} 1.5s ease-in-out`,
+    height: "100%",
+    objectFit: "cover",
+    animation: `${zoomIn} 20s ease-in-out infinite alternate`,
+  },
+});
+
+const GradientOverlay = styled("div")({
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%)",
+});
+
+const TextOverlay = styled("div")(({ textposition }) => ({
+  position: "absolute",
+  color: "#ffffff",
+  padding: "32px",
+  maxWidth: "800px",
+  textAlign: textposition === "center" ? "center" : textposition === "right" ? "right" : "left",
+  left: textposition === "left" || textposition === "center" ? "50%" : "auto",
+  right: textposition === "right" ? "10%" : "auto",
+  bottom: "15%",
+  transform: textposition === "center" ? "translateX(-50%)" : "none",
+  animation: `
+    ${textposition === "right" ? slideInFromRight : 
+      textposition === "center" ? slideInFromBottom : slideInFromLeft} 
+    1s ease-out forwards`,
+  "& p": {
+    fontSize: "1.5rem",
+    fontWeight: 400,
+    lineHeight: 1.6,
+    textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+    marginBottom: "16px",
+    "@media (max-width: 960px)": {
+      fontSize: "1.2rem",
+    },
   },
 }));
 
-const TextOverlay = styled("div")(() => ({
-  position: "absolute",
-  bottom: "20px",
-  left: "20px",
-  color: "#fff",
-  backgroundColor: "rgba(0, 0, 0, 0.6)",
-  padding: "12px 24px",
-  borderRadius: "8px",
-  fontSize: "1.3rem",
-  fontWeight: "bold",
-  animation: `${slideInText} 1.2s ease-in-out`,
-}));
-
 const Dashboard = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
   const [images, setImages] = useState(slides.map((slide) => slide.image));
 
   const handleImageError = (index) => {
@@ -77,30 +131,47 @@ const Dashboard = () => {
     });
   };
 
+  const handleChange = (index) => {
+    setActiveIndex(index);
+  };
+
   return (
-    <Box sx={{ textAlign: "center" }}>
+    <Box sx={{ position: "relative" }}>
       <Carousel
-        animation="slide"
-        interval={5000}
+        animation="fade"
+        interval={6000}
+        duration={1000}
         autoPlay={true}
         indicators={false}
         navButtonsAlwaysVisible={true}
+        onChange={handleChange}
         navButtonsProps={{
           style: {
-            backgroundColor: "cornflowerblue",
-            color: "white",
-            borderRadius: "50%",
+            backgroundColor: "rgba(255,255,255,0.3)",
+            color: "#ffffff",
+            borderRadius: 0,
+            height: "100px",
+            marginTop: "-50px",
+            "&:hover": {
+              backgroundColor: "rgba(255,255,255,0.5)",
+            },
           },
         }}
+        fullHeightHover={false}
       >
         {slides.map((slide, index) => (
           <StyledCarouselItem key={index}>
-            <img
-              src={images[index]}
-              alt={`slide-${index}`}
-              onError={() => handleImageError(index)}
-            />
-            <TextOverlay>{slide.text}</TextOverlay>
+            <ImageWrapper>
+              <img
+                src={images[index]}
+                alt={`slide-${index}`}
+                onError={() => handleImageError(index)}
+              />
+            </ImageWrapper>
+            <GradientOverlay />
+            <TextOverlay textposition={slide.textPosition || "left"}>
+              <p>{slide.text}</p>
+            </TextOverlay>
           </StyledCarouselItem>
         ))}
       </Carousel>

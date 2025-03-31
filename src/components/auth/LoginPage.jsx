@@ -112,7 +112,7 @@ const LoginPage = () => {
         navigate("/dashboard")
 
         localStorage.setItem("accessToken", response.data?.tokens?.accessToken)
-        localStorage.setItem("userData", response.data?.user)
+        localStorage.setItem("userData", JSON.stringify(response.data?.user))
       } finally {
         setLoading(false);
       }
