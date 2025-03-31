@@ -113,7 +113,7 @@ const Navbar = ({ onMenuToggle }) => {
   const lastName = userInfo.lastname || "";
   const email = userInfo.email || "";
   const userId = userInfo.id || "";
-  const roleName = userInfo.role || "Guest";
+  const roleName = userInfo.roleName || "Guest";
   const avatarChar = firstName?.charAt(0).toUpperCase() || "?";
 
   const unreadNotifications = notifications.filter(n => !n.read).length;

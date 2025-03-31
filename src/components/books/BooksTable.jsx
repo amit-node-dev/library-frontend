@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
-
-// THIRD PARTY IMPORTS
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-
-// MUI IMPORTS
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
@@ -21,27 +13,77 @@ import {
   Select,
   MenuItem,
   Tooltip,
+  TextField,
+  Paper,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import Fab from "@mui/material/Fab";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import {
+  Add,
+  Edit,
+  Delete,
+  Visibility,
+  PictureAsPdf,
+  GridOn,
+  Clear,
+  Search,
+} from "@mui/icons-material";
+import { styled } from "@mui/system";
+import { toast } from "react-toastify";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
-// CUSTOM COMPONENTS
-import BookDetailsModal from "./BookDetailsModal";
-
-// ACTIONS & STORES
+// Actions & Stores
 import {
   getAllBooksList,
   deleteBooks,
 } from "../../features/book_module/bookActions";
+import { setPage, setPageSize } from "../../features/book_module/bookSlice";
 import { getAllAuthorsList } from "../../features/author_module/authorActions";
 import { getAllCategoryList } from "../../features/category_module/categoryActions";
-import { setPage, setPageSize } from "../../features/book_module/bookSlice";
 
-// CSS IMPORTS
-import "./books.css";
+// Styled Components
+const Container = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(1),
+  borderRadius: "10px",
+  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  backgroundColor: "",
+}));
+
+const Header = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: theme.spacing(3),
+  flexWrap: "wrap",
+  gap: theme.spacing(2),
+}));
+
+const FilterSection = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing(2),
+  flexWrap: "wrap",
+}));
+
+const SearchField = styled(TextField)(({ theme }) => ({
+  minWidth: "250px",
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "8px",
+  },
+}));
+
+const ActionButton = styled(IconButton)(({ theme }) => ({
+  transition: "all 0.2s ease",
+  "&:hover": {
+    transform: "scale(1.1)",
+  },
+}));
 
 const BooksTable = () => {
   const { books, loading, error, total, page, pageSize } = useSelector(
@@ -54,16 +96,16 @@ const BooksTable = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortModel, setSortModel] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAuthor, setSelectedAuthor] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState(null);
 
-  const startEntry = (page - 1) * pageSize + 1;
-  const endEntry = Math.min(page * pageSize, total);
-
-  const roleId = localStorage.getItem("roleId");
+  const userData = localStorage.getItem("userData");
+  const userInfo = JSON.parse(userData) || {};
+  const roleId = userInfo?.roleId || 0;
 
   useEffect(() => {
     dispatch(
@@ -79,7 +121,7 @@ const BooksTable = () => {
     dispatch(getAllAuthorsList());
   }, [dispatch, page, pageSize, searchQuery, selectedCategory, selectedAuthor]);
 
-  // Function to export data as PDF
+  // Export functions
   const handleExportPDF = () => {
     const doc = new jsPDF();
     doc.text("Books List", 14, 15);
@@ -114,12 +156,23 @@ const BooksTable = () => {
       head: [tableColumn],
       body: tableRows,
       startY: 20,
+      styles: {
+        cellPadding: 3,
+        fontSize: 10,
+        valign: "middle",
+        halign: "center",
+      },
+      headStyles: {
+        fillColor: [63, 81, 181],
+        textColor: 255,
+        fontStyle: "bold",
+      },
     });
 
     doc.save("books_list.pdf");
+    toast.success("PDF exported successfully");
   };
 
-  // Function to export data as Excel
   const handleExportExcel = () => {
     const data = books.map((book) => ({
       Id: book.id,
@@ -147,39 +200,41 @@ const BooksTable = () => {
     });
 
     saveAs(excelData, "books_list.xlsx");
+    toast.success("Excel exported successfully");
   };
 
-  // Handle export selection
-  const handleExport = (format) => {
-    if (format === "pdf") {
-      handleExportPDF();
-    } else if (format === "excel") {
-      handleExportExcel();
-    }
-  };
-
+  // Pagination handlers
   const handlePageChange = (event, newPage) => {
     dispatch(setPage(newPage));
-    dispatch(getAllBooksList({ page: newPage, pageSize }));
   };
 
   const handlePageSizeChange = (event) => {
     const newSize = parseInt(event.target.value, 10);
     dispatch(setPageSize(newSize));
     dispatch(setPage(1));
-    dispatch(getAllBooksList({ page: 1, pageSize: newSize }));
   };
 
+  // CRUD handlers
   const handleEdit = (bookId) => {
     navigate(`/books/${bookId}`);
   };
 
-  const handleDelete = async (bookId) => {
+  const handleDeleteClick = (bookId) => {
+    setBookToDelete(bookId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     try {
-      await dispatch(deleteBooks(bookId)).unwrap();
-      await dispatch(getAllBooksList({ page, pageSize })).unwrap();
+      await dispatch(deleteBooks(bookToDelete)).unwrap();
+      toast.success("Book deleted successfully");
+      dispatch(getAllBooksList({ page, pageSize }));
     } catch (error) {
-      console.log("ERROR IN DELETE USER ::: ", error);
+      toast.error("Failed to delete book");
+      console.error("Error deleting book:", error);
+    } finally {
+      setDeleteDialogOpen(false);
+      setBookToDelete(null);
     }
   };
 
@@ -188,56 +243,22 @@ const BooksTable = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedBook(null);
+  const handleAddBook = () => {
+    navigate("/books/add-book");
   };
 
-  // Custom renderer for actions
-  const ActionRenderer = (params) => (
-    <div className="actions-container">
-      <Tooltip title="View">
-        <IconButton color="secondary" onClick={() => handleView(params.row)}>
-          <VisibilityIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Edit">
-        <IconButton
-          color="primary"
-          disabled={roleId !== "1"}
-          onClick={() => handleEdit(params.row.id)}
-        >
-          <EditIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Delete">
-        <IconButton
-          color="error"
-          disabled={roleId !== "1"}
-          onClick={() => handleDelete(params.row.id)}
-          style={{ marginLeft: 10 }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </Tooltip>
-    </div>
-  );
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setSelectedAuthor("");
+    setSelectedCategory("");
+    dispatch(setPage(1));
+  };
 
-  // Define columns with custom renderers
+  // Columns configuration
   const columns = [
-    { field: "id", headerName: "Id", width: 70, sortable: false },
-    {
-      field: "isbn",
-      headerName: "ISBN",
-      width: 150,
-      sortable: false,
-    },
-    {
-      field: "bookname",
-      headerName: "Book Name",
-      width: 250,
-      sortable: false,
-    },
+    { field: "id", headerName: "ID", width: 70, sortable: false },
+    { field: "isbn", headerName: "ISBN", width: 150, sortable: false },
+    { field: "bookname", headerName: "Book Name", width: 250, sortable: false },
     {
       field: "publisher",
       headerName: "Publisher",
@@ -246,14 +267,14 @@ const BooksTable = () => {
     },
     {
       field: "publication_year",
-      headerName: "Publication Year",
-      width: 150,
+      headerName: "Pub. Year",
+      width: 120,
       sortable: false,
     },
     {
       field: "points_required",
-      headerName: "Points Required",
-      width: 150,
+      headerName: "Points",
+      width: 100,
       sortable: false,
     },
     {
@@ -261,70 +282,91 @@ const BooksTable = () => {
       headerName: "Category",
       width: 150,
       sortable: false,
-      renderCell: (params) => params.row.category?.name,
+      renderCell: (params) => params.row.category?.name || "N/A",
     },
     {
       field: "total_copies",
-      headerName: "Total Copies",
-      width: 120,
+      headerName: "Total",
+      width: 80,
       sortable: false,
     },
     {
       field: "available_copies",
-      headerName: "Available Copies",
-      width: 150,
+      headerName: "Available",
+      width: 100,
       sortable: false,
     },
-    {
-      field: "location",
-      headerName: "Location",
-      width: 150,
-      sortable: false,
-    },
+    { field: "location", headerName: "Location", width: 150, sortable: false },
     {
       field: "actions",
       headerName: "Actions",
       width: 150,
-      renderCell: ActionRenderer,
+      sortable: false,
+      renderCell: (params) => (
+        <Box display="flex" gap={1}>
+          <Tooltip title="View details">
+            <ActionButton color="info" onClick={() => handleView(params.row)}>
+              <Visibility fontSize="small" />
+            </ActionButton>
+          </Tooltip>
+          <Tooltip title="Edit book">
+            <ActionButton
+              color="primary"
+              disabled={roleId !== "1"}
+              onClick={() => handleEdit(params.row.id)}
+            >
+              <Edit fontSize="small" />
+            </ActionButton>
+          </Tooltip>
+          <Tooltip title="Delete book">
+            <ActionButton
+              color="error"
+              disabled={roleId !== "1"}
+              onClick={() => handleDeleteClick(params.row.id)}
+            >
+              <Delete fontSize="small" />
+            </ActionButton>
+          </Tooltip>
+        </Box>
+      ),
     },
   ];
 
-  const handleAddBook = () => {
-    navigate("/books/add-book");
-  };
+  const startEntry = (page - 1) * pageSize + 1;
+  const endEntry = Math.min(page * pageSize, total);
 
   return (
-    <div className="book-container">
-      <div className="book-header">
-        <Typography variant="h4" sx={{ fontFamily: "sans-serif" }}>
-          List of Books
+    <Container elevation={3}>
+      <Header>
+        <Typography variant="h5" fontWeight="bold" color="textPrimary">
+          Book Inventory
         </Typography>
-        <div className="book-util">
-          {/* Export Button */}
-          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
-            <InputLabel id="export-select-label">Export</InputLabel>
-            <Select
-              labelId="export-select-label"
-              id="export-select"
-              onChange={(e) => handleExport(e.target.value)}
-              defaultValue=""
-            >
-              <MenuItem value="">Select Format</MenuItem>
-              <MenuItem value="pdf">Export as PDF</MenuItem>
-              <MenuItem value="excel">Export as Excel</MenuItem>
-            </Select>
-          </FormControl>
 
-          {/* Category Filters */}
-          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
-            <InputLabel id="category-select-label">By Category</InputLabel>
+        <FilterSection>
+          <SearchField
+            variant="outlined"
+            placeholder="Search books..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{
+              startAdornment: <Search color="action" sx={{ mr: 1 }} />,
+              endAdornment: searchQuery && (
+                <IconButton size="small" onClick={() => setSearchQuery("")}>
+                  <Clear fontSize="small" />
+                </IconButton>
+              ),
+            }}
+            size="small"
+          />
+
+          <FormControl variant="outlined" size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Category</InputLabel>
             <Select
-              labelId="category-select-label"
-              id="category-select"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
+              label="Category"
             >
-              <MenuItem value="">Select Category</MenuItem>
+              <MenuItem value="">All Categories</MenuItem>
               {categories?.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}
@@ -333,16 +375,14 @@ const BooksTable = () => {
             </Select>
           </FormControl>
 
-          {/* Author Filters */}
-          <FormControl variant="filled" sx={{ mx: 3, minWidth: 150 }}>
-            <InputLabel id="author-select-label">By Author</InputLabel>
+          <FormControl variant="outlined" size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Author</InputLabel>
             <Select
-              labelId="author-select-label"
-              id="author-select"
               value={selectedAuthor}
               onChange={(e) => setSelectedAuthor(e.target.value)}
+              label="Author"
             >
-              <MenuItem value="">Select Author</MenuItem>
+              <MenuItem value="">All Authors</MenuItem>
               {authors?.map((author) => (
                 <MenuItem key={author.id} value={author.id}>
                   {author.firstname} {author.lastname}
@@ -350,131 +390,201 @@ const BooksTable = () => {
               ))}
             </Select>
           </FormControl>
-          {roleId === "1" && (
-            <Tooltip title="Add">
-              <Fab
-                size="small"
-                color="warning"
-                aria-label="add"
-                sx={{ marginRight: "2rem" }}
-              >
-                <AddIcon onClick={handleAddBook} />
-              </Fab>
-            </Tooltip>
-          )}
 
-          <input
-            type="text"
-            className="book-search-input"
-            placeholder="Search books..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
+          <Box display="flex" gap={1}>
+            <Tooltip title="Clear filters">
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={handleClearFilters}
+                startIcon={<Clear />}
+                size="small"
+              >
+                Clear
+              </Button>
+            </Tooltip>
+
+            <Tooltip title="Export as PDF">
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleExportPDF}
+                startIcon={<PictureAsPdf />}
+                size="small"
+              >
+                PDF
+              </Button>
+            </Tooltip>
+
+            <Tooltip title="Export as Excel">
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleExportExcel}
+                startIcon={<GridOn />}
+                size="small"
+              >
+                Excel
+              </Button>
+            </Tooltip>
+
+            {roleId === "1" && (
+              <Tooltip title="Add new book">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddBook}
+                  startIcon={<Add />}
+                  size="small"
+                >
+                  Add Book
+                </Button>
+              </Tooltip>
+            )}
+          </Box>
+        </FilterSection>
+      </Header>
+
       {loading ? (
-        <div className="spinner-container">
-          <ClipLoader size={50} color={"#123abc"} loading={loading} />
-        </div>
+        <Box display="flex" justifyContent="center" py={10}>
+          <ClipLoader size={50} color="#3f51b5" />
+        </Box>
       ) : error ? (
-        <p>Error: {error}</p>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="200px"
+        >
+          <Typography color="error">Error: {error}</Typography>
+        </Box>
       ) : (
         <>
           <Box
             sx={{
-              height: "auto",
+              height: "calc(100vh - 320px)",
               width: "100%",
-              margin: "0px auto",
-              animation: "fadeIn 1s ease-in-out",
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "#f5f5f5",
+                fontWeight: "bold",
+              },
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "rgba(63, 81, 181, 0.04)",
+              },
             }}
           >
             <DataGrid
               rows={books}
-              density="compact"
-              disableRowSelectionOnClick={true}
-              hideFooter={true}
-              getRowId={(row) => row.id + row.bookname}
               columns={columns}
               pageSize={pageSize}
-              rowsPerPageOptions={[5, 10, 20]}
-              pagination
+              rowsPerPageOptions={[5, 10, 20, 50]}
               paginationMode="server"
               rowCount={total}
-              onPageSizeChange={handlePageSizeChange}
-              sortingMode="server"
-              sortModel={sortModel}
-              onSortModelChange={(model) => setSortModel(model)}
-              rowHeight={65}
-              columnHeaderHeight={50}
-              autoHeight
+              disableSelectionOnClick
+              density="comfortable"
+              getRowId={(row) => row.id + row.bookname}
+              hideFooter
               sx={{
-                "& .MuiDataGrid-columnHeader": {
-                  backgroundColor: "#a9a9a9",
-                },
-                "& .MuiDataGrid-footerContainer": {
-                  borderTop: "1px solid #ddd",
-                },
-                "& .MuiDataGrid-row:hover": {
-                  backgroundColor: "#e0f7fa",
-                },
-                "& .actions-container > *": {
-                  transition: "color 0.3s ease",
-                },
-                "& .actions-container > *:hover": {
-                  color: "#007bff",
-                },
+                border: "none",
                 "& .MuiDataGrid-cell": {
-                  padding: "4px",
-                },
-                "& .MuiDataGrid-row": {
-                  minHeight: "35px !important",
+                  borderBottom: "1px solid rgba(224, 224, 224, 0.5)",
                 },
               }}
             />
           </Box>
+
           <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "40px",
-            }}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mt={2}
           >
-            <Typography
-              variant="caption"
-              gutterBottom
-              sx={{ display: "flex", alignItems: "center" }}
-            >
-              Showing {startEntry} - {endEntry} from {total} entries
+            <Typography variant="body2" color="textSecondary">
+              Showing {startEntry} to {endEntry} of {total} books
             </Typography>
-            <Pagination
-              showFirstButton
-              showLastButton
-              shape="rounded"
-              variant="outlined"
-              count={Math.ceil(total / pageSize)}
-              page={page}
-              onChange={handlePageChange}
-              color="warning"
-              sx={{
-                margin: "0",
-                display: "flex",
-                justifyContent: "right",
-                animation: "fadeIn 1s ease-in-out",
-              }}
-            />
+
+            <Box display="flex" alignItems="center" gap={5}>
+              <FormControl variant="outlined" size="small">
+                <InputLabel>Rows per page</InputLabel>
+                <Select
+                  value={pageSize}
+                  onChange={handlePageSizeChange}
+                  label="Rows per page"
+                >
+                  <MenuItem value={5}>5</MenuItem>
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                  <MenuItem value={50}>50</MenuItem>
+                </Select>
+              </FormControl>
+
+              <Pagination
+                count={Math.ceil(total / pageSize)}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+              />
+            </Box>
           </Box>
         </>
       )}
-      <BookDetailsModal
+
+      {/* Book Details Modal */}
+      <Dialog
         open={isModalOpen}
-        onClose={handleCloseModal}
-        book={selectedBook}
-        sx={{
-          animation: "fadeIn 0.5s ease-in-out",
-        }}
-      />
-    </div>
+        onClose={() => setIsModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Book Details</DialogTitle>
+        <DialogContent>
+          {selectedBook && (
+            <Box>
+              <Typography variant="h6">{selectedBook.bookname}</Typography>
+              <Typography>ISBN: {selectedBook.isbn}</Typography>
+              <Typography>Publisher: {selectedBook.publisher}</Typography>
+              <Typography>
+                Publication Year: {selectedBook.publication_year}
+              </Typography>
+              <Typography>
+                Available Copies: {selectedBook.available_copies}/
+                {selectedBook.total_copies}
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsModalOpen(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this book? This action cannot be
+            undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
   );
 };
 
