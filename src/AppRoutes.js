@@ -45,7 +45,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/mobile_otp_based" element={<MobileOTPBased />} />
+        <Route path="/mobile-login" element={<MobileOTPBased />} />
 
         {/* DASHBOARD */}
         <Route
