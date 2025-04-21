@@ -35,7 +35,7 @@ export const loginUser = createAsyncThunk(
     try {
       const {email, password} = formData
       const response = await apiClient.post(`/auth/login`, {
-        email,
+        emailId: email,
         password,
       });
       if (response.status === 200) {
@@ -242,7 +242,7 @@ export const currentUserPoints = createAsyncThunk(
   async ({ email, userId }, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(`/users/get-points`, {
-        email,
+        emailId: email,
         userId,
       });
       if (response.status === 200) {

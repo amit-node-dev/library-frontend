@@ -46,13 +46,15 @@ import {
 import { setPage, setPageSize } from "../../features/book_module/bookSlice";
 import { getAllAuthorsList } from "../../features/author_module/authorActions";
 import { getAllCategoryList } from "../../features/category_module/categoryActions";
+import BookDetailsModal from "./BookDetailsModal";
 
 // Styled Components
 const Container = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
   borderRadius: "10px",
   boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-  backgroundColor: "",
+  backgroundColor: "#f5f7fa",
+  position: "relative", 
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -142,13 +144,13 @@ const BooksTable = () => {
     const tableRows = books.map((book) => [
       book.id,
       book.isbn,
-      book.bookname,
+      book.bookName,
       book.publisher,
-      book.publication_year,
-      book.points_required,
+      book.publicationYear,
+      book.pointsRequired,
       book.category?.name || "N/A",
-      book.total_copies,
-      book.available_copies,
+      book.totalCopies,
+      book.availableCopies,
       book.location,
     ]);
 
@@ -177,13 +179,13 @@ const BooksTable = () => {
     const data = books.map((book) => ({
       Id: book.id,
       ISBN: book.isbn,
-      "Book Name": book.bookname,
+      "Book Name": book.bookName,
       Publisher: book.publisher,
-      "Publication Year": book.publication_year,
-      "Points Required": book.points_required,
+      "Publication Year": book.publicationYear,
+      "Points Required": book.pointsRequired,
       Category: book.category?.name || "N/A",
-      "Total Copies": book.total_copies,
-      "Available Copies": book.available_copies,
+      "Total Copies": book.totalCopies,
+      "Available Copies": book.availableCopies,
       Location: book.location,
     }));
 
@@ -256,23 +258,23 @@ const BooksTable = () => {
 
   // Columns configuration
   const columns = [
-    { field: "id", headerName: "ID", width: 70, sortable: false },
+    { field: "id", headerName: "ID", width: 100, sortable: false },
     { field: "isbn", headerName: "ISBN", width: 150, sortable: false },
-    { field: "bookname", headerName: "Book Name", width: 250, sortable: false },
+    { field: "bookName", headerName: "Book Name", width: 250, sortable: false },
     {
       field: "publisher",
       headerName: "Publisher",
-      width: 200,
+      width: 150,
       sortable: false,
     },
     {
-      field: "publication_year",
+      field: "publicationYear",
       headerName: "Pub. Year",
-      width: 120,
+      width: 150,
       sortable: false,
     },
     {
-      field: "points_required",
+      field: "pointsRequired",
       headerName: "Points",
       width: 100,
       sortable: false,
@@ -280,23 +282,23 @@ const BooksTable = () => {
     {
       field: "category",
       headerName: "Category",
-      width: 150,
+      width: 200,
       sortable: false,
       renderCell: (params) => params.row.category?.name || "N/A",
     },
     {
-      field: "total_copies",
+      field: "totalCopies",
       headerName: "Total",
-      width: 80,
+      width: 100,
       sortable: false,
     },
     {
-      field: "available_copies",
+      field: "availableCopies",
       headerName: "Available",
       width: 100,
       sortable: false,
     },
-    { field: "location", headerName: "Location", width: 150, sortable: false },
+    { field: "location", headerName: "Location", width: 250, sortable: false },
     {
       field: "actions",
       headerName: "Actions",
@@ -385,7 +387,7 @@ const BooksTable = () => {
               <MenuItem value="">All Authors</MenuItem>
               {authors?.map((author) => (
                 <MenuItem key={author.id} value={author.id}>
-                  {author.firstname} {author.lastname}
+                  {author.firstName} {author.lastName}
                 </MenuItem>
               ))}
             </Select>
@@ -462,7 +464,7 @@ const BooksTable = () => {
         <>
           <Box
             sx={{
-              height: "calc(100vh - 320px)",
+              height: "calc(100vh - 450px)",
               width: "100%",
               "& .MuiDataGrid-columnHeaders": {
                 backgroundColor: "#f5f5f5",
@@ -481,8 +483,8 @@ const BooksTable = () => {
               paginationMode="server"
               rowCount={total}
               disableSelectionOnClick
-              density="comfortable"
-              getRowId={(row) => row.id + row.bookname}
+              density="standard"
+              getRowId={(row) => row.id + row.bookName}
               hideFooter
               sx={{
                 border: "none",
@@ -532,36 +534,13 @@ const BooksTable = () => {
         </>
       )}
 
-      {/* Book Details Modal */}
-      <Dialog
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Book Details</DialogTitle>
-        <DialogContent>
-          {selectedBook && (
-            <Box>
-              <Typography variant="h6">{selectedBook.bookname}</Typography>
-              <Typography>ISBN: {selectedBook.isbn}</Typography>
-              <Typography>Publisher: {selectedBook.publisher}</Typography>
-              <Typography>
-                Publication Year: {selectedBook.publication_year}
-              </Typography>
-              <Typography>
-                Available Copies: {selectedBook.available_copies}/
-                {selectedBook.total_copies}
-              </Typography>
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsModalOpen(false)} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {isModalOpen && (
+        <BookDetailsModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          book={selectedBook}
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <Dialog

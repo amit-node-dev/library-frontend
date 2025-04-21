@@ -109,9 +109,9 @@ const Navbar = ({ onMenuToggle }) => {
   const userData = localStorage.getItem("userData");
   const userInfo = JSON.parse(userData) || {};
 
-  const firstName = userInfo.firstname || "";
-  const lastName = userInfo.lastname || "";
-  const email = userInfo.email || "";
+  const firstName = userInfo.firstName || "";
+  const lastName = userInfo.lastName || "";
+  const email = userInfo.emailId || "";
   const userId = userInfo.id || "";
   const roleName = userInfo.roleName || "Guest";
   const avatarChar = firstName?.charAt(0).toUpperCase() || "?";

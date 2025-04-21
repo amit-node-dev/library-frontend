@@ -48,7 +48,7 @@ const authorSlice = createSlice({
       })
       .addCase(getAllAuthorsListPagination.fulfilled, (state, action) => {
         state.loading = false;
-        state.authors = action.payload.authors;
+        state.authors = action.payload.items;
         state.total = action.payload.total;
         state.page = action.payload.page;
         state.pageSize = action.payload.pageSize;
@@ -63,7 +63,7 @@ const authorSlice = createSlice({
       })
       .addCase(getAllAuthorsList.fulfilled, (state, action) => {
         state.loading = false;
-        state.authors = action.payload.authors;
+        state.authors = action.payload.items;
       })
       .addCase(getAllAuthorsList.rejected, (state, action) => {
         state.loading = false;

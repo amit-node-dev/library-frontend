@@ -47,7 +47,7 @@ const bookSlice = createSlice({
       })
       .addCase(getAllBooksList.fulfilled, (state, action) => {
         state.loading = false;
-        state.books = action.payload.books;
+        state.books = action.payload.items;
         state.total = action.payload.total;
         state.page = action.payload.page;
         state.pageSize = action.payload.pageSize;
