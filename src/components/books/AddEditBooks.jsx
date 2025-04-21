@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-
-// THIRD PARTY COMPONENTS
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import dayjs from "dayjs";
+import { styled } from "@mui/material/styles";
 
 // MUI IMPORTS
 import {
@@ -19,6 +18,9 @@ import {
   Grid,
   Autocomplete,
   Tooltip,
+  Paper,
+  Divider,
+  Alert,
 } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -34,15 +36,72 @@ import {
 import { getAllAuthorsList } from "../../features/author_module/authorActions";
 import { getAllCategoryList } from "../../features/category_module/categoryActions";
 
-// CSS
-import "./books.css";
+// Styled Components
+const FormContainer = styled(Container)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+  marginBottom: theme.spacing(4),
+  padding: theme.spacing(2),
+  position: "relative",
+  textAlign: "center",
+  height: "100px",
+  boxSizing: "border-box",
+}));
+
+const FormPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[3],
+  animation: "fadeIn 0.5s ease-in-out",
+}));
+
+const FormHeader = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: theme.spacing(3),
+}));
+
+const FormTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 600,
+  color: theme.palette.primary.main,
+}));
+
+const FormGrid = styled(Grid)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
+
+const ActionButtons = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "flex-end",
+  gap: theme.spacing(2),
+  marginTop: theme.spacing(3),
+}));
+
+const SubmitButton = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(1.5, 4),
+  fontWeight: 600,
+  transition: "all 0.3s ease",
+}));
+
+const ResetButton = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(1.5, 4),
+  fontWeight: 600,
+  transition: "all 0.3s ease",
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    borderRadius: theme.shape.borderRadius,
+  },
+  animation: "fadeIn 0.5s ease-in-out",
+}));
 
 const AddEditBooks = () => {
   const { bookId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { currentBook } = useSelector((state) => state.books);
+  const { currentBook, loading, error } = useSelector((state) => state.books);
 
   const [authorList, setAuthorList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
@@ -62,17 +121,19 @@ const AddEditBooks = () => {
     pointsRequired: "",
   });
 
-  const [booknameError, setBooknameError] = useState("");
-  const [titleError, setTilteError] = useState("");
-  const [descriptionError, setDescriptionError] = useState("");
-  const [authorIdError, setAuthorIdError] = useState("");
-  const [categoryIdError, setCategoryIdError] = useState("");
-  const [conclusionError, setConclusionError] = useState("");
-  const [isbnError, setISBNError] = useState("");
-  const [publisherError, setPublisherError] = useState("");
-  const [locationError, setLocationError] = useState("");
-  const [totalCopiesError, setTotalCopiesError] = useState("");
-  const [pointsRequiredError, setPointsRequiredError] = useState("");
+  const [errors, setErrors] = useState({
+    bookname: "",
+    title: "",
+    authorId: "",
+    categoryId: "",
+    description: "",
+    conclusion: "",
+    isbn: "",
+    publisher: "",
+    location: "",
+    totalCopies: "",
+    pointsRequired: "",
+  });
 
   useEffect(() => {
     dispatch(getAllCategoryList()).then((response) => {
@@ -81,8 +142,8 @@ const AddEditBooks = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(getAllAuthorsList({ page: 1, pageSize: 5 })).then((response) => {
-      setAuthorList(response.payload.authors);
+    dispatch(getAllAuthorsList()).then((response) => {
+      setAuthorList(response.payload.items);
     });
   }, [dispatch]);
 
@@ -117,102 +178,72 @@ const AddEditBooks = () => {
       ...bookData,
       [name]: value,
     });
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: "",
+      });
+    }
   };
 
-  const handleBookNameBlur = () => {
-    setBooknameError(bookData.bookname === "" ? "Name is required" : "");
+  const validateField = (name, value) => {
+    let error = "";
+    if (!value) {
+      error = `${name.charAt(0).toUpperCase() + name.slice(1)} is required`;
+    }
+    return error;
   };
 
-  const handleTitleBlur = () => {
-    setTilteError(bookData.title === "" ? "Title is required" : "");
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrors({
+      ...errors,
+      [name]: error,
+    });
   };
 
-  const handleAuthorIdBlur = () => {
-    setAuthorIdError(bookData.authorId === "" ? "Author Name is required" : "");
-  };
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
 
-  const handleCategoryIdBlur = () => {
-    setCategoryIdError(
-      bookData.categoryId === "" ? "Category is required" : ""
-    );
-  };
+    Object.keys(bookData).forEach((key) => {
+      if (key !== "publicationYear") {
+        const error = validateField(key, bookData[key]);
+        if (error) {
+          newErrors[key] = error;
+          isValid = false;
+        }
+      }
+    });
 
-  const handleDescriptionBlur = () => {
-    setDescriptionError(
-      bookData.description === "" ? "Description is required" : ""
-    );
-  };
-
-  const handleConclusionBlur = () => {
-    setConclusionError(
-      bookData.conclusion === "" ? "Conclusion is required" : ""
-    );
-  };
-
-  const handleISBNBlur = () => {
-    setISBNError(bookData.isbn === "" ? "ISBN is required" : "");
-  };
-
-  const handlePublisherBlur = () => {
-    setPublisherError(bookData.publisher === "" ? "Publisher is required" : "");
-  };
-
-  const handleLocationBlur = () => {
-    setLocationError(bookData.location === "" ? "Location is required" : "");
-  };
-
-  const handleTotalCopiesBlur = () => {
-    setTotalCopiesError(
-      bookData.totalCopies === "" ? "Total Copies is required" : ""
-    );
-  };
-
-  const handlePointsRequiredBlur = () => {
-    setPointsRequiredError(
-      bookData.pointsRequired === "" ? "Points Required is required" : ""
-    );
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    handleBookNameBlur();
-    handleTitleBlur();
-    handleAuthorIdBlur();
-    handleCategoryIdBlur();
-    handleDescriptionBlur();
-    handleConclusionBlur();
-    handleISBNBlur();
-    handlePublisherBlur();
-    handleLocationBlur();
-    handleTotalCopiesBlur();
-    handlePointsRequiredBlur();
-
-    if (
-      bookData.bookname &&
-      bookData.title &&
-      bookData.authorId &&
-      bookData.categoryId &&
-      bookData.description &&
-      bookData.conclusion &&
-      bookData.isbn &&
-      bookData.publisher &&
-      bookData.location &&
-      bookData.totalCopies &&
-      bookData.pointsRequired
-    ) {
+    if (validateForm()) {
       try {
-        bookData.publicationYear = dayjs(bookData.publicationYear).format(
-          "YYYY-MM-DD"
-        );
+        const submissionData = {
+          ...bookData,
+          publicationYear: bookData.publicationYear
+            ? dayjs(bookData.publicationYear).format("YYYY-MM-DD")
+            : "",
+        };
+
         if (bookId) {
-          await dispatch(updateBooks({ bookId, bookData })).unwrap();
+          await dispatch(
+            updateBooks({ bookId, bookData: submissionData })
+          ).unwrap();
         } else {
-          await dispatch(addNewBooks(bookData)).unwrap();
+          await dispatch(addNewBooks(submissionData)).unwrap();
         }
         navigate("/books");
       } catch (error) {
-        console.log("Error in handleSubmit:", error);
+        console.error("Error in handleSubmit:", error);
       }
     }
   };
@@ -232,17 +263,19 @@ const AddEditBooks = () => {
       totalCopies: "",
       pointsRequired: "",
     });
-    setBooknameError("");
-    setTilteError("");
-    setAuthorIdError("");
-    setCategoryIdError("");
-    setDescriptionError("");
-    setConclusionError("");
-    setISBNError("");
-    setPublisherError("");
-    setLocationError("");
-    setTotalCopiesError("");
-    setPointsRequiredError("");
+    setErrors({
+      bookname: "",
+      title: "",
+      authorId: "",
+      categoryId: "",
+      description: "",
+      conclusion: "",
+      isbn: "",
+      publisher: "",
+      location: "",
+      totalCopies: "",
+      pointsRequired: "",
+    });
   };
 
   const handleBack = () => {
@@ -250,280 +283,220 @@ const AddEditBooks = () => {
   };
 
   return (
-    <div className="book-add-edit-container">
-      <Container maxWidth="lg">
-        <Box
-          sx={{
-            mt: 2,
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            padding: "40px",
-            backgroundColor: "#fff",
-            animation: "fadeIn 1s ease-in-out",
-            height: "65vh",
-            overflow: "hidden",
-          }}
-        >
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{ fontFamily: "sans-serif" }}
+    <FormContainer maxWidth="lg">
+      <FormPaper elevation={4}>
+        <FormHeader>
+          <FormTitle variant="h4">
+            {bookId ? "Edit Book" : "Add New Book"}
+          </FormTitle>
+          <Tooltip title="Back to Books">
+            <Fab
+              size="medium"
+              color="primary"
+              aria-label="back"
+              onClick={handleBack}
+              sx={{ boxShadow: 2 }}
             >
-              {bookId ? "Edit Book" : "Add Book"}
-            </Typography>
-            <Tooltip title="Back">
-              <Fab
-                size="small"
-                color="warning"
-                aria-label="add"
-                sx={{ marginRight: "2rem" }}
-              >
-                <ArrowBack onClick={handleBack} />
-              </Fab>
-            </Tooltip>
-          </Box>
-          <PerfectScrollbar>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{
-                animation: "slideIn 0.5s ease-out",
-                padding: "15px",
-                marginBottom: "3rem",
-              }}
-            >
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    margin="normal"
-                    label="Name"
-                    name="bookname"
-                    value={bookData.bookname}
-                    onChange={handleChange}
-                    onBlur={handleBookNameBlur}
-                    error={!!booknameError}
-                    helperText={booknameError}
-                    sx={{
-                      animation: "fadeIn 1s ease-in-out",
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    margin="normal"
-                    label="Title"
-                    name="title"
-                    value={bookData.title}
-                    onChange={handleChange}
-                    onBlur={handleTitleBlur}
-                    error={!!titleError}
-                    helperText={titleError}
-                    sx={{
-                      animation: "fadeIn 1s ease-in-out",
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    margin="normal"
-                    label="ISBN"
-                    name="isbn"
-                    value={bookData.isbn}
-                    onChange={handleChange}
-                    onBlur={handleISBNBlur}
-                    error={!!isbnError}
-                    helperText={isbnError}
-                    sx={{
-                      animation: "fadeIn 1s ease-in-out",
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    margin="normal"
-                    label="Publisher"
-                    name="publisher"
-                    value={bookData.publisher}
-                    onChange={handleChange}
-                    onBlur={handlePublisherBlur}
-                    error={!!publisherError}
-                    helperText={publisherError}
-                    sx={{
-                      animation: "fadeIn 1s ease-in-out",
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    margin="normal"
-                    label="Location"
-                    name="location"
-                    value={bookData.location}
-                    onChange={handleChange}
-                    onBlur={handleLocationBlur}
-                    error={!!locationError}
-                    helperText={locationError}
-                    sx={{
-                      animation: "fadeIn 1s ease-in-out",
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    margin="normal"
-                    label="Total Copies"
-                    name="totalCopies"
-                    value={bookData.totalCopies}
-                    onChange={handleChange}
-                    onBlur={handleTotalCopiesBlur}
-                    error={!!totalCopiesError}
-                    helperText={totalCopiesError}
-                    sx={{
-                      animation: "fadeIn 1s ease-in-out",
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <FormControl
-                    fullWidth
-                    margin="normal"
-                    error={!!authorIdError}
-                  >
-                    <Autocomplete
-                      options={authorList}
-                      getOptionLabel={(option) =>
-                        `${option.firstname} ${option.lastname}`
-                      }
-                      onChange={(event, value) => {
-                        setBookData({
-                          ...bookData,
-                          authorId: value ? value.id : "",
-                        });
-                      }}
-                      onBlur={handleAuthorIdBlur}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Author"
-                          error={!!authorIdError}
-                          helperText={authorIdError}
-                          sx={{
-                            animation: "fadeIn 1s ease-in-out",
-                          }}
-                        />
-                      )}
-                      value={
-                        authorList?.find(
-                          (author) => author.id === bookData.authorId
-                        ) || null
-                      }
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <FormControl
-                    fullWidth
-                    margin="normal"
-                    error={!!categoryIdError}
-                  >
-                    <Autocomplete
-                      options={categoryList}
-                      getOptionLabel={(option) => `${option.name}`}
-                      onChange={(event, value) => {
-                        setBookData({
-                          ...bookData,
-                          categoryId: value ? value.id : "",
-                        });
-                      }}
-                      onBlur={handleCategoryIdBlur}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Category"
-                          error={!!categoryIdError}
-                          helperText={categoryIdError}
-                          sx={{
-                            animation: "fadeIn 1s ease-in-out",
-                          }}
-                        />
-                      )}
-                      value={
-                        categoryList?.find(
-                          (category) => category.id === bookData.categoryId
-                        ) || null
-                      }
-                    />
-                  </FormControl>
-                </Grid>
+              <ArrowBack />
+            </Fab>
+          </Tooltip>
+        </FormHeader>
+
+        <Divider sx={{ my: 3 }} />
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
+
+        <PerfectScrollbar>
+          <Box mt={2} component="form" onSubmit={handleSubmit}>
+            <FormGrid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  fullWidth
+                  label="Book Name"
+                  name="bookname"
+                  value={bookData.bookname}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.bookname}
+                  helperText={errors.bookname}
+                  size="small"
+                />
               </Grid>
-              <TextField
-                size="small"
-                fullWidth
-                margin="normal"
-                label="Points Required"
-                name="pointsRequired"
-                value={bookData.pointsRequired}
-                onChange={handleChange}
-                onBlur={handlePointsRequiredBlur}
-                error={!!pointsRequiredError}
-                helperText={pointsRequiredError}
-                sx={{
-                  animation: "fadeIn 1s ease-in-out",
-                }}
-              />
-              <TextField
-                size="small"
-                fullWidth
-                margin="normal"
-                label="Description"
-                name="description"
-                value={bookData.description}
-                onChange={handleChange}
-                onBlur={handleDescriptionBlur}
-                error={!!descriptionError}
-                helperText={descriptionError}
-                multiline
-                rows={4}
-                sx={{
-                  animation: "fadeIn 1s ease-in-out",
-                }}
-              />
-              <TextField
-                size="small"
-                fullWidth
-                margin="normal"
-                label="Conclusion"
-                name="conclusion"
-                value={bookData.conclusion}
-                onChange={handleChange}
-                onBlur={handleConclusionBlur}
-                error={!!conclusionError}
-                helperText={conclusionError}
-                multiline
-                rows={3}
-                sx={{
-                  animation: "fadeIn 1s ease-in-out",
-                }}
-              />
-              <Box sx={{ marginTop: "20px" }}>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  fullWidth
+                  label="Title"
+                  name="title"
+                  value={bookData.title}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.title}
+                  helperText={errors.title}
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  fullWidth
+                  label="ISBN"
+                  name="isbn"
+                  value={bookData.isbn}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.isbn}
+                  helperText={errors.isbn}
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  fullWidth
+                  label="Publisher"
+                  name="publisher"
+                  value={bookData.publisher}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.publisher}
+                  helperText={errors.publisher}
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  fullWidth
+                  label="Location"
+                  name="location"
+                  value={bookData.location}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.location}
+                  helperText={errors.location}
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  fullWidth
+                  label="Total Copies"
+                  name="totalCopies"
+                  type="number"
+                  value={bookData.totalCopies}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.totalCopies}
+                  helperText={errors.totalCopies}
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth error={!!errors.authorId}>
+                  <Autocomplete
+                    options={authorList}
+                    getOptionLabel={(option) =>
+                      `${option.firstName} ${option.lastName}`
+                    }
+                    onChange={(event, value) => {
+                      setBookData({
+                        ...bookData,
+                        authorId: value ? value.id : "",
+                      });
+                      if (errors.authorId) {
+                        setErrors({
+                          ...errors,
+                          authorId: "",
+                        });
+                      }
+                    }}
+                    onBlur={() => {
+                      if (!bookData.authorId) {
+                        setErrors({
+                          ...errors,
+                          authorId: "Author is required",
+                        });
+                      }
+                    }}
+                    renderInput={(params) => (
+                      <StyledTextField
+                        {...params}
+                        label="Author"
+                        error={!!errors.authorId}
+                        helperText={errors.authorId}
+                        size="small"
+                      />
+                    )}
+                    value={
+                      authorList?.find(
+                        (author) => author.id === bookData.authorId
+                      ) || null
+                    }
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth error={!!errors.categoryId}>
+                  <Autocomplete
+                    options={categoryList}
+                    getOptionLabel={(option) => `${option.name}`}
+                    onChange={(event, value) => {
+                      setBookData({
+                        ...bookData,
+                        categoryId: value ? value.id : "",
+                      });
+                      if (errors.categoryId) {
+                        setErrors({
+                          ...errors,
+                          categoryId: "",
+                        });
+                      }
+                    }}
+                    onBlur={() => {
+                      if (!bookData.categoryId) {
+                        setErrors({
+                          ...errors,
+                          categoryId: "Category is required",
+                        });
+                      }
+                    }}
+                    renderInput={(params) => (
+                      <StyledTextField
+                        {...params}
+                        label="Category"
+                        error={!!errors.categoryId}
+                        helperText={errors.categoryId}
+                        size="small"
+                      />
+                    )}
+                    value={
+                      categoryList?.find(
+                        (category) => category.id === bookData.categoryId
+                      ) || null
+                    }
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  fullWidth
+                  label="Points Required"
+                  name="pointsRequired"
+                  type="number"
+                  value={bookData.pointsRequired}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.pointsRequired}
+                  helperText={errors.pointsRequired}
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    maxDate={dayjs()}
                     label="Publication Year"
+                    inputFormat="YYYY-MM-DD"
                     value={
                       bookData.publicationYear
                         ? dayjs(bookData.publicationYear)
@@ -536,65 +509,67 @@ const AddEditBooks = () => {
                       });
                     }}
                     renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        sx={{
-                          animation: "fadeIn 1s ease-in-out",
-                        }}
-                      />
+                      <StyledTextField {...params} fullWidth size="small" />
                     )}
                   />
                 </LocalizationProvider>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  mt: 2,
-                  animation: "slideInUp 0.5s ease-out",
-                }}
+              </Grid>
+              <Grid item xs={12}>
+                <StyledTextField
+                  fullWidth
+                  label="Description"
+                  name="description"
+                  value={bookData.description}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.description}
+                  helperText={errors.description}
+                  multiline
+                  rows={3}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <StyledTextField
+                  fullWidth
+                  label="Conclusion"
+                  name="conclusion"
+                  value={bookData.conclusion}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.conclusion}
+                  helperText={errors.conclusion}
+                  multiline
+                  rows={2}
+                />
+              </Grid>
+            </FormGrid>
+
+            <ActionButtons>
+              <ResetButton
+                variant="outlined"
+                color="error"
+                onClick={handleReset}
+                disabled={loading}
               >
-                <Button
-                  type="submit"
-                  variant="contained"
-                  className="submit-button"
-                  sx={{
-                    backgroundColor: "#28a745",
-                    "&:hover": {
-                      backgroundColor: "#218838",
-                      transform: "scale(1.05)",
-                    },
-                    transition:
-                      "background-color 0.3s ease, transform 0.3s ease",
-                  }}
-                >
-                  {bookId ? "Update" : "Submit"}
-                </Button>
-                <Button
-                  type="reset"
-                  variant="outlined"
-                  className="reset-button"
-                  onClick={handleReset}
-                  sx={{
-                    ml: 2,
-                    color: "#dc3545",
-                    borderColor: "#dc3545",
-                    "&:hover": {
-                      backgroundColor: "#f8d7da",
-                      transform: "scale(1.05)",
-                    },
-                    transition:
-                      "background-color 0.3s ease, transform 0.3s ease",
-                  }}
-                >
-                  Reset
-                </Button>
-              </Box>
-            </Box>
-          </PerfectScrollbar>
-        </Box>
-      </Container>
-    </div>
+                Reset
+              </ResetButton>
+              <SubmitButton
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={loading}
+              >
+                {loading
+                  ? "Processing..."
+                  : bookId
+                  ? "Update Book"
+                  : "Add Book"}
+              </SubmitButton>
+            </ActionButtons>
+          </Box>
+        </PerfectScrollbar>
+      </FormPaper>
+    </FormContainer>
   );
 };
 

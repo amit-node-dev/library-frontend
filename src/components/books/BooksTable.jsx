@@ -430,7 +430,7 @@ const BooksTable = () => {
               </Button>
             </Tooltip>
 
-            {roleId === "1" && (
+            {roleId === 1 && (
               <Tooltip title="Add new book">
                 <Button
                   variant="contained"
