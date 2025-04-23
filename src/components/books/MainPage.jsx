@@ -3,7 +3,7 @@ import BooksTable from "./BooksTable";
 import { styled } from "@mui/material/styles";
 
 // Styled components
-const BookMainPageContainer = styled("div")(({ theme }) => ({
+const MainPageContainer = styled("div")(({ theme }) => ({
   position: "relative",
   padding: theme.spacing(10), 
   textAlign: "center",
@@ -12,7 +12,7 @@ const BookMainPageContainer = styled("div")(({ theme }) => ({
   boxSizing: "border-box",
 }));
 
-const BookTableWrapper = styled("div")(({ theme }) => ({
+const TableWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(1.25), 
   boxShadow: theme.shadows[4],
   borderRadius: 8,
@@ -24,11 +24,11 @@ const BookTableWrapper = styled("div")(({ theme }) => ({
 
 const MainPage = () => {
   return (
-    <BookMainPageContainer>
-      <BookTableWrapper>
+    <MainPageContainer>
+      <TableWrapper>
         <BooksTable />
-      </BookTableWrapper>
-    </BookMainPageContainer>
+      </TableWrapper>
+    </MainPageContainer>
   );
 };
 

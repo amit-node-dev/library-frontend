@@ -138,9 +138,9 @@ const Navbar = ({ onMenuToggle }) => {
 
   const handleLogout = async () => {
     try {
-      await apiClient.post(`/auth/logout`);
+      const response = await apiClient.post(`/auth/logout`);
       localStorage.clear();
-      toast.success("Thank you for visiting us!");
+      toast.success(response.data.message);
       navigate("/login");
     } catch (error) {
       toast.error("Logout failed. Please try again.");
@@ -398,7 +398,7 @@ const Navbar = ({ onMenuToggle }) => {
                 />
               )
             }
-            label={`${points} Points`}
+            label={`${points === null ? 0 : points} Points`}
             sx={{
               backgroundColor: amber[600],
               color: "common.white",

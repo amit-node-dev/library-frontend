@@ -9,170 +9,263 @@ import {
   Grid,
   Card,
   CardContent,
+  Divider,
+  Chip,
+  Avatar,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import BackgroundImage from "../../images/background1.jpg";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import PeopleIcon from "@mui/icons-material/People";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import { motion } from "framer-motion";
 
-// Styled components for enhanced UI
-const BackgroundContainer = styled(Box)({
-  backgroundImage: `url(${BackgroundImage})`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  minHeight: "90vh",
+// Enhanced Styled Components
+const BackgroundContainer = styled(Box)(({ theme }) => ({
+  minHeight: "100vh",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-});
+  padding: theme.spacing(5),
+}));
 
-const GlassmorphicContainer = styled(Container)({
-  background: "rgba(255, 255, 255, 0.2)",
-  borderRadius: "15px",
-  padding: "3rem",
-  maxWidth: "900px",
-  backdropFilter: "blur(10px)",
-  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
-  color: "#1c1c1b",
-  textAlign: "center",
-});
+const GlassmorphicCard = styled(Card)(({ theme }) => ({
+  background: "rgba(255, 255, 255, 0.85)",
+  backdropFilter: "blur(12px)",
+  borderRadius: theme.shape.borderRadius * 2,
+  padding: theme.spacing(5),
+  maxWidth: "1200px",
+  width: "100%",
+}));
 
-const AboutHeader = styled(Typography)({
-  fontWeight: "bold",
-  color: "#1c1c1b",
-  textAlign: "center",
-  marginBottom: "1rem",
-});
+const FeatureCard = styled(Card)(({ theme }) => ({
+  height: "100%",
+  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+  "&:hover": {
+    transform: "translateY(-5px)",
+    cursor: "pointer"
+  },
+}));
 
-const DescriptionText = styled(Typography)({
-  textAlign: "justify",
-  lineHeight: "1.6",
-  color: "#1c1c1b",
-});
+const IconContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  marginBottom: theme.spacing(2),
+  "& svg": {
+    fontSize: "3rem",
+  },
+}));
 
-// Accordion Styling
-const StyledAccordion = styled(Accordion)({
-  backgroundColor: "rgba(255, 255, 255, 0.2)",
-  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-});
-
-const projects = [
+// Data for consistent content management
+const features = [
   {
-    name: "Book Catalog Management",
-    description: "Track books, authors, and availability.",
+    icon: <LibraryBooksIcon />,
+    title: "Centralized Book Database",
+    description: "Comprehensive catalog with advanced search and filtering capabilities.",
   },
   {
-    name: "User & Membership Management",
-    description: "Manage student, teacher, and public memberships.",
+    icon: <PeopleIcon />,
+    title: "User Management",
+    description: "Manage memberships, track borrowing history, and set privileges.",
   },
   {
-    name: "Issue & Return System",
-    description: "Automate book lending with due dates and penalties.",
+    icon: <EventAvailableIcon />,
+    title: "Automated Transactions",
+    description: "Streamlined check-in/check-out with automatic notifications.",
   },
+];
+
+const systemFeatures = [
+  {
+    name: "Advanced Catalog System",
+    description: "Track books with ISBN, authors, categories, and multiple copies. Includes digital resource management.",
+    technologies: ["MERN Stack", "Elasticsearch", "JWT Auth"],
+  },
+  {
+    name: "Member Portal",
+    description: "Self-service portal for members to view loans, place holds, and renew items. Integrated with email/SMS notifications.",
+    technologies: ["React", "Redux", "Node.js"],
+  },
+  {
+    name: "Reporting Dashboard",
+    description: "Real-time analytics on circulation, popular titles, and member activity with export capabilities.",
+    technologies: ["Chart.js", "MongoDB Aggregation"],
+  },
+];
+
+const stats = [
+  { value: "10,000+", label: "Books Managed" },
+  { value: "5,000+", label: "Active Users" },
+  { value: "99.9%", label: "Uptime" },
+  { value: "24/7", label: "Support" },
 ];
 
 const About = () => {
   return (
     <BackgroundContainer>
-      <GlassmorphicContainer
+      <GlassmorphicCard
         component={motion.div}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5 }}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
       >
-        <>
-          <AboutHeader
-            variant="h3"
-            component={motion.div}
-            initial={{ y: -50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            About Us
-          </AboutHeader>
-          <Typography
-            variant="h6"
-            sx={{ color: "#1c1c1b", fontStyle: "italic", marginBottom: "1rem" }}
-          >
-            "Empowering Libraries with Technology."
-          </Typography>
+        <Container maxWidth="lg">
+          {/* Header Section */}
+          <Box textAlign="center" mb={4}>
+            <Typography
+              variant="h2"
+              component={motion.div}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              sx={{
+                fontWeight: 700,
+                color: "primary.main",
+                mb: 2,
+              }}
+            >
+              LibraTech - A Library Management System
+            </Typography>
+            <Typography
+              variant="h5"
+              component={motion.div}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              sx={{
+                fontStyle: "italic",
+                color: "text.secondary",
+                mb: 3,
+              }}
+            >
+              "Transforming libraries with digital innovation"
+            </Typography>
+            
+            {/* Stats Chip Display */}
+            <Box display="flex" justifyContent="center" flexWrap="wrap" gap={2} mb={4}>
+              {stats.map((stat, index) => (
+                <Chip
+                  size="medium"
+                  key={index}
+                  avatar={<Avatar>{stat.value}</Avatar>}
+                  label={stat.label}
+                  variant="outlined"
+                  component={motion.div}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                />
+              ))}
+            </Box>
+          </Box>
 
-          <hr />
+          <Divider sx={{ my: 4 }} />
 
-          <DescriptionText
-            component={motion.p}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2 }}
-          >
-            A <strong>Library Management System (LMS)</strong> is a digital
-            solution designed to organize and manage library resources
-            efficiently. It streamlines book tracking, user management, lending,
-            and reporting for educational institutions, public libraries, and
-            corporate archives.
-          </DescriptionText>
+          {/* Introduction */}
+          <Box mb={6}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
+              About Our System
+            </Typography>
+            <Typography variant="body1" paragraph>
+              Our <strong>Library Management System</strong> is a comprehensive digital platform designed to 
+              revolutionize how libraries operate in the modern age. Built with cutting-edge technology, 
+              it provides librarians and patrons with powerful tools to manage, discover, and interact 
+              with library resources.
+            </Typography>
+            <Typography variant="body1" paragraph>
+              The system has been adopted by academic institutions, public libraries, and corporate 
+              knowledge centers worldwide, helping them transition from traditional card catalogs to 
+              fully digital, cloud-based solutions.
+            </Typography>
+          </Box>
 
-          {/* LMS Benefits */}
-          <Grid container spacing={3} sx={{ marginTop: "20px" }}>
-            {[
-              {
-                title: "Centralized Book Database",
-                description:
-                  "Keep all records organized and easily accessible.",
-              },
-              {
-                title: "Automated Transactions",
-                description:
-                  "Efficient book issuing, returns, and fine calculation.",
-              },
-              {
-                title: "User-Friendly Access",
-                description:
-                  "Allow students and teachers to search books online.",
-              },
-            ].map((feature, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Card
-                  sx={{
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    textAlign: "center",
-                    padding: "1rem",
-                  }}
-                >
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      {feature.title}
-                    </Typography>
-                    <Typography variant="body2">
-                      {feature.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          {/* Key Features Grid */}
+          <Box mb={6}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
+              Key Features
+            </Typography>
+            <Grid container spacing={4}>
+              {features.map((feature, index) => (
+                <Grid item xs={12} md={4} key={index}>
+                  <FeatureCard
+                    component={motion.div}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + index * 0.1 }}
+                  >
+                    <CardContent sx={{ textAlign: "center", height: "100%" }}>
+                      <IconContainer>{feature.icon}</IconContainer>
+                      <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                        {feature.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {feature.description}
+                      </Typography>
+                    </CardContent>
+                  </FeatureCard>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
 
-          {/* Projects & Features Accordion */}
-          <Box sx={{ marginTop: "20px" }}>
-            {projects.map((project, index) => (
-              <StyledAccordion
+          {/* System Features Accordion */}
+          <Box mb={4}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
+              System Modules
+            </Typography>
+            {systemFeatures.map((feature, index) => (
+              <Accordion
                 key={index}
                 component={motion.div}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.3 }}
+                transition={{ delay: 0.3 + index * 0.15 }}
+                sx={{
+                  mb: 2,
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  "&:before": { display: "none" },
+                }}
               >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography variant="h6">{project.name}</Typography>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  sx={{ backgroundColor: "rgba(25, 118, 210, 0.08)" }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    {feature.name}
+                  </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <Typography variant="body2">{project.description}</Typography>
+                  <Typography variant="body1" paragraph>
+                    {feature.description}
+                  </Typography>
+                  <Box display="flex" flexWrap="wrap" gap={1} mt={2}>
+                    {feature.technologies.map((tech, techIndex) => (
+                      <Chip
+                        key={techIndex}
+                        label={tech}
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                      />
+                    ))}
+                  </Box>
                 </AccordionDetails>
-              </StyledAccordion>
+              </Accordion>
             ))}
           </Box>
-        </>
-      </GlassmorphicContainer>
+
+          {/* Closing Section */}
+          <Box mt={6} mb={6} textAlign="center">
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
+              Ready to transform your library?
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Contact us today to schedule a demo or learn more about our implementation process.
+            </Typography>
+          </Box>
+        </Container>
+      </GlassmorphicCard>
     </BackgroundContainer>
   );
 };

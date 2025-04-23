@@ -42,16 +42,20 @@ import { saveAs } from "file-saver";
 import dayjs from "dayjs";
 
 // Actions & Stores
-import { getAllUsersList, deleteUsers } from "../../features/user_module/userActions";
+import {
+  getAllUsersList,
+  deleteUsers,
+} from "../../features/user_module/userActions";
 import { getAllRolesList } from "../../features/role_module/roleActions";
 import { setPage, setPageSize } from "../../features/user_module/userSlice";
 
 // Styled Components
 const Container = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  borderRadius: "12px",
+  padding: theme.spacing(1),
+  borderRadius: "10px",
   boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-  // backgroundColor: theme.palette.background.paper,
+  backgroundColor: "#f5f7fa",
+  position: "relative",
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -100,8 +104,11 @@ const UsersTable = () => {
   );
   const { roles } = useSelector((state) => state.roles);
 
-  const userId = localStorage.getItem("userId") || "";
-  const roleId = localStorage.getItem("roleId");
+  const userData = localStorage.getItem("userData");
+  const userInfo = JSON.parse(userData) || {};
+
+  const userId = userInfo.id;
+  const roleId = userInfo.roleId;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -112,21 +119,17 @@ const UsersTable = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  // Calculate pagination entries
-  const startEntry = (page - 1) * pageSize + 1;
-  const endEntry = Math.min(page * pageSize, total);
-
   // Fetch users when filters change
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         await dispatch(
-          getAllUsersList({ 
-            page, 
-            pageSize, 
-            searchQuery, 
-            selectedRole 
+          getAllUsersList({
+            page,
+            pageSize,
+            searchQuery,
+            selectedRole,
           })
         ).unwrap();
         await dispatch(getAllRolesList()).unwrap();
@@ -136,7 +139,7 @@ const UsersTable = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchData();
   }, [dispatch, page, pageSize, searchQuery, selectedRole]);
 
@@ -154,7 +157,7 @@ const UsersTable = () => {
       "Email",
       "Mobile",
       "Created At",
-      "Updated At"
+      "Updated At",
     ];
 
     const tableRows = users.map((user) => [
@@ -207,14 +210,14 @@ const UsersTable = () => {
 
     // Auto-size columns
     const wscols = [
-      { wch: 10 }, // ID
-      { wch: 25 }, // Full Name
-      { wch: 15 }, // Role
-      { wch: 30 }, // Email
-      { wch: 15 }, // Mobile Number
-      { wch: 15 }, // Created At
-      { wch: 15 }, // Updated At
-      { wch: 15 }, // Status
+      { wch: 10 },
+      { wch: 25 },
+      { wch: 15 },
+      { wch: 30 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 15 },
     ];
     worksheet["!cols"] = wscols;
 
@@ -279,21 +282,25 @@ const UsersTable = () => {
 
   // Columns configuration
   const columns = [
-    { 
-      field: "id", 
-      headerName: "ID", 
-      width: 80,
+    {
+      field: "id",
+      headerName: "ID",
+      width: 70,
       headerAlign: "center",
       align: "center",
     },
     {
-      field: "fullname",
-      headerName: "Full Name",
-      width: 220,
-      valueGetter: (params) => `${params.row.firstname} ${params.row.lastname}`,
+      field: "firstName",
+      headerName: "Firstname",
+      width: 120,
     },
     {
-      field: "email",
+      field: "lastName",
+      headerName: "Lastname",
+      width: 120,
+    },
+    {
+      field: "emailId",
       headerName: "Email",
       width: 250,
     },
@@ -303,39 +310,76 @@ const UsersTable = () => {
       width: 150,
     },
     {
+      field: "age",
+      headerName: "Age",
+      width: 100,
+    },
+    {
       field: "role",
       headerName: "Role",
       width: 150,
       renderCell: (params) => {
         const roleName = params.row.role?.name || "unknown";
-        const displayName = {
-          super_admin: "Super Admin",
-          admin: "Admin",
-          customer: "Customer",
-        }[roleName] || "Unknown";
-        
+        const roleId = params.row.role?.id?.toString();
+
+        // Mapping for display names
+        const displayName =
+          {
+            super_admin: "Super Admin",
+            admin: "Admin",
+            librarian: "Librarian",
+            customer: "Customer",
+            guest: "Guest",
+          }[roleName] || "Unknown";
+
+        // Color mapping based on role
+        const colorMap = {
+          "1": "primary",
+          "2": "secondary",
+          "3": "info",
+          "4": "success",
+          "5": "warning",
+        };
+
         return (
-          <RoleChip
+          <Chip
             size="small"
             label={displayName}
-            role={roleName}
+            color={colorMap[roleId] || "default"}
+            sx={{
+              fontWeight: ["1", "2"].includes(roleId) ? "bold" : "normal",
+              textTransform: "capitalize",
+            }}
           />
         );
       },
     },
     {
+      field: "points",
+      headerName: "Points",
+      width: 100,
+    },
+    {
       field: "createdAt",
       headerName: "Created",
-      width: 120,
-      valueFormatter: (params) =>
-        params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
+      width: 200,
+      renderCell: (params) => {
+        if (!params.value) return null;
+        return (
+          <span>{new Date(params.value).toISOString().split("T")[0]}</span>
+        );
+      },
     },
     {
       field: "updatedAt",
       headerName: "Updated",
-      width: 120,
-      valueFormatter: (params) =>
-        params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
+      width: 200,
+      renderCell: (params) => {
+        if (!params.value) return null;
+        return (
+          <span>{new Date(params.value).toISOString().split("T")[0]}</span>
+        );
+      },
     },
     {
       field: "actions",
@@ -343,28 +387,53 @@ const UsersTable = () => {
       width: 120,
       sortable: false,
       renderCell: (params) => {
-        const isCurrentUser = params.row.id.toString() === userId;
+        const isCurrentUser = params.row?.id === userId;
+        const currentUserRole = roleId;
+
+        const isAuthorizedUser = [1, 2].includes(currentUserRole);
+        const shouldDisableButtons = !isAuthorizedUser || isCurrentUser;
+
         return (
           <Box display="flex" gap={1}>
-            <Tooltip title="Edit user">
-              <IconButton
-                color="primary"
-                size="small"
-                onClick={() => handleEdit(params.row.id)}
-                disabled={roleId !== "1"}
-              >
-                <Edit fontSize="small" />
-              </IconButton>
+            <Tooltip
+              title={
+                !isAuthorizedUser
+                  ? "Requires admin privileges"
+                  : isCurrentUser
+                  ? "Cannot edit yourself"
+                  : "Edit user"
+              }
+            >
+              <span>
+                <IconButton
+                  color="primary"
+                  size="small"
+                  onClick={() => handleEdit(params.row.id)}
+                  disabled={shouldDisableButtons}
+                >
+                  <Edit fontSize="small" />
+                </IconButton>
+              </span>
             </Tooltip>
-            <Tooltip title={isCurrentUser ? "Cannot delete yourself" : "Delete user"}>
-              <IconButton
-                color="error"
-                size="small"
-                onClick={() => handleDeleteClick(params.row.id)}
-                disabled={roleId !== "1" || isCurrentUser}
-              >
-                <Delete fontSize="small" />
-              </IconButton>
+            <Tooltip
+              title={
+                !isAuthorizedUser
+                  ? "Requires admin privileges"
+                  : isCurrentUser
+                  ? "Cannot delete yourself"
+                  : "Delete user"
+              }
+            >
+              <span>
+                <IconButton
+                  color="error"
+                  size="small"
+                  onClick={() => handleDeleteClick(params.row.id)}
+                  disabled={shouldDisableButtons}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </span>
             </Tooltip>
           </Box>
         );
@@ -372,13 +441,17 @@ const UsersTable = () => {
     },
   ];
 
+  // Calculate pagination entries
+  const startEntry = (page - 1) * pageSize + 1;
+  const endEntry = Math.min(page * pageSize, total);
+
   return (
     <Container elevation={3}>
       <Header>
         <Typography variant="h5" fontWeight="bold" color="textPrimary">
           User Management
         </Typography>
-        
+
         <FilterSection>
           <SearchField
             variant="outlined"
@@ -388,10 +461,7 @@ const UsersTable = () => {
             InputProps={{
               startAdornment: <Search color="action" sx={{ mr: 1 }} />,
               endAdornment: searchQuery && (
-                <IconButton
-                  size="small"
-                  onClick={() => setSearchQuery("")}
-                >
+                <IconButton size="small" onClick={() => setSearchQuery("")}>
                   <Clear fontSize="small" />
                 </IconButton>
               ),
@@ -463,7 +533,7 @@ const UsersTable = () => {
               </Button>
             </Tooltip>
 
-            {roleId === "1" && (
+            {roleId === 1 && (
               <Tooltip title="Add new user">
                 <Button
                   variant="contained"
@@ -497,7 +567,7 @@ const UsersTable = () => {
         <>
           <Box
             sx={{
-              height: "calc(100vh - 300px)",
+              height: "calc(100vh - 450px)",
               width: "100%",
               "& .MuiDataGrid-columnHeaders": {
                 backgroundColor: "#f5f5f5",
@@ -505,9 +575,6 @@ const UsersTable = () => {
               },
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "rgba(63, 81, 181, 0.04)",
-              },
-              "& .MuiDataGrid-cell": {
-                borderBottom: "1px solid rgba(224, 224, 224, 0.5)",
               },
             }}
           >
@@ -519,41 +586,56 @@ const UsersTable = () => {
               paginationMode="server"
               rowCount={total}
               disableSelectionOnClick
-              density="comfortable"
-              getRowId={(row) => row.id}
+              density="standard"
+              getRowId={(row) => row.id + row.firstName}
               hideFooter
               loading={loading || isLoading}
               sx={{
                 border: "none",
                 "& .MuiDataGrid-cell": {
-                  py: 1,
+                  borderBottom: "1px solid rgba(224, 224, 224, 0.5)",
                 },
               }}
             />
           </Box>
 
           <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mt={2}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "flex-start", sm: "center" },
+              mt: 3,
+              gap: 2,
+              p: 1,
+            }}
           >
-            <Typography variant="body2" color="textSecondary">
-              Showing {startEntry} to {endEntry} of {total} users
+            <Typography variant="body2" color="text.secondary">
+              Showing{" "}
+              <strong>
+                {startEntry}-{endEntry}
+              </strong>{" "}
+              of <strong>{total}</strong> users
             </Typography>
 
             <Box display="flex" alignItems="center" gap={2}>
-              <FormControl variant="outlined" size="small">
+              {/* Rows per Page Select */}
+              <FormControl
+                variant="outlined"
+                size="small"
+                sx={{ minWidth: 120 }}
+              >
                 <InputLabel>Rows per page</InputLabel>
                 <Select
                   value={pageSize}
                   onChange={handlePageSizeChange}
                   label="Rows per page"
                 >
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
+                  {[5, 10, 20, 50].map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
 
@@ -565,6 +647,13 @@ const UsersTable = () => {
                 shape="rounded"
                 showFirstButton
                 showLastButton
+                siblingCount={1}
+                boundaryCount={1}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    fontSize: "0.875rem",
+                  },
+                }}
               />
             </Box>
           </Box>
@@ -579,7 +668,8 @@ const UsersTable = () => {
         <DialogTitle>Confirm User Deletion</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete this user? This action cannot be undone.
+            Are you sure you want to delete this user? This action cannot be
+            undone.
           </Typography>
         </DialogContent>
         <DialogActions>

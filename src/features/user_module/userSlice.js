@@ -89,7 +89,7 @@ const userSlice = createSlice({
         state.users = action.payload.items;
         state.total = action.payload.total;
         state.page = action.payload.page;
-        state.pageSize = action.payload.itemsPerPage;
+        state.pageSize = action.payload.pageSize;
       })
       .addCase(getAllUsersList.rejected, (state, action) => {
         state.loading = false;

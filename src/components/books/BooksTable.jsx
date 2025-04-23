@@ -54,7 +54,7 @@ const Container = styled(Paper)(({ theme }) => ({
   borderRadius: "10px",
   boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
   backgroundColor: "#f5f7fa",
-  position: "relative", 
+  position: "relative",
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -314,7 +314,7 @@ const BooksTable = () => {
           <Tooltip title="Edit book">
             <ActionButton
               color="primary"
-              disabled={roleId !== "1"}
+              disabled={![1, 2].includes(roleId)}
               onClick={() => handleEdit(params.row.id)}
             >
               <Edit fontSize="small" />
@@ -323,7 +323,7 @@ const BooksTable = () => {
           <Tooltip title="Delete book">
             <ActionButton
               color="error"
-              disabled={roleId !== "1"}
+              disabled={![1, 2].includes(roleId)}
               onClick={() => handleDeleteClick(params.row.id)}
             >
               <Delete fontSize="small" />
@@ -496,27 +496,42 @@ const BooksTable = () => {
           </Box>
 
           <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mt={2}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "flex-start", sm: "center" },
+              mt: 3,
+              gap: 2,
+              p: 1,
+            }}
           >
-            <Typography variant="body2" color="textSecondary">
-              Showing {startEntry} to {endEntry} of {total} books
+            <Typography variant="body2" color="text.secondary">
+              Showing{" "}
+              <strong>
+                {startEntry}-{endEntry}
+              </strong>{" "}
+              of <strong>{total}</strong> users
             </Typography>
 
             <Box display="flex" alignItems="center" gap={5}>
-              <FormControl variant="outlined" size="small">
+              {/* Rows per Page Select */}
+              <FormControl
+                variant="outlined"
+                size="small"
+                sx={{ minWidth: 120 }}
+              >
                 <InputLabel>Rows per page</InputLabel>
                 <Select
                   value={pageSize}
                   onChange={handlePageSizeChange}
                   label="Rows per page"
                 >
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
+                  {[5, 10, 20, 50].map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
 
@@ -528,6 +543,13 @@ const BooksTable = () => {
                 shape="rounded"
                 showFirstButton
                 showLastButton
+                siblingCount={1}
+                boundaryCount={1}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    fontSize: "0.875rem",
+                  },
+                }}
               />
             </Box>
           </Box>

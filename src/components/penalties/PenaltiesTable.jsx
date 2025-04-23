@@ -18,13 +18,13 @@ import {
   useTheme,
   Tooltip,
 } from "@mui/material";
-import { 
-  PictureAsPdf, 
-  GridOn, 
-  Search, 
+import {
+  PictureAsPdf,
+  GridOn,
+  Search,
   Clear,
   Refresh,
-  AttachMoney
+  AttachMoney,
 } from "@mui/icons-material";
 import { styled } from "@mui/system";
 import { toast } from "react-toastify";
@@ -36,14 +36,18 @@ import dayjs from "dayjs";
 
 // Actions & Stores
 import { getAllPenaltiesList } from "../../features/penalties_module/penaltiesAction";
-import { setPage, setPageSize } from "../../features/penalties_module/penaltiesSlice";
+import {
+  setPage,
+  setPageSize,
+} from "../../features/penalties_module/penaltiesSlice";
 
 // Styled Components
 const Container = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  borderRadius: "12px",
+  padding: theme.spacing(1),
+  borderRadius: "10px",
   boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-  // backgroundColor: theme.palette.background.paper,
+  backgroundColor: "#f5f7fa",
+  position: "relative",
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -95,10 +99,10 @@ const PenaltiesTable = () => {
       setIsLoading(true);
       try {
         await dispatch(
-          getAllPenaltiesList({ 
-            page, 
-            pageSize, 
-            search: searchQuery 
+          getAllPenaltiesList({
+            page,
+            pageSize,
+            search: searchQuery,
           })
         ).unwrap();
       } catch (error) {
@@ -107,7 +111,7 @@ const PenaltiesTable = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchData();
   }, [dispatch, page, pageSize, searchQuery]);
 
@@ -124,7 +128,7 @@ const PenaltiesTable = () => {
       "User",
       "Fine Amount",
       "Date",
-      "Status"
+      "Status",
     ];
 
     const tableRows = penalties.map((penalty) => [
@@ -133,7 +137,7 @@ const PenaltiesTable = () => {
       penalty.fullname || "N/A",
       `$${penalty.fine.toFixed(2)}`,
       dayjs(penalty.createdAt).format("YYYY-MM-DD"),
-      penalty.paid ? "Paid" : "Unpaid"
+      penalty.paid ? "Paid" : "Unpaid",
     ]);
 
     doc.autoTable({
@@ -169,7 +173,9 @@ const PenaltiesTable = () => {
       "Fine Amount": `$${penalty.fine.toFixed(2)}`,
       Date: dayjs(penalty.createdAt).format("YYYY-MM-DD"),
       Status: penalty.paid ? "Paid" : "Unpaid",
-      "Payment Date": penalty.paidAt ? dayjs(penalty.paidAt).format("YYYY-MM-DD") : "-"
+      "Payment Date": penalty.paidAt
+        ? dayjs(penalty.paidAt).format("YYYY-MM-DD")
+        : "-",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -178,13 +184,13 @@ const PenaltiesTable = () => {
 
     // Auto-size columns
     const wscols = [
-      { wch: 10 }, // ID
-      { wch: 30 }, // Book Name
-      { wch: 25 }, // User Name
-      { wch: 15 }, // Fine Amount
-      { wch: 15 }, // Date
-      { wch: 15 }, // Status
-      { wch: 15 }, // Payment Date
+      { wch: 10 },
+      { wch: 30 },
+      { wch: 25 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 15 },
     ];
     worksheet["!cols"] = wscols;
 
@@ -221,10 +227,10 @@ const PenaltiesTable = () => {
 
   // Columns configuration
   const columns = [
-    { 
-      field: "id", 
-      headerName: "ID", 
-      width: 80,
+    {
+      field: "id",
+      headerName: "ID",
+      width: 150,
       headerAlign: "center",
       align: "center",
     },
@@ -232,38 +238,36 @@ const PenaltiesTable = () => {
       field: "bookname",
       headerName: "Book Name",
       width: 250,
-      valueGetter: (params) => params.row.bookname || "N/A",
+      valueGetter: (params) => params.row.bookName || "N/A",
     },
     {
       field: "fullname",
-      headerName: "User",
+      headerName: "Fullname",
       width: 200,
       valueGetter: (params) => params.row.fullname || "N/A",
     },
     {
       field: "fine",
       headerName: "Fine Amount",
-      width: 150,
+      width: 200,
       renderCell: (params) => (
         <FineChip
           icon={<AttachMoney fontSize="small" />}
           label={`$${params.value.toFixed(2)}`}
         />
       ),
-      headerAlign: "right",
-      align: "right",
     },
     {
       field: "createdAt",
       headerName: "Date",
-      width: 150,
+      width: 250,
       valueFormatter: (params) =>
         params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
     },
     {
       field: "paid",
       headerName: "Status",
-      width: 120,
+      width: 250,
       renderCell: (params) => (
         <Chip
           label={params.value ? "Paid" : "Unpaid"}
@@ -280,7 +284,7 @@ const PenaltiesTable = () => {
         <Typography variant="h5" fontWeight="bold" color="textPrimary">
           Penalty Records
         </Typography>
-        
+
         <FilterSection>
           <SearchField
             variant="outlined"
@@ -290,10 +294,7 @@ const PenaltiesTable = () => {
             InputProps={{
               startAdornment: <Search color="action" sx={{ mr: 1 }} />,
               endAdornment: searchQuery && (
-                <IconButton
-                  size="small"
-                  onClick={() => setSearchQuery("")}
-                >
+                <IconButton size="small" onClick={() => setSearchQuery("")}>
                   <Clear fontSize="small" />
                 </IconButton>
               ),
@@ -369,7 +370,7 @@ const PenaltiesTable = () => {
         <>
           <Box
             sx={{
-              height: "calc(100vh - 300px)",
+              height: "calc(100vh - 450px)",
               width: "100%",
               "& .MuiDataGrid-columnHeaders": {
                 backgroundColor: "#f5f5f5",
@@ -377,9 +378,6 @@ const PenaltiesTable = () => {
               },
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "rgba(63, 81, 181, 0.04)",
-              },
-              "& .MuiDataGrid-cell": {
-                borderBottom: "1px solid rgba(224, 224, 224, 0.5)",
               },
             }}
           >
@@ -392,40 +390,56 @@ const PenaltiesTable = () => {
               rowCount={total}
               disableSelectionOnClick
               density="comfortable"
-              getRowId={(row) => row.id + (row.user_id || "") + (row.book_id || "")}
+              getRowId={(row) =>
+                row.id + (row.user_id || "") + (row.book_id || "")
+              }
               hideFooter
-              loading={loading || isLoading}
               sx={{
                 border: "none",
                 "& .MuiDataGrid-cell": {
-                  py: 1,
+                  borderBottom: "1px solid rgba(224, 224, 224, 0.5)",
                 },
               }}
             />
           </Box>
 
           <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mt={2}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "flex-start", sm: "center" },
+              mt: 3,
+              gap: 2,
+              p: 1,
+            }}
           >
-            <Typography variant="body2" color="textSecondary">
-              Showing {startEntry} to {endEntry} of {total} records
+            <Typography variant="body2" color="text.secondary">
+              Showing{" "}
+              <strong>
+                {startEntry}-{endEntry}
+              </strong>{" "}
+              of <strong>{total}</strong> users
             </Typography>
 
-            <Box display="flex" alignItems="center" gap={2}>
-              <FormControl variant="outlined" size="small">
+            <Box display="flex" alignItems="center" gap={5}>
+              {/* Rows per Page Select */}
+              <FormControl
+                variant="outlined"
+                size="small"
+                sx={{ minWidth: 120 }}
+              >
                 <InputLabel>Rows per page</InputLabel>
                 <Select
                   value={pageSize}
                   onChange={handlePageSizeChange}
                   label="Rows per page"
                 >
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
+                  {[5, 10, 20, 50].map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
 
@@ -437,6 +451,13 @@ const PenaltiesTable = () => {
                 shape="rounded"
                 showFirstButton
                 showLastButton
+                siblingCount={1}
+                boundaryCount={1}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    fontSize: "0.875rem",
+                  },
+                }}
               />
             </Box>
           </Box>

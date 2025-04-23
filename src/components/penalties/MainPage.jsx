@@ -1,15 +1,37 @@
 import React from "react";
-import "./penalties.css";
 import PenaltiesTable from "./PenaltiesTable";
+import { styled } from "@mui/material/styles";
+
+// Styled components
+const MainPageContainer = styled("div")(({ theme }) => ({
+  position: "relative",
+  padding: theme.spacing(10), 
+  textAlign: "center",
+  backgroundColor: "darkgray",
+  minHeight: "90vh",
+  boxSizing: "border-box",
+}));
+
+const TableWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(1.25), 
+  boxShadow: theme.shadows[4],
+  borderRadius: 8,
+  backgroundColor: theme.palette.background.paper,
+  width: "100%",
+  margin: "0 auto",
+  animation: "slideIn 0.5s ease-out",
+}));
 
 const MainPage = () => {
   return (
-    <div className="penalties-main-page-container">
-      <div className="penalties-table-wrapper">
+    <MainPageContainer>
+      <TableWrapper>
         <PenaltiesTable />
-      </div>
-    </div>
+      </TableWrapper>
+    </MainPageContainer>
   );
 };
 
 export default MainPage;
+
+

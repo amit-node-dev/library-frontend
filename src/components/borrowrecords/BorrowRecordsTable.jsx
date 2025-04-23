@@ -17,12 +17,12 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import { 
-  PictureAsPdf, 
-  GridOn, 
-  Search, 
+import {
+  PictureAsPdf,
+  GridOn,
+  Search,
   Clear,
-  Refresh 
+  Refresh,
 } from "@mui/icons-material";
 import { styled } from "@mui/system";
 import { toast } from "react-toastify";
@@ -33,20 +33,16 @@ import { saveAs } from "file-saver";
 import dayjs from "dayjs";
 
 // Actions & Stores
-import { 
-  getAllBorrowRecordList 
-} from "../../features/borrowRecord_module/borrorRecordAction";
-import { 
-  setPage, 
-  setPageSize 
-} from "../../features/book_module/bookSlice";
+import { getAllBorrowRecordList } from "../../features/borrowRecord_module/borrorRecordAction";
+import { setPage, setPageSize } from "../../features/book_module/bookSlice";
 
 // Styled Components
 const Container = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  borderRadius: "12px",
+  padding: theme.spacing(1),
+  borderRadius: "10px",
   boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-  // backgroundColor: theme.palette.background.paper,
+  backgroundColor: "#f5f7fa",
+  position: "relative",
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -89,15 +85,10 @@ const StatusChip = styled(Chip)(({ theme, status }) => ({
 }));
 
 const BorrowRecordsTable = () => {
-  const { 
-    borrowRecords, 
-    loading, 
-    error, 
-    total, 
-    page, 
-    pageSize 
-  } = useSelector((state) => state.borrowRecords);
-
+  const { borrowRecords, loading, error, total, page, pageSize } = useSelector(
+    (state) => state.borrowRecords
+  );
+  
   const dispatch = useDispatch();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -114,11 +105,11 @@ const BorrowRecordsTable = () => {
       setIsLoading(true);
       try {
         await dispatch(
-          getAllBorrowRecordList({ 
-            page, 
-            pageSize, 
+          getAllBorrowRecordList({
+            page,
+            pageSize,
             status: selectedStatus,
-            search: searchQuery 
+            search: searchQuery,
           })
         ).unwrap();
       } catch (error) {
@@ -127,7 +118,7 @@ const BorrowRecordsTable = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchData();
   }, [dispatch, page, pageSize, selectedStatus, searchQuery]);
 
@@ -151,15 +142,13 @@ const BorrowRecordsTable = () => {
     const tableRows = borrowRecords.map((record) => [
       record.id,
       record.books?.bookname || "N/A",
-      record.users 
+      record.users
         ? `${record.users.firstname} ${record.users.lastname}`
         : "N/A",
       record.status,
       dayjs(record.borrow_date).format("YYYY-MM-DD"),
       dayjs(record.due_date).format("YYYY-MM-DD"),
-      record.return_date 
-        ? dayjs(record.return_date).format("YYYY-MM-DD")
-        : "-",
+      record.return_date ? dayjs(record.return_date).format("YYYY-MM-DD") : "-",
     ]);
 
     doc.autoTable({
@@ -192,18 +181,19 @@ const BorrowRecordsTable = () => {
     const data = borrowRecords.map((record) => ({
       ID: record.id,
       "Book Name": record.books?.bookname || "N/A",
-      Borrower: record.users 
+      Borrower: record.users
         ? `${record.users.firstname} ${record.users.lastname}`
         : "N/A",
       Status: record.status,
       "Borrow Date": dayjs(record.borrow_date).format("YYYY-MM-DD"),
       "Due Date": dayjs(record.due_date).format("YYYY-MM-DD"),
-      "Return Date": record.return_date 
+      "Return Date": record.return_date
         ? dayjs(record.return_date).format("YYYY-MM-DD")
         : "-",
-      "Days Overdue": record.status === "overdue" 
-        ? dayjs().diff(dayjs(record.due_date), "day")
-        : 0,
+      "Days Overdue":
+        record.status === "overdue"
+          ? dayjs().diff(dayjs(record.due_date), "day")
+          : 0,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -257,7 +247,9 @@ const BorrowRecordsTable = () => {
   };
 
   const handleRefresh = () => {
-    dispatch(getAllBorrowRecordList({ page, pageSize, status: selectedStatus }));
+    dispatch(
+      getAllBorrowRecordList({ page, pageSize, status: selectedStatus })
+    );
   };
 
   // Determine status with overdue check
@@ -269,9 +261,9 @@ const BorrowRecordsTable = () => {
 
   // Columns configuration
   const columns = [
-    { 
-      field: "id", 
-      headerName: "ID", 
+    {
+      field: "id",
+      headerName: "ID",
       width: 80,
       headerAlign: "center",
       align: "center",
@@ -279,8 +271,8 @@ const BorrowRecordsTable = () => {
     {
       field: "bookname",
       headerName: "Book Name",
-      width: 220,
-      valueGetter: (params) => params.row.books?.bookname || "N/A",
+      width: 300,
+      valueGetter: (params) => params.row.books?.bookName || "N/A",
     },
     {
       field: "user",
@@ -288,13 +280,13 @@ const BorrowRecordsTable = () => {
       width: 200,
       valueGetter: (params) =>
         params.row.users
-          ? `${params.row.users.firstname} ${params.row.users.lastname}`
+          ? `${params.row.users.firstName} ${params.row.users.lastName}`
           : "N/A",
     },
     {
       field: "status",
       headerName: "Status",
-      width: 120,
+      width: 200,
       renderCell: (params) => {
         const status = getRecordStatus(params.row);
         return (
@@ -309,28 +301,28 @@ const BorrowRecordsTable = () => {
     {
       field: "borrow_date",
       headerName: "Borrow Date",
-      width: 120,
+      width: 200,
       valueFormatter: (params) =>
         params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
     },
     {
       field: "due_date",
       headerName: "Due Date",
-      width: 120,
+      width: 200,
       valueFormatter: (params) =>
         params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
     },
     {
       field: "return_date",
       headerName: "Return Date",
-      width: 120,
+      width: 200,
       valueFormatter: (params) =>
         params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
     },
     {
       field: "days_overdue",
       headerName: "Days Overdue",
-      width: 120,
+      width: 200,
       valueGetter: (params) => {
         if (params.row.status === "returned") return 0;
         if (dayjs().isAfter(dayjs(params.row.due_date))) {
@@ -353,7 +345,7 @@ const BorrowRecordsTable = () => {
         <Typography variant="h5" fontWeight="bold" color="textPrimary">
           Borrow Records
         </Typography>
-        
+
         <FilterSection>
           <SearchField
             variant="outlined"
@@ -363,10 +355,7 @@ const BorrowRecordsTable = () => {
             InputProps={{
               startAdornment: <Search color="action" sx={{ mr: 1 }} />,
               endAdornment: searchQuery && (
-                <IconButton
-                  size="small"
-                  onClick={() => setSearchQuery("")}
-                >
+                <IconButton size="small" onClick={() => setSearchQuery("")}>
                   <Clear fontSize="small" />
                 </IconButton>
               ),
@@ -456,7 +445,7 @@ const BorrowRecordsTable = () => {
         <>
           <Box
             sx={{
-              height: "calc(100vh - 300px)",
+              height: "calc(100vh - 450px)",
               width: "100%",
               "& .MuiDataGrid-columnHeaders": {
                 backgroundColor: "#f5f5f5",
@@ -464,9 +453,6 @@ const BorrowRecordsTable = () => {
               },
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "rgba(63, 81, 181, 0.04)",
-              },
-              "& .MuiDataGrid-cell": {
-                borderBottom: "1px solid rgba(224, 224, 224, 0.5)",
               },
             }}
           >
@@ -479,40 +465,56 @@ const BorrowRecordsTable = () => {
               rowCount={total}
               disableSelectionOnClick
               density="comfortable"
-              getRowId={(row) => row.id + (row.books?.id || "") + (row.users?.id || "")}
+              getRowId={(row) =>
+                row.id + (row.books?.id || "") + (row.users?.id || "")
+              }
               hideFooter
-              loading={loading || isLoading}
               sx={{
                 border: "none",
                 "& .MuiDataGrid-cell": {
-                  py: 1,
+                  borderBottom: "1px solid rgba(224, 224, 224, 0.5)",
                 },
               }}
             />
           </Box>
 
           <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mt={2}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "flex-start", sm: "center" },
+              mt: 3,
+              gap: 2,
+              p: 1,
+            }}
           >
-            <Typography variant="body2" color="textSecondary">
-              Showing {startEntry} to {endEntry} of {total} records
+            <Typography variant="body2" color="text.secondary">
+              Showing{" "}
+              <strong>
+                {startEntry}-{endEntry}
+              </strong>{" "}
+              of <strong>{total}</strong> users
             </Typography>
 
-            <Box display="flex" alignItems="center" gap={2}>
-              <FormControl variant="outlined" size="small">
+            <Box display="flex" alignItems="center" gap={5}>
+              {/* Rows per Page Select */}
+              <FormControl
+                variant="outlined"
+                size="small"
+                sx={{ minWidth: 120 }}
+              >
                 <InputLabel>Rows per page</InputLabel>
                 <Select
                   value={pageSize}
                   onChange={handlePageSizeChange}
                   label="Rows per page"
                 >
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
+                  {[5, 10, 20, 50].map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
 
@@ -524,6 +526,13 @@ const BorrowRecordsTable = () => {
                 shape="rounded"
                 showFirstButton
                 showLastButton
+                siblingCount={1}
+                boundaryCount={1}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    fontSize: "0.875rem",
+                  },
+                }}
               />
             </Box>
           </Box>
