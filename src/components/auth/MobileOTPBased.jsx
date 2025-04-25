@@ -101,7 +101,9 @@ const MobileOTPBased = () => {
     if (mobileNumber && !mobileNumberError) {
       setLoading(true);
       try {
-        const response = await dispatch(sendOTP(mobileNumber)).unwrap();
+        const response = await dispatch(
+          sendOTP({ mobileNumber, mode: "create" })
+        ).unwrap();
         if (response.statusType === true) {
           setIsOTPSent(true);
           setOtpExpired(false);

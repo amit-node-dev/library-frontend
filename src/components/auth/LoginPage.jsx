@@ -30,7 +30,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState({
@@ -69,7 +69,7 @@ const LoginPage = () => {
 
   const validateField = (name, value) => {
     let error = "";
-    
+
     switch (name) {
       case "email":
         error = validateEmail(value);
@@ -80,7 +80,7 @@ const LoginPage = () => {
       default:
         break;
     }
-    
+
     setErrors((prev) => ({
       ...prev,
       [name]: error,
@@ -92,7 +92,7 @@ const LoginPage = () => {
       email: validateEmail(formData.email),
       password: validatePassword(formData.password),
     };
-    
+
     setErrors(newErrors);
     setTouched({
       email: true,
@@ -104,15 +104,22 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       setLoading(true);
       try {
         const response = await dispatch(loginUser(formData)).unwrap();
-        navigate("/dashboard")
+        if (response.statusType === true) {
+          localStorage.setItem(
+            "accessToken",
+            response.data?.tokens?.accessToken
+          );
+          localStorage.setItem("userData", JSON.stringify(response.data?.user));
 
-        localStorage.setItem("accessToken", response.data?.tokens?.accessToken)
-        localStorage.setItem("userData", JSON.stringify(response.data?.user))
+          navigate("/dashboard");
+        } else {
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
@@ -175,9 +182,7 @@ const LoginPage = () => {
           <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>
             Welcome Back
           </Typography>
-          <Typography variant="h6">
-            Your journey starts here
-          </Typography>
+          <Typography variant="h6">Your journey starts here</Typography>
         </motion.div>
       </motion.div>
 
@@ -209,26 +214,26 @@ const LoginPage = () => {
           >
             <Fade in={true} timeout={800}>
               <div>
-                <Typography 
-                  variant="h4" 
-                  component="h1" 
-                  gutterBottom 
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  gutterBottom
                   align="center"
-                  sx={{ 
+                  sx={{
                     fontWeight: 700,
                     background: "linear-gradient(45deg, #1976d2, #00bcd4)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
-                    mb: 2
+                    mb: 2,
                   }}
                 >
                   Welcome Back
                 </Typography>
-                
-                <Typography 
-                  variant="body1" 
-                  color="textSecondary" 
-                  align="center" 
+
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  align="center"
                   mb={4}
                   sx={{ fontStyle: "inherit" }}
                 >
@@ -314,7 +319,11 @@ const LoginPage = () => {
                                 transition: "color 0.3s",
                               }}
                             >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -327,10 +336,19 @@ const LoginPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                      <Link to="/forgot-password" style={{ textDecoration: "none" }}>
-                        <Typography 
-                          variant="body2" 
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        mb: 2,
+                      }}
+                    >
+                      <Link
+                        to="/forgot-password"
+                        style={{ textDecoration: "none" }}
+                      >
+                        <Typography
+                          variant="body2"
                           color="primary"
                           sx={{
                             "&:hover": {
@@ -357,9 +375,9 @@ const LoginPage = () => {
                       color="primary"
                       type="submit"
                       disabled={loading}
-                      sx={{ 
-                        mt: 2, 
-                        mb: 2, 
+                      sx={{
+                        mt: 2,
+                        mb: 2,
                         height: 48,
                         fontSize: "1rem",
                         fontWeight: 600,
@@ -403,8 +421,8 @@ const LoginPage = () => {
                       variant="outlined"
                       color="primary"
                       onClick={handleOTPLogin}
-                      sx={{ 
-                        mb: 2, 
+                      sx={{
+                        mb: 2,
                         height: 48,
                         fontSize: "1rem",
                         fontWeight: 600,

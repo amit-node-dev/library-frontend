@@ -9,6 +9,7 @@ import PrivateRoute from "./PrivateRoutes";
 import RegisterPage from "./components/auth/RegisterPage";
 import LoginPage from "./components/auth/LoginPage";
 import MobileOTPBased from "./components/auth/MobileOTPBased";
+import ForgotPasswordPage from "./components/auth/ForgotPasswordPage";
 
 // DASHBOARD
 import Dashboard from "./components/dashboard/Dashboard";
@@ -46,6 +47,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/mobile-login" element={<MobileOTPBased />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* DASHBOARD */}
         <Route

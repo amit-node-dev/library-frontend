@@ -58,10 +58,11 @@ export const loginUser = createAsyncThunk(
 // SEND OTP
 export const sendOTP = createAsyncThunk(
   "auth/sendOTP",
-  async (mobileNumber, { rejectWithValue }) => {
+  async ({mobileNumber, mode}, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(`/auth/send-otp`, {
-        mobileNumber: mobileNumber,
+        mobileNumber,
+        mode
       });
       if (response.status === 200) {
         toast.success(response.data.message);
@@ -246,6 +247,57 @@ export const currentUserPoints = createAsyncThunk(
         userId,
       });
       if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response;
+      } else {
+        toast.error("Failed to login user");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// VERIFY USER DETAILS
+export const verifyUserDetails = createAsyncThunk(
+  "auth/verifyUserDetails",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/auth/verify-user`, formData);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response) {
+        const errorMsg = error.response.data.message;
+        toast.error(`${errorMsg}`);
+        return error.response;
+      } else {
+        toast.error("Failed to login user");
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// RESET PASSWORD
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const {emailId, mobileNumber, password} = formData
+      const response = await apiClient.post(`/auth/reset-password`, {
+        emailId,
+        mobileNumber,
+        password,
+      });
+      if (response.status === 200) {
+        toast.success(response.data.message);
         return response.data;
       }
     } catch (error) {

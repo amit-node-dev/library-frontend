@@ -16,6 +16,8 @@ export const addNewBorrowRecord = createAsyncThunk(
       if (response.status === 201) {
         toast.success(response.data.message);
         return response.data;
+      } else {
+        toast.warning(response.data.message);
       }
     } catch (error) {
       if (error.response) {

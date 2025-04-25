@@ -202,14 +202,14 @@ const BorrowRecordsTable = () => {
 
     // Auto-size columns
     const wscols = [
-      { wch: 10 }, // ID
-      { wch: 30 }, // Book Name
-      { wch: 25 }, // Borrower
-      { wch: 15 }, // Status
-      { wch: 15 }, // Borrow Date
-      { wch: 15 }, // Due Date
-      { wch: 15 }, // Return Date
-      { wch: 15 }, // Days Overdue
+      { wch: 10 },
+      { wch: 30 }, 
+      { wch: 25 }, 
+      { wch: 15 }, 
+      { wch: 15 }, 
+      { wch: 15 }, 
+      { wch: 15 }, 
+      { wch: 15 }, 
     ];
     worksheet["!cols"] = wscols;
 
@@ -267,78 +267,134 @@ const BorrowRecordsTable = () => {
       width: 80,
       headerAlign: "center",
       align: "center",
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+          <Typography variant="body2">
+            {params.row.id}
+          </Typography>
+        </Box>
+      ),
     },
     {
-      field: "bookname",
+      field: "bookName",
       headerName: "Book Name",
       width: 300,
-      valueGetter: (params) => params.row.books?.bookName || "N/A",
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+          <Typography variant="body2" textAlign="center">
+            {params.row.book?.bookName || "N/A"}
+          </Typography>
+        </Box>
+      ),
     },
     {
       field: "user",
       headerName: "Borrower",
       width: 200,
-      valueGetter: (params) =>
-        params.row.users
-          ? `${params.row.users.firstName} ${params.row.users.lastName}`
-          : "N/A",
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+          <Typography variant="body2" textAlign="center">
+            {params.row.user
+              ? `${params.row.user.firstName} ${params.row.user.lastName}`
+              : "N/A"}
+          </Typography>
+        </Box>
+      ),
     },
     {
       field: "status",
       headerName: "Status",
       width: 200,
-      renderCell: (params) => {
-        const status = getRecordStatus(params.row);
-        return (
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
           <StatusChip
             size="small"
-            label={status.charAt(0).toUpperCase() + status.slice(1)}
-            status={status}
+            label={getRecordStatus(params.row).charAt(0).toUpperCase() + 
+                  getRecordStatus(params.row).slice(1)}
+            status={getRecordStatus(params.row)}
           />
-        );
-      },
+        </Box>
+      ),
     },
     {
-      field: "borrow_date",
+      field: "borrowDate",
       headerName: "Borrow Date",
       width: 200,
-      valueFormatter: (params) =>
-        params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+          <Typography variant="body2" textAlign="center">
+            {params.row.borrowDate
+              ? dayjs(params.row.borrowDate).format("MMM D, YYYY")
+              : "-"}
+          </Typography>
+        </Box>
+      ),
     },
     {
-      field: "due_date",
+      field: "dueDate",
       headerName: "Due Date",
       width: 200,
-      valueFormatter: (params) =>
-        params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+          <Typography variant="body2" textAlign="center">
+            {params.row.dueDate
+              ? dayjs(params.row.dueDate).format("MMM D, YYYY")
+              : "-"}
+          </Typography>
+        </Box>
+      ),
     },
     {
-      field: "return_date",
+      field: "returnDate",
       headerName: "Return Date",
       width: 200,
-      valueFormatter: (params) =>
-        params.value ? dayjs(params.value).format("MMM D, YYYY") : "-",
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+          <Typography variant="body2" textAlign="center">
+            {params.row.returnDate
+              ? dayjs(params.row.returnDate).format("MMM D, YYYY")
+              : "-"}
+          </Typography>
+        </Box>
+      ),
     },
     {
-      field: "days_overdue",
+      field: "daysOverdue",
       headerName: "Days Overdue",
       width: 200,
-      valueGetter: (params) => {
-        if (params.row.status === "returned") return 0;
-        if (dayjs().isAfter(dayjs(params.row.due_date))) {
-          return dayjs().diff(dayjs(params.row.due_date), "day");
-        }
-        return 0;
-      },
-      renderCell: (params) => {
-        if (params.value > 0) {
-          return <span style={{ color: "#f44336" }}>{params.value} days</span>;
-        }
-        return "-";
-      },
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+          {params.row.status === "returned" ? (
+            <Typography variant="body2" textAlign="center">-</Typography>
+          ) : dayjs().isAfter(dayjs(params.row.dueDate)) ? (
+            <Typography 
+              variant="body2" 
+              textAlign="center"
+              sx={{ color: "#f44336", fontWeight: 500 }}
+            >
+              {dayjs().diff(dayjs(params.row.dueDate), "day")} days
+            </Typography>
+          ) : (
+            <Typography variant="body2" textAlign="center">-</Typography>
+          )}
+        </Box>
+      ),
     },
   ];
-
   return (
     <Container elevation={3}>
       <Header>
@@ -464,7 +520,7 @@ const BorrowRecordsTable = () => {
               paginationMode="server"
               rowCount={total}
               disableSelectionOnClick
-              density="comfortable"
+              density="standard"
               getRowId={(row) =>
                 row.id + (row.books?.id || "") + (row.users?.id || "")
               }
