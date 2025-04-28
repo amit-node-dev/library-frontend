@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { styled } from "@mui/material/styles";
 import {
   addNewAuthors,
   getAuthorsById,
@@ -15,8 +16,56 @@ import {
   Fab,
   Grid,
   Tooltip,
+  Paper,
+  Divider,
 } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
+
+// Styled components
+const MainContainer = styled("div")(({ theme }) => ({
+  position: "relative",
+  padding: theme.spacing(2),
+  backgroundColor: "lightgray",
+  minHeight: "calc(100vh - 100px)",
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
+}));
+
+const FormContainer = styled(Container)(({ theme }) => ({
+  flex: 2,
+  display: "flex",
+  flexDirection: "column",
+  padding: theme.spacing(5),
+  marginTop: theme.spacing(5),
+}));
+
+const FormPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[3],
+}));
+
+const FormHeader = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: theme.spacing(3),
+}));
+
+const FormTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 600,
+  color: theme.palette.primary.main,
+}));
+
+const ActionButtons = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "flex-end",
+  gap: theme.spacing(2),
+  marginTop: theme.spacing(3),
+  paddingTop: theme.spacing(2),
+  borderTop: `1px solid ${theme.palette.divider}`,
+}));
 
 const AddEditAuthors = () => {
   const { authorId } = useParams();
@@ -116,52 +165,33 @@ const AddEditAuthors = () => {
   };
 
   return (
-    <div className="author-add-edit-container">
-      <Container maxWidth="lg">
-        <Box
-          className="add-edit-author-container"
-          sx={{
-            mt: 5,
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            padding: "50px",
-            backgroundColor: "#fff",
-            animation: "fadeIn 1s ease-in-out",
-          }}
-        >
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{ fontFamily: "sans-serif" }}
-            >
+    <MainContainer>
+      <FormContainer maxWidth="lg">
+        <FormPaper elevation={4}>
+          <FormHeader>
+            <FormTitle variant="h4">
               {authorId ? "Edit Author" : "Add Author"}
-            </Typography>
+            </FormTitle>
             <Tooltip title="Back">
               <Fab
-                size="small"
-                color="warning"
-                aria-label="add"
-                sx={{ marginRight: "2rem" }}
+                size="medium"
+                color="primary"
+                aria-label="back"
+                onClick={handleBack}
+                sx={{ boxShadow: 2 }}
               >
-                <ArrowBack onClick={handleBack} />
+                <ArrowBack />
               </Fab>
             </Tooltip>
-          </Box>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{
-              animation: "slideIn 0.5s ease-out",
-            }}
-          >
-            <Grid container spacing={2}>
+          </FormHeader>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box component="form" onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  size="small"
-                  margin="normal"
                   label="First Name"
                   name="firstname"
                   value={authorData.firstname}
@@ -169,16 +199,12 @@ const AddEditAuthors = () => {
                   onBlur={handleFirstNameBlur}
                   error={!!firstnameError}
                   helperText={firstnameError}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
+                  size="small"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  size="small"
-                  margin="normal"
                   label="Last Name"
                   name="lastname"
                   value={authorData.lastname}
@@ -186,16 +212,12 @@ const AddEditAuthors = () => {
                   onBlur={handleLastNameBlur}
                   error={!!lastnameError}
                   helperText={lastnameError}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
+                  size="small"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  size="small"
-                  margin="normal"
                   label="Email ID"
                   name="email"
                   value={authorData.email}
@@ -203,16 +225,12 @@ const AddEditAuthors = () => {
                   onBlur={handleEmailBlur}
                   error={!!emailError}
                   helperText={emailError}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
+                  size="small"
                 />
               </Grid>
-              <Grid item xs={12} sm={12}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  size="small"
-                  margin="normal"
                   label="Biography"
                   name="biography"
                   value={authorData.biography}
@@ -220,60 +238,33 @@ const AddEditAuthors = () => {
                   onBlur={handleBiographyBlur}
                   error={!!biographyError}
                   helperText={biographyError}
+                  size="small"
                   multiline
-                  rows={4}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
+                  rows={5}
                 />
               </Grid>
             </Grid>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                mt: 2,
-                animation: "slideInUp 0.5s ease-out",
-              }}
-            >
-              <Button
-                variant="contained"
-                type="submit"
-                color="primary"
-                sx={{
-                  backgroundColor: "#28a745",
-                  "&:hover": {
-                    backgroundColor: "#218838",
-                    transform: "scale(1.05)",
-                  },
-                  transition: "background-color 0.3s ease, transform 0.3s ease",
-                }}
-              >
-                {authorId ? "Update" : "Submit"}
-              </Button>
+
+            <ActionButtons>
               <Button
                 variant="outlined"
                 onClick={handleReset}
                 color="secondary"
-                className="reset-button"
-                sx={{
-                  ml: 2,
-                  color: "#dc3545",
-                  borderColor: "#dc3545",
-                  "&:hover": {
-                    backgroundColor: "#f8d7da",
-                    transform: "scale(1.05)",
-                  },
-                  transition: "background-color 0.3s ease, transform 0.3s ease",
-                }}
               >
                 Reset
               </Button>
-            </Box>
+              <Button
+                variant="contained"
+                type="submit"
+                color="primary"
+              >
+                {authorId ? "Update" : "Submit"}
+              </Button>
+            </ActionButtons>
           </Box>
-        </Box>
-      </Container>
-    </div>
+        </FormPaper>
+      </FormContainer>
+    </MainContainer>
   );
 };
 

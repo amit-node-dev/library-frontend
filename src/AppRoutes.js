@@ -11,6 +11,9 @@ import LoginPage from "./components/auth/LoginPage";
 import MobileOTPBased from "./components/auth/MobileOTPBased";
 import ForgotPasswordPage from "./components/auth/ForgotPasswordPage";
 
+// PROFILE
+import Profile from "./components/Profile";
+
 // DASHBOARD
 import Dashboard from "./components/dashboard/Dashboard";
 
@@ -56,6 +59,18 @@ const AppRoutes = () => {
             <PrivateRoute>
               <Layout>
                 <Dashboard />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* PROFILE */}
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Profile />
               </Layout>
             </PrivateRoute>
           }

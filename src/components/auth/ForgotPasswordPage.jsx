@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -23,6 +23,7 @@ import {
   verifyOTP,
   resetPassword,
 } from "../../features/user_module/userActions";
+import loginImage from "../../images/loginPage.jpg";
 
 const ForgotPasswordPage = () => {
   const [formData, setFormData] = useState({
@@ -356,6 +357,11 @@ const ForgotPasswordPage = () => {
     }));
   };
 
+  useEffect(() => {
+    const img = new Image();
+    img.src = loginImage;
+  }, []);
+
   return (
     <Box
       sx={{
@@ -365,6 +371,54 @@ const ForgotPasswordPage = () => {
         overflow: "hidden",
       }}
     >
+      {/* Image Section with Animation */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        style={{
+          flex: 1,
+          display: { xs: "none", md: "flex" },
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundImage: `url(${loginImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+          }}
+        />
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1.5 }}
+          style={{
+            zIndex: 1,
+            textAlign: "center",
+            padding: "2rem",
+            color: "white",
+          }}
+        >
+          <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>
+            Reset Password
+          </Typography>
+          <Typography variant="h6">Secure your account</Typography>
+        </motion.div>
+      </motion.div>
+
+      {/* Form Section */}
       <Box
         sx={{
           flex: 1,
@@ -383,6 +437,11 @@ const ForgotPasswordPage = () => {
               maxWidth: 450,
               borderRadius: 4,
               boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: "0px 15px 30px rgba(0, 0, 0, 0.15)",
+              },
             }}
           >
             <Fade in={true} timeout={800}>
@@ -408,6 +467,7 @@ const ForgotPasswordPage = () => {
                   color="textSecondary"
                   align="center"
                   mb={4}
+                  sx={{ fontStyle: "inherit" }}
                 >
                   {step === 1
                     ? "Enter your email or mobile number to verify your account"
@@ -442,6 +502,20 @@ const ForgotPasswordPage = () => {
                           error={touched.email && !!errors.email}
                           helperText={touched.email && errors.email}
                           variant="outlined"
+                          sx={{
+                            "& .MuiOutlinedInput-root": {
+                              "& fieldset": {
+                                borderColor: "#e0e0e0",
+                              },
+                              "&:hover fieldset": {
+                                borderColor: "#1976d2",
+                              },
+                              "&.Mui-focused fieldset": {
+                                borderColor: "#1976d2",
+                                borderWidth: 2,
+                              },
+                            },
+                          }}
                         />
                       </motion.div>
 
@@ -469,6 +543,20 @@ const ForgotPasswordPage = () => {
                               </InputAdornment>
                             ),
                           }}
+                          sx={{
+                            "& .MuiOutlinedInput-root": {
+                              "& fieldset": {
+                                borderColor: "#e0e0e0",
+                              },
+                              "&:hover fieldset": {
+                                borderColor: "#1976d2",
+                              },
+                              "&.Mui-focused fieldset": {
+                                borderColor: "#1976d2",
+                                borderWidth: 2,
+                              },
+                            },
+                          }}
                         />
                       </motion.div>
                     </>
@@ -493,6 +581,20 @@ const ForgotPasswordPage = () => {
                         helperText={touched.otp && errors.otp}
                         variant="outlined"
                         inputProps={{ maxLength: 6 }}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              borderColor: "#e0e0e0",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "#1976d2",
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: "#1976d2",
+                              borderWidth: 2,
+                            },
+                          },
+                        }}
                       />
                     </motion.div>
                   )}
@@ -516,12 +618,30 @@ const ForgotPasswordPage = () => {
                           error={touched.password && !!errors.password}
                           helperText={touched.password && errors.password}
                           variant="outlined"
+                          sx={{
+                            "& .MuiOutlinedInput-root": {
+                              "& fieldset": {
+                                borderColor: "#e0e0e0",
+                              },
+                              "&:hover fieldset": {
+                                borderColor: "#1976d2",
+                              },
+                              "&.Mui-focused fieldset": {
+                                borderColor: "#1976d2",
+                                borderWidth: 2,
+                              },
+                            },
+                          }}
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
                                 <IconButton
                                   onClick={() => toggleShowPassword("password")}
                                   edge="end"
+                                  sx={{
+                                    color: showPassword.password ? "#1976d2" : "inherit",
+                                    transition: "color 0.3s",
+                                  }}
                                 >
                                   {showPassword.password ? (
                                     <VisibilityOff />
@@ -545,27 +665,37 @@ const ForgotPasswordPage = () => {
                           margin="normal"
                           label="Confirm Password"
                           name="confirmPassword"
-                          type={
-                            showPassword.confirmPassword ? "text" : "password"
-                          }
+                          type={showPassword.confirmPassword ? "text" : "password"}
                           value={formData.confirmPassword}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          error={
-                            touched.confirmPassword && !!errors.confirmPassword
-                          }
-                          helperText={
-                            touched.confirmPassword && errors.confirmPassword
-                          }
+                          error={touched.confirmPassword && !!errors.confirmPassword}
+                          helperText={touched.confirmPassword && errors.confirmPassword}
                           variant="outlined"
+                          sx={{
+                            "& .MuiOutlinedInput-root": {
+                              "& fieldset": {
+                                borderColor: "#e0e0e0",
+                              },
+                              "&:hover fieldset": {
+                                borderColor: "#1976d2",
+                              },
+                              "&.Mui-focused fieldset": {
+                                borderColor: "#1976d2",
+                                borderWidth: 2,
+                              },
+                            },
+                          }}
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
                                 <IconButton
-                                  onClick={() =>
-                                    toggleShowPassword("confirmPassword")
-                                  }
+                                  onClick={() => toggleShowPassword("confirmPassword")}
                                   edge="end"
+                                  sx={{
+                                    color: showPassword.confirmPassword ? "#1976d2" : "inherit",
+                                    transition: "color 0.3s",
+                                  }}
                                 >
                                   {showPassword.confirmPassword ? (
                                     <VisibilityOff />
@@ -581,12 +711,20 @@ const ForgotPasswordPage = () => {
                     </>
                   )}
 
-                  {renderButton()}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                  >
+                    {renderButton()}
+                  </motion.div>
 
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
+                    transition={{ delay: 0.7 }}
                   >
                     <Box sx={{ textAlign: "center", mt: 3 }}>
                       <Typography variant="body2">

@@ -53,12 +53,20 @@ const RegisterPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hasMobileNumber, setHasMobileNumber] = useState(false);
+  const [touched, setTouched] = useState({
+    firstname: false,
+    lastname: false,
+    age: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    mobileNumber: false,
+  });
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Check for mobile number in localStorage
     const storedMobileNumber = localStorage.getItem("mobileNumber");
     if (storedMobileNumber) {
       setHasMobileNumber(true);
@@ -84,8 +92,12 @@ const RegisterPage = () => {
   };
 
   const handleBlur = (e) => {
-    const { name, value } = e.target;
-    validateField(name, value);
+    const { name } = e.target;
+    setTouched(prev => ({
+      ...prev,
+      [name]: true,
+    }));
+    validateField(name, formData[name]);
   };
 
   const evaluatePasswordStrength = (password) => {
@@ -195,18 +207,76 @@ const RegisterPage = () => {
   };
 
   const validateForm = () => {
-    let isValid = true;
-    const newErrors = { ...errors };
-
-    Object.keys(formData).forEach((field) => {
-      validateField(field, formData[field]);
-      if (errors[field]) isValid = false;
+    // Mark all fields as touched
+    const newTouched = {};
+    Object.keys(touched).forEach(field => {
+      newTouched[field] = true;
     });
+    setTouched(newTouched);
 
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-      isValid = false;
-    }
+    // Validate all fields
+    const newErrors = {};
+    let isValid = true;
+
+    Object.keys(formData).forEach(field => {
+      if (field === "mobileNumber" && hasMobileNumber) return;
+      
+      let error = "";
+      const value = formData[field];
+
+      switch (field) {
+        case "firstname":
+          error = value.trim() === "" ? "First name is required" : "";
+          break;
+        case "lastname":
+          error = value.trim() === "" ? "Last name is required" : "";
+          break;
+        case "age":
+          error = value.trim() === "" 
+            ? "Age is required" 
+            : isNaN(value) || value < 1 
+            ? "Please enter a valid age" 
+            : "";
+          break;
+        case "email":
+          error = value.trim() === "" 
+            ? "Email is required" 
+            : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) 
+            ? "Invalid email format" 
+            : "";
+          break;
+        case "password":
+          error = value.trim() === "" 
+            ? "Password is required" 
+            : value.length < 8 
+            ? "Password must be at least 8 characters" 
+            : "";
+          break;
+        case "confirmPassword":
+          error = value.trim() === "" 
+            ? "Please confirm your password" 
+            : value !== formData.password 
+            ? "Passwords do not match" 
+            : "";
+          break;
+        case "mobileNumber":
+          if (!hasMobileNumber) {
+            error = value.trim() === "" 
+              ? "Mobile number is required" 
+              : !/^[0-9]{10}$/.test(value) 
+              ? "Invalid mobile number format" 
+              : "";
+          }
+          break;
+        default:
+          break;
+      }
+
+      if (error) {
+        isValid = false;
+        newErrors[field] = error;
+      }
+    });
 
     setErrors(newErrors);
     return isValid;
@@ -214,35 +284,35 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
+    try {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(formData.password, saltRounds);
 
-    if (validateForm()) {
-      try {
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(formData.password, saltRounds);
+      const userData = {
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        age: formData.age,
+        email: formData.email,
+        password: hashedPassword,
+        mobileNumber: hasMobileNumber 
+          ? localStorage.getItem("mobileNumber") 
+          : formData.mobileNumber,
+      };
 
-        const userData = {
-          firstname: formData.firstname,
-          lastname: formData.lastname,
-          age: formData.age,
-          email: formData.email,
-          password: hashedPassword,
-          mobileNumber: hasMobileNumber
-            ? localStorage.getItem("mobileNumber")
-            : formData.mobileNumber,
-        };
-
-        const response = await dispatch(registerUser(userData)).unwrap();
-        if (response.statusType === true) {
-          navigate("/login");
-          localStorage.clear();
-        }
-      } catch (error) {
-        console.error("Registration error:", error);
-      } finally {
-        setLoading(false);
+      const response = await dispatch(registerUser(userData)).unwrap();
+      if (response.statusType === true) {
+        navigate("/login");
+        localStorage.clear();
       }
-    } else {
+    } catch (error) {
+      console.error("Registration error:", error);
+    } finally {
       setLoading(false);
     }
   };

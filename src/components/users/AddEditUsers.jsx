@@ -19,7 +19,12 @@ import {
   Grid,
   Fab,
   Tooltip,
+  Paper,
+  Divider,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import "react-perfect-scrollbar/dist/css/styles.css";
 
 // ACTIONS & STORES
 import {
@@ -29,6 +34,79 @@ import {
 } from "../../features/user_module/userActions";
 import { getAllRolesList } from "../../features/role_module/roleActions";
 import { ArrowBack, Visibility, VisibilityOff } from "@mui/icons-material";
+
+// Styled components (copied and adapted from AddEditRole.jsx)
+const MainContainer = styled("div")(({ theme }) => ({
+  position: "relative",
+  padding: theme.spacing(2),
+  backgroundColor: "darkgray",
+  minHeight: "calc(100vh - 100px)",
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
+}));
+const MainWrapper = styled("div")(() => ({
+  margin: "0 auto",
+  width: "100%",
+  maxWidth: "1200px",
+  animation: "slideIn 0.5s ease-out",
+}));
+const FormContainer = styled(Container)(({ theme }) => ({
+  flex: 2,
+  display: "flex",
+  flexDirection: "column",
+  padding: theme.spacing(0),
+}));
+const FormPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[3],
+  animation: "fadeIn 0.5s ease-in-out",
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+}));
+const FormHeader = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: theme.spacing(3),
+}));
+const FormTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 600,
+  color: theme.palette.primary.main,
+}));
+const FormGrid = styled(Grid)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
+const ActionButtons = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "flex-end",
+  gap: theme.spacing(2),
+  marginTop: theme.spacing(3),
+  paddingTop: theme.spacing(2),
+  borderTop: `1px solid ${theme.palette.divider}`,
+}));
+const SubmitButton = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(1, 4),
+  fontWeight: 600,
+  transition: "all 0.3s ease",
+}));
+const ResetButton = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(1, 4),
+  fontWeight: 600,
+  transition: "all 0.3s ease",
+}));
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    borderRadius: theme.shape.borderRadius,
+  },
+  animation: "fadeIn 0.5s ease-in-out",
+}));
+const ScrollableFormContent = styled(Box)({
+  flex: 1,
+  overflow: "hidden",
+});
 
 const AddEditUsers = () => {
   const { userId } = useParams();
@@ -270,360 +348,278 @@ const AddEditUsers = () => {
   };
 
   return (
-    <div className="user-add-edit-container">
-      <Container maxWidth="lg">
-        <Box
-          sx={{
-            mt: 5,
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            padding: "50px",
-            backgroundColor: "#fff",
-            animation: "fadeIn 1s ease-in-out",
-          }}
-        >
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{ fontFamily: "sans-serif" }}
-            >
-              {userId ? "Edit User" : "Add User"}
-            </Typography>
-            <Tooltip title="Back">
-              <Fab
-                size="small"
-                color="warning"
-                aria-label="add"
-                sx={{ marginRight: "2rem" }}
-              >
-                <ArrowBack onClick={handleBack} />
-              </Fab>
-            </Tooltip>
-          </Box>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{
-              animation: "slideIn 0.5s ease-out",
-            }}
-          >
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="First Name"
-                  name="firstname"
-                  value={userData.firstname}
-                  onChange={handleChange}
-                  onBlur={handleFirstNameBlur}
-                  error={!!firstnameError}
-                  helperText={firstnameError}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="Last Name"
-                  name="lastname"
-                  value={userData.lastname}
-                  onChange={handleChange}
-                  onBlur={handleLastNameBlur}
-                  error={!!lastnameError}
-                  helperText={lastnameError}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="Email ID"
-                  name="email"
-                  value={userData.email}
-                  onChange={handleChange}
-                  onBlur={handleEmailBlur}
-                  error={!!emailError}
-                  helperText={emailError}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="Age"
-                  name="age"
-                  value={userData.age}
-                  onChange={handleChange}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="Mobile Number"
-                  name="mobileNumber"
-                  value={userData.mobileNumber}
-                  onChange={handleChange}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                />
-              </Grid>
-              {userId && (
-                <>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      margin="normal"
-                      label="Old Password"
-                      name="oldpassword"
-                      type={showPassword ? "text" : "password"}
-                      value={userData.oldpassword}
-                      onChange={handleChange}
-                      onBlur={handleOldPasswordBlur}
-                      error={!!oldPasswordError}
-                      helperText={oldPasswordError}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        animation: "fadeIn 1s ease-in-out",
-                      }}
-                    />
-                  </Grid>
-                </>
-              )}
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label={userId ? "New Password" : "Password"}
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  value={userData.password}
-                  onChange={handleChange}
-                  onBlur={handlePasswordBlur}
-                  error={!!passwordError}
-                  helperText={passwordError}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="Confirm Password"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={userData.confirmPassword}
-                  onChange={handleChange}
-                  onBlur={handleConfirmPasswordBlur}
-                  error={!!confirmPasswordError}
-                  helperText={confirmPasswordError}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
-                          edge="end"
-                        >
-                          {showConfirmPassword ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="Country"
-                  name="country"
-                  value={userData.country}
-                  onChange={handleCountryChange}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
+    <MainContainer>
+      <MainWrapper>
+        <FormContainer maxWidth="lg">
+          <FormPaper elevation={4}>
+            <FormHeader>
+              <FormTitle variant="h4">
+                {userId ? "Edit User" : "Add User"}
+              </FormTitle>
+              <Tooltip title="Back to Users">
+                <Fab
+                  size="medium"
+                  color="primary"
+                  aria-label="back"
+                  onClick={handleBack}
+                  sx={{ boxShadow: 2 }}
                 >
-                  {countries.map((country) => (
-                    <MenuItem key={country.isoCode} value={country.isoCode}>
-                      {country.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="State"
-                  name="state"
-                  value={userData.state}
-                  onChange={handleStateChange}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                >
-                  {states.map((state) => (
-                    <MenuItem key={state.isoCode} value={state.isoCode}>
-                      {state.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="City"
-                  name="city"
-                  value={userData.city}
-                  onChange={handleCityChange}
-                  sx={{
-                    animation: "fadeIn 1s ease-in-out",
-                  }}
-                >
-                  {cities.map((city) => (
-                    <MenuItem key={city.name} value={city.name}>
-                      {city.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  margin="normal"
-                  label="Role"
-                  name="role"
-                  select
-                  value={userData.role}
-                  onChange={handleChange}
-                  onBlur={handleRoleBlur}
-                  error={!!roleError}
-                  helperText={roleError}
-                >
-                  {roleList?.map((role) => (
-                    <MenuItem key={role.id} value={role.id}>
-                      {role.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                mt: 2,
-                animation: "slideInUp 0.5s ease-out",
-              }}
-            >
-              <Button
-                type="submit"
-                variant="contained"
-                className="submit-button"
-                sx={{
-                  backgroundColor: "#28a745",
-                  "&:hover": {
-                    backgroundColor: "#218838",
-                    transform: "scale(1.05)",
-                  },
-                  transition: "background-color 0.3s ease, transform 0.3s ease",
-                }}
-              >
-                {userId ? "Update" : "Submit"}
-              </Button>
-              <Button
-                type="reset"
-                variant="outlined"
-                className="reset-button"
-                onClick={handleReset}
-                sx={{
-                  ml: 2,
-                  color: "#dc3545",
-                  borderColor: "#dc3545",
-                  "&:hover": {
-                    backgroundColor: "#f8d7da",
-                    transform: "scale(1.05)",
-                  },
-                  transition: "background-color 0.3s ease, transform 0.3s ease",
-                }}
-              >
-                Reset
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-      </Container>
-    </div>
+                  <ArrowBack />
+                </Fab>
+              </Tooltip>
+            </FormHeader>
+            <Divider sx={{ my: 2 }} />
+            {/* Error handling can be added here if needed */}
+            <ScrollableFormContent>
+              <PerfectScrollbar>
+                <Box mt={1} component="form" onSubmit={handleSubmit}>
+                  <FormGrid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="First Name"
+                        name="firstname"
+                        value={userData.firstname}
+                        onChange={handleChange}
+                        onBlur={handleFirstNameBlur}
+                        error={!!firstnameError}
+                        helperText={firstnameError}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="Last Name"
+                        name="lastname"
+                        value={userData.lastname}
+                        onChange={handleChange}
+                        onBlur={handleLastNameBlur}
+                        error={!!lastnameError}
+                        helperText={lastnameError}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="Email ID"
+                        name="email"
+                        value={userData.email}
+                        onChange={handleChange}
+                        onBlur={handleEmailBlur}
+                        error={!!emailError}
+                        helperText={emailError}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="Age"
+                        name="age"
+                        value={userData.age}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="Mobile Number"
+                        name="mobileNumber"
+                        value={userData.mobileNumber}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    {userId && (
+                      <Grid item xs={12} sm={6}>
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Old Password"
+                          name="oldpassword"
+                          type={showPassword ? "text" : "password"}
+                          value={userData.oldpassword}
+                          onChange={handleChange}
+                          onBlur={handleOldPasswordBlur}
+                          error={!!oldPasswordError}
+                          helperText={oldPasswordError}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  edge="end"
+                                >
+                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </Grid>
+                    )}
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label={userId ? "New Password" : "Password"}
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        value={userData.password}
+                        onChange={handleChange}
+                        onBlur={handlePasswordBlur}
+                        error={!!passwordError}
+                        helperText={passwordError}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() => setShowPassword(!showPassword)}
+                                edge="end"
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="Confirm Password"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={userData.confirmPassword}
+                        onChange={handleChange}
+                        onBlur={handleConfirmPasswordBlur}
+                        error={!!confirmPasswordError}
+                        helperText={confirmPasswordError}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                edge="end"
+                              >
+                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        select
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="Country"
+                        name="country"
+                        value={userData.country}
+                        onChange={handleCountryChange}
+                      >
+                        {countries.map((country) => (
+                          <MenuItem key={country.isoCode} value={country.isoCode}>
+                            {country.name}
+                          </MenuItem>
+                        ))}
+                      </StyledTextField>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        select
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="State"
+                        name="state"
+                        value={userData.state}
+                        onChange={handleStateChange}
+                      >
+                        {states.map((state) => (
+                          <MenuItem key={state.isoCode} value={state.isoCode}>
+                            {state.name}
+                          </MenuItem>
+                        ))}
+                      </StyledTextField>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        select
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="City"
+                        name="city"
+                        value={userData.city}
+                        onChange={handleCityChange}
+                      >
+                        {cities.map((city) => (
+                          <MenuItem key={city.name} value={city.name}>
+                            {city.name}
+                          </MenuItem>
+                        ))}
+                      </StyledTextField>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <StyledTextField
+                        fullWidth
+                        size="small"
+                        margin="normal"
+                        label="Role"
+                        name="role"
+                        select
+                        value={userData.role}
+                        onChange={handleChange}
+                        onBlur={handleRoleBlur}
+                        error={!!roleError}
+                        helperText={roleError}
+                      >
+                        {roleList?.map((role) => (
+                          <MenuItem key={role.id} value={role.id}>
+                            {role.name}
+                          </MenuItem>
+                        ))}
+                      </StyledTextField>
+                    </Grid>
+                  </FormGrid>
+                  <ActionButtons>
+                    <ResetButton
+                      variant="outlined"
+                      color="error"
+                      onClick={handleReset}
+                    >
+                      Reset
+                    </ResetButton>
+                    <SubmitButton
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                    >
+                      {userId ? "Update" : "Submit"}
+                    </SubmitButton>
+                  </ActionButtons>
+                </Box>
+              </PerfectScrollbar>
+            </ScrollableFormContent>
+          </FormPaper>
+        </FormContainer>
+      </MainWrapper>
+    </MainContainer>
   );
 };
 

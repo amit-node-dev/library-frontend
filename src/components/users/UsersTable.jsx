@@ -292,12 +292,12 @@ const UsersTable = () => {
     {
       field: "firstName",
       headerName: "Firstname",
-      width: 120,
+      width: 140,
     },
     {
       field: "lastName",
       headerName: "Lastname",
-      width: 120,
+      width: 140,
     },
     {
       field: "emailId",
@@ -312,12 +312,12 @@ const UsersTable = () => {
     {
       field: "age",
       headerName: "Age",
-      width: 100,
+      width: 120,
     },
     {
       field: "role",
       headerName: "Role",
-      width: 150,
+      width: 170,
       renderCell: (params) => {
         const roleName = params.row.role?.name || "unknown";
         const roleId = params.row.role?.id?.toString();
