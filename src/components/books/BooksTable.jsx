@@ -51,10 +51,14 @@ import BookDetailsModal from "./BookDetailsModal";
 // Styled Components
 const Container = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
-  borderRadius: "10px",
-  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  borderRadius: "16px",
+  boxShadow: "0 4px 24px rgba(63,81,181,0.10)",
   backgroundColor: "#f5f7fa",
   position: "relative",
+  transition: "box-shadow 0.3s",
+  "&:hover": {
+    boxShadow: "0 8px 32px rgba(63,81,181,0.18)",
+  },
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -71,6 +75,11 @@ const FilterSection = styled(Box)(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing(2),
   flexWrap: "wrap",
+  animation: "slideIn 0.7s",
+  '@keyframes slideIn': {
+    from: { opacity: 0, transform: 'translateY(-20px)' },
+    to: { opacity: 1, transform: 'translateY(0)' },
+  },
 }));
 
 const SearchField = styled(TextField)(({ theme }) => ({
@@ -81,9 +90,11 @@ const SearchField = styled(TextField)(({ theme }) => ({
 }));
 
 const ActionButton = styled(IconButton)(({ theme }) => ({
-  transition: "all 0.2s ease",
+  transition: "all 0.2s cubic-bezier(.4,2,.6,1)",
   "&:hover": {
-    transform: "scale(1.1)",
+    transform: "scale(1.2) rotate(-5deg)",
+    boxShadow: "0 2px 8px rgba(63,81,181,0.15)",
+    backgroundColor: "#e3e8fd",
   },
 }));
 
@@ -464,6 +475,11 @@ const BooksTable = () => {
         <>
           <Box
             sx={{
+              animation: "fadeIn 0.7s",
+              "@keyframes fadeIn": {
+                from: { opacity: 0, transform: "translateY(20px)" },
+                to: { opacity: 1, transform: "translateY(0)" },
+              },
               height: "calc(100vh - 450px)",
               width: "100%",
               "& .MuiDataGrid-columnHeaders": {

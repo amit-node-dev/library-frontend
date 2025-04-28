@@ -15,6 +15,8 @@ import {
   Divider,
   Button,
   Checkbox,
+  Alert,
+  Stack,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/system";
@@ -24,20 +26,36 @@ import dayjs from "dayjs";
 import { getBorrowRecordById } from "../../features/borrowRecord_module/borrorRecordAction";
 
 // Styled components for modal
-const ReturnModalContainer = styled(Paper)(() => ({
-  padding: "20px",
+const ModalContainer = styled(Paper)(({ theme }) => ({
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "20%",
-  backgroundColor: "#eeeeee",
-  borderRadius: "14px",
-  boxShadow: "2px 3px 20px 1px",
-  p: 2,
-  height: "auto",
-  maxHeight: "80vh",
+  width: "90%",
+  maxWidth: "500px",
+  backgroundColor: "#ffffff",
+  borderRadius: "12px",
+  boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.15)",
+  padding: "32px",
+  outline: "none",
+  maxHeight: "90vh",
   overflowY: "auto",
+}));
+
+const ModalHeader = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "16px",
+}));
+
+const ActionButton = styled(Button)(({ theme }) => ({
+  padding: "12px 24px",
+  borderRadius: "8px",
+  fontWeight: "bold",
+  textTransform: "none",
+  letterSpacing: 0.5,
+  marginTop: "24px",
 }));
 
 const ReturnModal = ({ type, open, onClose, onSubmit, book, recordId }) => {
@@ -82,52 +100,55 @@ const ReturnModal = ({ type, open, onClose, onSubmit, book, recordId }) => {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <ReturnModalContainer>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={1}
-        >
-          <Typography variant="h6">
-            #{book.id} {book.bookname}
+      <ModalContainer>
+        <ModalHeader>
+          <Typography variant="h5" fontWeight="bold">
+            Return Book
           </Typography>
-          <IconButton onClick={onClose} size="normal">
+          <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
+        </ModalHeader>
+        <Divider />
+        <Box mt={3}>
+          <Typography variant="subtitle1" color="text.secondary">
+            Book Details
+          </Typography>
+          <Typography variant="h6" fontWeight="medium">
+            {book.bookName}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            ISBN: {book.isbn}
+          </Typography>
         </Box>
-        <Divider sx={{ mb: 2 }} />
-
-        <Box mt={2}>
+        <Box mt={3}>
           <Typography variant="body2" sx={{ marginBottom: "20px" }}>
             Are you sure you want to return this book?
           </Typography>
         </Box>
-
         {isFine && (
-          <>
-            <Box>
-              <Typography variant="body2" sx={{ marginBottom: "20px" }}>
-                <Checkbox
-                  {...label}
-                  color="secondary"
-                  onChange={(e) => setIsCheck(e.target.checked)}
-                />
-                Fine Amount: 30% of the books points will be fined.
+          <Alert severity="warning" sx={{ mt: 2, mb: 2 }}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Checkbox
+                {...label}
+                color="secondary"
+                onChange={(e) => setIsCheck(e.target.checked)}
+              />
+              <Typography variant="body2">
+                Fine Amount: 30% of the book's points will be fined.
               </Typography>
-            </Box>
-          </>
+            </Stack>
+          </Alert>
         )}
-
-        <Box mt={4} display="flex" justifyContent="space-between">
-          <Button variant="contained" color="secondary" onClick={onClose}>
+        <Box display="flex" justifyContent="flex-end" gap={2} mt={4}>
+          <ActionButton variant="contained" color="secondary" onClick={onClose}>
             Cancel
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Yes
-          </Button>
+          </ActionButton>
+          <ActionButton variant="contained" color="primary" onClick={handleSubmit}>
+            Confirm Return
+          </ActionButton>
         </Box>
-      </ReturnModalContainer>
+      </ModalContainer>
     </Modal>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 // THIRD PARTY COMPONENTS
 import { useDispatch, useSelector } from "react-redux";
@@ -375,83 +376,152 @@ const AddEditUsers = () => {
                 <Box mt={1} component="form" onSubmit={handleSubmit}>
                   <FormGrid container spacing={3}>
                     <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="First Name"
-                        name="firstname"
-                        value={userData.firstname}
-                        onChange={handleChange}
-                        onBlur={handleFirstNameBlur}
-                        error={!!firstnameError}
-                        helperText={firstnameError}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="Last Name"
-                        name="lastname"
-                        value={userData.lastname}
-                        onChange={handleChange}
-                        onBlur={handleLastNameBlur}
-                        error={!!lastnameError}
-                        helperText={lastnameError}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="Email ID"
-                        name="email"
-                        value={userData.email}
-                        onChange={handleChange}
-                        onBlur={handleEmailBlur}
-                        error={!!emailError}
-                        helperText={emailError}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="Age"
-                        name="age"
-                        value={userData.age}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="Mobile Number"
-                        name="mobileNumber"
-                        value={userData.mobileNumber}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    {userId && (
-                      <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 0 }}
+                      >
                         <StyledTextField
                           fullWidth
                           size="small"
                           margin="normal"
-                          label="Old Password"
-                          name="oldpassword"
-                          type={showPassword ? "text" : "password"}
-                          value={userData.oldpassword}
+                          label="First Name"
+                          name="firstname"
+                          value={userData.firstname}
                           onChange={handleChange}
-                          onBlur={handleOldPasswordBlur}
-                          error={!!oldPasswordError}
-                          helperText={oldPasswordError}
+                          onBlur={handleFirstNameBlur}
+                          error={!!firstnameError}
+                          helperText={firstnameError}
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 1 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Last Name"
+                          name="lastname"
+                          value={userData.lastname}
+                          onChange={handleChange}
+                          onBlur={handleLastNameBlur}
+                          error={!!lastnameError}
+                          helperText={lastnameError}
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 2 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Email ID"
+                          name="email"
+                          value={userData.email}
+                          onChange={handleChange}
+                          onBlur={handleEmailBlur}
+                          error={!!emailError}
+                          helperText={emailError}
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 3 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Age"
+                          name="age"
+                          value={userData.age}
+                          onChange={handleChange}
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 4 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Mobile Number"
+                          name="mobileNumber"
+                          value={userData.mobileNumber}
+                          onChange={handleChange}
+                        />
+                      </motion.div>
+                    </Grid>
+                    {userId && (
+                      <Grid item xs={12} sm={6}>
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 * 5 }}
+                        >
+                          <StyledTextField
+                            fullWidth
+                            size="small"
+                            margin="normal"
+                            label="Old Password"
+                            name="oldpassword"
+                            type={showPassword ? "text" : "password"}
+                            value={userData.oldpassword}
+                            onChange={handleChange}
+                            onBlur={handleOldPasswordBlur}
+                            error={!!oldPasswordError}
+                            helperText={oldPasswordError}
+                            InputProps={{
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  <IconButton
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    edge="end"
+                                  >
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                  </IconButton>
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </motion.div>
+                      </Grid>
+                    )}
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 6 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label={userId ? "New Password" : "Password"}
+                          name="password"
+                          type={showPassword ? "text" : "password"}
+                          value={userData.password}
+                          onChange={handleChange}
+                          onBlur={handlePasswordBlur}
+                          error={!!passwordError}
+                          helperText={passwordError}
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
@@ -465,136 +535,139 @@ const AddEditUsers = () => {
                             ),
                           }}
                         />
-                      </Grid>
-                    )}
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label={userId ? "New Password" : "Password"}
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        value={userData.password}
-                        onChange={handleChange}
-                        onBlur={handlePasswordBlur}
-                        error={!!passwordError}
-                        helperText={passwordError}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() => setShowPassword(!showPassword)}
-                                edge="end"
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
+                      </motion.div>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="Confirm Password"
-                        name="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        value={userData.confirmPassword}
-                        onChange={handleChange}
-                        onBlur={handleConfirmPasswordBlur}
-                        error={!!confirmPasswordError}
-                        helperText={confirmPasswordError}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                edge="end"
-                              >
-                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        select
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="Country"
-                        name="country"
-                        value={userData.country}
-                        onChange={handleCountryChange}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 7 }}
                       >
-                        {countries.map((country) => (
-                          <MenuItem key={country.isoCode} value={country.isoCode}>
-                            {country.name}
-                          </MenuItem>
-                        ))}
-                      </StyledTextField>
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Confirm Password"
+                          name="confirmPassword"
+                          type={showConfirmPassword ? "text" : "password"}
+                          value={userData.confirmPassword}
+                          onChange={handleChange}
+                          onBlur={handleConfirmPasswordBlur}
+                          error={!!confirmPasswordError}
+                          helperText={confirmPasswordError}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                  edge="end"
+                                >
+                                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </motion.div>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        select
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="State"
-                        name="state"
-                        value={userData.state}
-                        onChange={handleStateChange}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 8 }}
                       >
-                        {states.map((state) => (
-                          <MenuItem key={state.isoCode} value={state.isoCode}>
-                            {state.name}
-                          </MenuItem>
-                        ))}
-                      </StyledTextField>
+                        <StyledTextField
+                          select
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Country"
+                          name="country"
+                          value={userData.country}
+                          onChange={handleCountryChange}
+                        >
+                          {countries.map((country) => (
+                            <MenuItem key={country.isoCode} value={country.isoCode}>
+                              {country.name}
+                            </MenuItem>
+                          ))}
+                        </StyledTextField>
+                      </motion.div>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        select
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="City"
-                        name="city"
-                        value={userData.city}
-                        onChange={handleCityChange}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 9 }}
                       >
-                        {cities.map((city) => (
-                          <MenuItem key={city.name} value={city.name}>
-                            {city.name}
-                          </MenuItem>
-                        ))}
-                      </StyledTextField>
+                        <StyledTextField
+                          select
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="State"
+                          name="state"
+                          value={userData.state}
+                          onChange={handleStateChange}
+                        >
+                          {states.map((state) => (
+                            <MenuItem key={state.isoCode} value={state.isoCode}>
+                              {state.name}
+                            </MenuItem>
+                          ))}
+                        </StyledTextField>
+                      </motion.div>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        size="small"
-                        margin="normal"
-                        label="Role"
-                        name="role"
-                        select
-                        value={userData.role}
-                        onChange={handleChange}
-                        onBlur={handleRoleBlur}
-                        error={!!roleError}
-                        helperText={roleError}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 10 }}
                       >
-                        {roleList?.map((role) => (
-                          <MenuItem key={role.id} value={role.id}>
-                            {role.name}
-                          </MenuItem>
-                        ))}
-                      </StyledTextField>
+                        <StyledTextField
+                          select
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="City"
+                          name="city"
+                          value={userData.city}
+                          onChange={handleCityChange}
+                        >
+                          {cities.map((city) => (
+                            <MenuItem key={city.name} value={city.name}>
+                              {city.name}
+                            </MenuItem>
+                          ))}
+                        </StyledTextField>
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 11 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Role"
+                          name="role"
+                          select
+                          value={userData.role}
+                          onChange={handleChange}
+                          onBlur={handleRoleBlur}
+                          error={!!roleError}
+                          helperText={roleError}
+                        >
+                          {roleList?.map((role) => (
+                            <MenuItem key={role.id} value={role.id}>
+                              {role.name}
+                            </MenuItem>
+                          ))}
+                        </StyledTextField>
+                      </motion.div>
                     </Grid>
                   </FormGrid>
                   <ActionButtons>

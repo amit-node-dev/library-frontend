@@ -20,6 +20,7 @@ import {
   Divider,
 } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
+import { motion } from "framer-motion";
 
 // Styled components
 const MainContainer = styled("div")(({ theme }) => ({
@@ -190,58 +191,82 @@ const AddEditAuthors = () => {
           <Box component="form" onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="First Name"
-                  name="firstname"
-                  value={authorData.firstname}
-                  onChange={handleChange}
-                  onBlur={handleFirstNameBlur}
-                  error={!!firstnameError}
-                  helperText={firstnameError}
-                  size="small"
-                />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * 0 }}
+                >
+                  <TextField
+                    fullWidth
+                    label="First Name"
+                    name="firstname"
+                    value={authorData.firstname}
+                    onChange={handleChange}
+                    onBlur={handleFirstNameBlur}
+                    error={!!firstnameError}
+                    helperText={firstnameError}
+                    size="small"
+                  />
+                </motion.div>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Last Name"
-                  name="lastname"
-                  value={authorData.lastname}
-                  onChange={handleChange}
-                  onBlur={handleLastNameBlur}
-                  error={!!lastnameError}
-                  helperText={lastnameError}
-                  size="small"
-                />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * 1 }}
+                >
+                  <TextField
+                    fullWidth
+                    label="Last Name"
+                    name="lastname"
+                    value={authorData.lastname}
+                    onChange={handleChange}
+                    onBlur={handleLastNameBlur}
+                    error={!!lastnameError}
+                    helperText={lastnameError}
+                    size="small"
+                  />
+                </motion.div>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Email ID"
-                  name="email"
-                  value={authorData.email}
-                  onChange={handleChange}
-                  onBlur={handleEmailBlur}
-                  error={!!emailError}
-                  helperText={emailError}
-                  size="small"
-                />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * 2 }}
+                >
+                  <TextField
+                    fullWidth
+                    label="Email ID"
+                    name="email"
+                    value={authorData.email}
+                    onChange={handleChange}
+                    onBlur={handleEmailBlur}
+                    error={!!emailError}
+                    helperText={emailError}
+                    size="small"
+                  />
+                </motion.div>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Biography"
-                  name="biography"
-                  value={authorData.biography}
-                  onChange={handleChange}
-                  onBlur={handleBiographyBlur}
-                  error={!!biographyError}
-                  helperText={biographyError}
-                  size="small"
-                  multiline
-                  rows={5}
-                />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * 3 }}
+                >
+                  <TextField
+                    fullWidth
+                    label="Biography"
+                    name="biography"
+                    value={authorData.biography}
+                    onChange={handleChange}
+                    onBlur={handleBiographyBlur}
+                    error={!!biographyError}
+                    helperText={biographyError}
+                    size="small"
+                    multiline
+                    rows={5}
+                  />
+                </motion.div>
               </Grid>
             </Grid>
 

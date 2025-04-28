@@ -5,6 +5,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import dayjs from "dayjs";
 import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
 
 // MUI IMPORTS
 import {
@@ -132,7 +133,7 @@ const AddEditBooks = () => {
   const [categoryList, setCategoryList] = useState([]);
 
   const [bookData, setBookData] = useState({
-    bookname: "",
+    bookName: "",
     title: "",
     authorId: "",
     categoryId: "",
@@ -147,7 +148,7 @@ const AddEditBooks = () => {
   });
 
   const [errors, setErrors] = useState({
-    bookname: "",
+    bookName: "",
     title: "",
     authorId: "",
     categoryId: "",
@@ -181,18 +182,18 @@ const AddEditBooks = () => {
   useEffect(() => {
     if (bookId && currentBook) {
       setBookData({
-        bookname: currentBook.bookname,
+        bookName: currentBook.bookName,
         title: currentBook.title,
-        authorId: currentBook.author_id,
-        categoryId: currentBook.category_id,
+        authorId: currentBook.authorId,
+        categoryId: currentBook.categoryId,
         description: currentBook.description,
         conclusion: currentBook.conclusion,
         isbn: currentBook.isbn,
         publisher: currentBook.publisher,
-        publicationYear: currentBook.publication_year,
+        publicationYear: currentBook.publicationYear,
         location: currentBook.location,
-        totalCopies: currentBook.total_copies,
-        pointsRequired: currentBook.points_required,
+        totalCopies: currentBook.totalCopies,
+        pointsRequired: currentBook.pointsRequired,
       });
     }
   }, [currentBook, bookId]);
@@ -342,237 +343,309 @@ const AddEditBooks = () => {
                 <Box mt={1} component="form" onSubmit={handleSubmit}>
                   <FormGrid container spacing={3}>
                     <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        label="Book Name"
-                        name="bookname"
-                        value={bookData.bookname}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.bookname}
-                        helperText={errors.bookname}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        label="Title"
-                        name="title"
-                        value={bookData.title}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.title}
-                        helperText={errors.title}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        label="ISBN"
-                        name="isbn"
-                        value={bookData.isbn}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.isbn}
-                        helperText={errors.isbn}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        label="Publisher"
-                        name="publisher"
-                        value={bookData.publisher}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.publisher}
-                        helperText={errors.publisher}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        label="Location"
-                        name="location"
-                        value={bookData.location}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.location}
-                        helperText={errors.location}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        label="Total Copies"
-                        name="totalCopies"
-                        type="number"
-                        value={bookData.totalCopies}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.totalCopies}
-                        helperText={errors.totalCopies}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <FormControl fullWidth error={!!errors.authorId}>
-                        <Autocomplete
-                          options={authorList}
-                          getOptionLabel={(option) =>
-                            `${option.firstName} ${option.lastName}`
-                          }
-                          onChange={(event, value) => {
-                            setBookData({
-                              ...bookData,
-                              authorId: value ? value.id : "",
-                            });
-                            if (errors.authorId) {
-                              setErrors({
-                                ...errors,
-                                authorId: "",
-                              });
-                            }
-                          }}
-                          onBlur={() => {
-                            if (!bookData.authorId) {
-                              setErrors({
-                                ...errors,
-                                authorId: "Author is required",
-                              });
-                            }
-                          }}
-                          renderInput={(params) => (
-                            <StyledTextField
-                              {...params}
-                              label="Author"
-                              error={!!errors.authorId}
-                              helperText={errors.authorId}
-                              size="small"
-                            />
-                          )}
-                          value={
-                            authorList?.find(
-                              (author) => author.id === bookData.authorId
-                            ) || null
-                          }
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 0 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Book Name"
+                          name="bookName"
+                          value={bookData.bookName}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.bookName}
+                          helperText={errors.bookName}
+                          size="small"
                         />
-                      </FormControl>
+                      </motion.div>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <FormControl fullWidth error={!!errors.categoryId}>
-                        <Autocomplete
-                          options={categoryList}
-                          getOptionLabel={(option) => `${option.name}`}
-                          onChange={(event, value) => {
-                            setBookData({
-                              ...bookData,
-                              categoryId: value ? value.id : "",
-                            });
-                            if (errors.categoryId) {
-                              setErrors({
-                                ...errors,
-                                categoryId: "",
-                              });
-                            }
-                          }}
-                          onBlur={() => {
-                            if (!bookData.categoryId) {
-                              setErrors({
-                                ...errors,
-                                categoryId: "Category is required",
-                              });
-                            }
-                          }}
-                          renderInput={(params) => (
-                            <StyledTextField
-                              {...params}
-                              label="Category"
-                              error={!!errors.categoryId}
-                              helperText={errors.categoryId}
-                              size="small"
-                            />
-                          )}
-                          value={
-                            categoryList?.find(
-                              (category) => category.id === bookData.categoryId
-                            ) || null
-                          }
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 1 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Title"
+                          name="title"
+                          value={bookData.title}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.title}
+                          helperText={errors.title}
+                          size="small"
                         />
-                      </FormControl>
+                      </motion.div>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <StyledTextField
-                        fullWidth
-                        label="Points Required"
-                        name="pointsRequired"
-                        type="number"
-                        value={bookData.pointsRequired}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.pointsRequired}
-                        helperText={errors.pointsRequired}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                          label="Publication Year"
-                          inputFormat="YYYY-MM-DD"
-                          value={
-                            bookData.publicationYear
-                              ? dayjs(bookData.publicationYear)
-                              : null
-                          }
-                          onChange={(newValue) => {
-                            setBookData({
-                              ...bookData,
-                              publicationYear: newValue ? newValue : "",
-                            });
-                          }}
-                          renderInput={(params) => (
-                            <StyledTextField
-                              {...params}
-                              fullWidth
-                              size="small"
-                            />
-                          )}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 2 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="ISBN"
+                          name="isbn"
+                          value={bookData.isbn}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.isbn}
+                          helperText={errors.isbn}
+                          size="small"
                         />
-                      </LocalizationProvider>
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 3 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Publisher"
+                          name="publisher"
+                          value={bookData.publisher}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.publisher}
+                          helperText={errors.publisher}
+                          size="small"
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 4 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Location"
+                          name="location"
+                          value={bookData.location}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.location}
+                          helperText={errors.location}
+                          size="small"
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 5 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Total Copies"
+                          name="totalCopies"
+                          type="number"
+                          value={bookData.totalCopies}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.totalCopies}
+                          helperText={errors.totalCopies}
+                          size="small"
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 6 }}
+                      >
+                        <FormControl fullWidth error={!!errors.authorId}>
+                          <Autocomplete
+                            options={authorList}
+                            getOptionLabel={(option) =>
+                              `${option.firstName} ${option.lastName}`
+                            }
+                            onChange={(event, value) => {
+                              setBookData({
+                                ...bookData,
+                                authorId: value ? value.id : "",
+                              });
+                              if (errors.authorId) {
+                                setErrors({
+                                  ...errors,
+                                  authorId: "",
+                                });
+                              }
+                            }}
+                            onBlur={() => {
+                              if (!bookData.authorId) {
+                                setErrors({
+                                  ...errors,
+                                  authorId: "Author is required",
+                                });
+                              }
+                            }}
+                            renderInput={(params) => (
+                              <StyledTextField
+                                {...params}
+                                label="Author"
+                                error={!!errors.authorId}
+                                helperText={errors.authorId}
+                                size="small"
+                              />
+                            )}
+                            value={
+                              authorList?.find(
+                                (author) => author.id === bookData.authorId
+                              ) || null
+                            }
+                          />
+                        </FormControl>
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 7 }}
+                      >
+                        <FormControl fullWidth error={!!errors.categoryId}>
+                          <Autocomplete
+                            options={categoryList}
+                            getOptionLabel={(option) => `${option.name}`}
+                            onChange={(event, value) => {
+                              setBookData({
+                                ...bookData,
+                                categoryId: value ? value.id : "",
+                              });
+                              if (errors.categoryId) {
+                                setErrors({
+                                  ...errors,
+                                  categoryId: "",
+                                });
+                              }
+                            }}
+                            onBlur={() => {
+                              if (!bookData.categoryId) {
+                                setErrors({
+                                  ...errors,
+                                  categoryId: "Category is required",
+                                });
+                              }
+                            }}
+                            renderInput={(params) => (
+                              <StyledTextField
+                                {...params}
+                                label="Category"
+                                error={!!errors.categoryId}
+                                helperText={errors.categoryId}
+                                size="small"
+                              />
+                            )}
+                            value={
+                              categoryList?.find(
+                                (category) => category.id === bookData.categoryId
+                              ) || null
+                            }
+                          />
+                        </FormControl>
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 8 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Points Required"
+                          name="pointsRequired"
+                          type="number"
+                          value={bookData.pointsRequired}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.pointsRequired}
+                          helperText={errors.pointsRequired}
+                          size="small"
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 9 }}
+                      >
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            label="Publication Year"
+                            inputFormat="YYYY-MM-DD"
+                            value={
+                              bookData.publicationYear
+                                ? dayjs(bookData.publicationYear)
+                                : null
+                            }
+                            onChange={(newValue) => {
+                              setBookData({
+                                ...bookData,
+                                publicationYear: newValue ? newValue : "",
+                              });
+                            }}
+                            renderInput={(params) => (
+                              <StyledTextField
+                                {...params}
+                                fullWidth
+                                size="small"
+                              />
+                            )}
+                          />
+                        </LocalizationProvider>
+                      </motion.div>
                     </Grid>
                     <Grid item xs={12}>
-                      <StyledTextField
-                        fullWidth
-                        label="Description"
-                        name="description"
-                        value={bookData.description}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.description}
-                        helperText={errors.description}
-                        multiline
-                        rows={3}
-                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 10 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Description"
+                          name="description"
+                          value={bookData.description}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.description}
+                          helperText={errors.description}
+                          multiline
+                          rows={3}
+                        />
+                      </motion.div>
                     </Grid>
                     <Grid item xs={12}>
-                      <StyledTextField
-                        fullWidth
-                        label="Conclusion"
-                        name="conclusion"
-                        value={bookData.conclusion}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.conclusion}
-                        helperText={errors.conclusion}
-                        multiline
-                        rows={2}
-                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 11 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Conclusion"
+                          name="conclusion"
+                          value={bookData.conclusion}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={!!errors.conclusion}
+                          helperText={errors.conclusion}
+                          multiline
+                          rows={2}
+                        />
+                      </motion.div>
                     </Grid>
                   </FormGrid>
 

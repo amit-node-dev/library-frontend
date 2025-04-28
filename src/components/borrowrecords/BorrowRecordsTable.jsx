@@ -39,10 +39,14 @@ import { setPage, setPageSize } from "../../features/book_module/bookSlice";
 // Styled Components
 const Container = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
-  borderRadius: "10px",
-  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  borderRadius: "16px",
+  boxShadow: "0 4px 24px rgba(63,81,181,0.10)",
   backgroundColor: "#f5f7fa",
   position: "relative",
+  transition: "box-shadow 0.3s",
+  "&:hover": {
+    boxShadow: "0 8px 32px rgba(63,81,181,0.18)",
+  },
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -59,6 +63,11 @@ const FilterSection = styled(Box)(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing(2),
   flexWrap: "wrap",
+  animation: "slideIn 0.7s",
+  '@keyframes slideIn': {
+    from: { opacity: 0, transform: 'translateY(-20px)' },
+    to: { opacity: 1, transform: 'translateY(0)' },
+  },
 }));
 
 const SearchField = styled(TextField)(({ theme }) => ({
@@ -88,7 +97,7 @@ const BorrowRecordsTable = () => {
   const { borrowRecords, loading, error, total, page, pageSize } = useSelector(
     (state) => state.borrowRecords
   );
-  
+
   const dispatch = useDispatch();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -203,13 +212,13 @@ const BorrowRecordsTable = () => {
     // Auto-size columns
     const wscols = [
       { wch: 10 },
-      { wch: 30 }, 
-      { wch: 25 }, 
-      { wch: 15 }, 
-      { wch: 15 }, 
-      { wch: 15 }, 
-      { wch: 15 }, 
-      { wch: 15 }, 
+      { wch: 30 },
+      { wch: 25 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 15 },
     ];
     worksheet["!cols"] = wscols;
 
@@ -268,10 +277,14 @@ const BorrowRecordsTable = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
-          <Typography variant="body2">
-            {params.row.id}
-          </Typography>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          height="100%"
+        >
+          <Typography variant="body2">{params.row.id}</Typography>
         </Box>
       ),
     },
@@ -282,7 +295,13 @@ const BorrowRecordsTable = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          height="100%"
+        >
           <Typography variant="body2" textAlign="center">
             {params.row.book?.bookName || "N/A"}
           </Typography>
@@ -296,7 +315,13 @@ const BorrowRecordsTable = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          height="100%"
+        >
           <Typography variant="body2" textAlign="center">
             {params.row.user
               ? `${params.row.user.firstName} ${params.row.user.lastName}`
@@ -312,11 +337,19 @@ const BorrowRecordsTable = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          height="100%"
+        >
           <StatusChip
             size="small"
-            label={getRecordStatus(params.row).charAt(0).toUpperCase() + 
-                  getRecordStatus(params.row).slice(1)}
+            label={
+              getRecordStatus(params.row).charAt(0).toUpperCase() +
+              getRecordStatus(params.row).slice(1)
+            }
             status={getRecordStatus(params.row)}
           />
         </Box>
@@ -329,7 +362,13 @@ const BorrowRecordsTable = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          height="100%"
+        >
           <Typography variant="body2" textAlign="center">
             {params.row.borrowDate
               ? dayjs(params.row.borrowDate).format("MMM D, YYYY")
@@ -345,7 +384,13 @@ const BorrowRecordsTable = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          height="100%"
+        >
           <Typography variant="body2" textAlign="center">
             {params.row.dueDate
               ? dayjs(params.row.dueDate).format("MMM D, YYYY")
@@ -361,7 +406,13 @@ const BorrowRecordsTable = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          height="100%"
+        >
           <Typography variant="body2" textAlign="center">
             {params.row.returnDate
               ? dayjs(params.row.returnDate).format("MMM D, YYYY")
@@ -377,19 +428,29 @@ const BorrowRecordsTable = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          height="100%"
+        >
           {params.row.status === "returned" ? (
-            <Typography variant="body2" textAlign="center">-</Typography>
+            <Typography variant="body2" textAlign="center">
+              -
+            </Typography>
           ) : dayjs().isAfter(dayjs(params.row.dueDate)) ? (
-            <Typography 
-              variant="body2" 
+            <Typography
+              variant="body2"
               textAlign="center"
               sx={{ color: "#f44336", fontWeight: 500 }}
             >
               {dayjs().diff(dayjs(params.row.dueDate), "day")} days
             </Typography>
           ) : (
-            <Typography variant="body2" textAlign="center">-</Typography>
+            <Typography variant="body2" textAlign="center">
+              -
+            </Typography>
           )}
         </Box>
       ),
@@ -501,6 +562,11 @@ const BorrowRecordsTable = () => {
         <>
           <Box
             sx={{
+              animation: "fadeIn 0.7s",
+              "@keyframes fadeIn": {
+                from: { opacity: 0, transform: "translateY(20px)" },
+                to: { opacity: 1, transform: "translateY(0)" },
+              },
               height: "calc(100vh - 450px)",
               width: "100%",
               "& .MuiDataGrid-columnHeaders": {

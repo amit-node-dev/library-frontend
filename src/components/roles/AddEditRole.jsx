@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
 
 // MUI IMPORTS
 import {
@@ -216,41 +217,61 @@ const AddEditRole = () => {
                 <Box mt={1} component="form" onSubmit={handleSubmit}>
                   <FormGrid container spacing={3}>
                     <Grid item xs={12}>
-                      <StyledTextField
-                        fullWidth
-                        label="Role Name"
-                        name="name"
-                        value={roleData.name}
-                        onChange={handleChange}
-                        onBlur={handleNameBlur}
-                        error={!!nameError}
-                        helperText={nameError}
-                        size="small"
-                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 0 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          label="Role Name"
+                          name="name"
+                          value={roleData.name}
+                          onChange={handleChange}
+                          onBlur={handleNameBlur}
+                          error={!!nameError}
+                          helperText={nameError}
+                          size="small"
+                        />
+                      </motion.div>
                     </Grid>
                   </FormGrid>
 
                   <ActionButtons>
-                    <ResetButton
-                      variant="outlined"
-                      color="error"
-                      onClick={handleReset}
-                      disabled={loading}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 * 1 }}
+                      style={{ display: "inline-block" }}
                     >
-                      Reset
-                    </ResetButton>
-                    <SubmitButton
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      disabled={loading}
+                      <ResetButton
+                        variant="outlined"
+                        color="error"
+                        onClick={handleReset}
+                        disabled={loading}
+                      >
+                        Reset
+                      </ResetButton>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 * 2 }}
+                      style={{ display: "inline-block" }}
                     >
-                      {loading
-                        ? "Processing..."
-                        : roleId
-                        ? "Update Role"
-                        : "Add Role"}
-                    </SubmitButton>
+                      <SubmitButton
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={loading}
+                      >
+                        {loading
+                          ? "Processing..."
+                          : roleId
+                          ? "Update Role"
+                          : "Add Role"}
+                      </SubmitButton>
+                    </motion.div>
                   </ActionButtons>
                 </Box>
               </PerfectScrollbar>

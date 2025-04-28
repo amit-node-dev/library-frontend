@@ -52,10 +52,14 @@ import { setPage, setPageSize } from "../../features/user_module/userSlice";
 // Styled Components
 const Container = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
-  borderRadius: "10px",
-  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  borderRadius: "16px",
+  boxShadow: "0 4px 24px rgba(63,81,181,0.10)",
   backgroundColor: "#f5f7fa",
   position: "relative",
+  transition: "box-shadow 0.3s",
+  "&:hover": {
+    boxShadow: "0 8px 32px rgba(63,81,181,0.18)",
+  },
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -72,6 +76,11 @@ const FilterSection = styled(Box)(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing(2),
   flexWrap: "wrap",
+  animation: "slideIn 0.7s",
+  '@keyframes slideIn': {
+    from: { opacity: 0, transform: 'translateY(-20px)' },
+    to: { opacity: 1, transform: 'translateY(0)' },
+  },
 }));
 
 const SearchField = styled(TextField)(({ theme }) => ({
@@ -79,22 +88,6 @@ const SearchField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
   },
-}));
-
-const RoleChip = styled(Chip)(({ theme, role }) => ({
-  fontWeight: 600,
-  ...(role === "super_admin" && {
-    backgroundColor: "#4caf50",
-    color: "#fff",
-  }),
-  ...(role === "admin" && {
-    backgroundColor: "#2196f3",
-    color: "#fff",
-  }),
-  ...(role === "customer" && {
-    backgroundColor: "#ff9800",
-    color: "#fff",
-  }),
 }));
 
 const UsersTable = () => {
@@ -567,6 +560,11 @@ const UsersTable = () => {
         <>
           <Box
             sx={{
+              animation: "fadeIn 0.7s",
+              "@keyframes fadeIn": {
+                from: { opacity: 0, transform: "translateY(20px)" },
+                to: { opacity: 1, transform: "translateY(0)" },
+              },
               height: "calc(100vh - 450px)",
               width: "100%",
               "& .MuiDataGrid-columnHeaders": {

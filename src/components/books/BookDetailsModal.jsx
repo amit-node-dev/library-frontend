@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import "react-perfect-scrollbar/dist/css/styles.css";
 
 // MUI IMPORTS
 import {
@@ -18,6 +20,7 @@ import {
   Tooltip,
   LinearProgress,
   Badge,
+  Dialog as MuiDialog,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/system";
@@ -45,26 +48,25 @@ import BorrowModal from "./BorrowModal";
 import ReturnModal from "./ReturnModal";
 
 // Styled components
-const StyledDialog = styled(Dialog)(({ theme }) => ({
+const StyledDialog = styled(Dialog)({
   "& .MuiDialog-paper": {
     padding: 0,
     width: "90%",
     maxWidth: "1200px",
     maxHeight: "90vh",
-    borderRadius: theme.shape.borderRadius,
     overflow: "hidden",
-    // background: theme.palette.background.paper,
+    background: "#fff",
   },
-}));
+});
 
-const HeaderSection = styled(Box)(({ theme }) => ({
+const HeaderSection = styled(Box)({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: theme.spacing(3),
-  // background: theme.palette.primary.main,
-  // color: theme.palette.primary.contrastText,
-}));
+  padding: "5px",
+  background: "linear-gradient(135deg, #212121 10%, #757575 100%)",
+  color: "#fff",
+});
 
 const BookInfoSection = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -75,10 +77,14 @@ const BookInfoSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const ContentSection = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(3),
-  // background: theme.palette.background.default,
-}));
+const ContentSection = styled(Box)({
+  padding: "24px",
+  background: "#f5f5f5",
+});
+
+const FooterSection = styled(Box)({
+  padding: "10px",
+});
 
 const MetaDataGrid = styled(Grid)(({ theme }) => ({
   marginTop: theme.spacing(2),
@@ -87,17 +93,28 @@ const MetaDataGrid = styled(Grid)(({ theme }) => ({
   },
 }));
 
-const ActionButton = styled(Button)(({ theme }) => ({
-  padding: theme.spacing(1.5, 3),
-  borderRadius: theme.shape.borderRadius,
+const ActionButton = styled(Button)({
+  padding: "12px 24px",
+  borderRadius: "8px",
   fontWeight: "bold",
   textTransform: "none",
   letterSpacing: 0.5,
-  // boxShadow: theme.shadows[2],
+  boxShadow: "0px 1px 3px rgba(0,0,0,0.2)",
   "&:hover": {
-    // boxShadow: theme.shadows[4],
+    boxShadow: "0px 4px 8px rgba(0,0,0,0.3)",
   },
-}));
+});
+
+// Helper function to split text into word-based pages
+const splitTextByWords = (text, wordsPerPage) => {
+  if (!text) return [""];
+  const words = text.split(/\s+/);
+  const pages = [];
+  for (let i = 0; i < words.length; i += wordsPerPage) {
+    pages.push(words.slice(i, i + wordsPerPage).join(" "));
+  }
+  return pages.length ? pages : [""];
+};
 
 const BookDetailsPage = ({ open, onClose, book }) => {
   const userData = localStorage.getItem("userData");
@@ -111,6 +128,38 @@ const BookDetailsPage = ({ open, onClose, book }) => {
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isReadMoreOpen, setIsReadMoreOpen] = useState(false);
+  const [page, setPage] = useState(1);
+
+  // Split content into pages (200 words per page for modal)
+  const WORDS_PER_MODAL_PAGE = 200;
+  const WORDS_PREVIEW = 70;
+  const fullText = useMemo(() => {
+    let text = book.description || "";
+    if (bookStatus === "borrowed" && book.conclusion) {
+      text += "\n\nConclusion:\n" + book.conclusion;
+    }
+    return text;
+  }, [book.description, book.conclusion, bookStatus]);
+
+  // For modal: split by 200 words
+  const pages = useMemo(() => splitTextByWords(fullText, WORDS_PER_MODAL_PAGE), [fullText]);
+
+  // For preview: first 70 words
+  const previewWords = useMemo(() => {
+    if (!book.description) return "";
+    const words = book.description.split(/\s+/);
+    return words.slice(0, WORDS_PREVIEW).join(" ");
+  }, [book.description]);
+  const hasMorePreview = useMemo(() => {
+    if (!book.description) return false;
+    return book.description.split(/\s+/).length > WORDS_PREVIEW;
+  }, [book.description]);
+
+  const handleNextPage = () => setPage((p) => Math.min(pages.length, p + 1));
+  const handlePrevPage = () => setPage((p) => Math.max(1, p - 1));
+  const handleOpenReadMore = () => { setIsReadMoreOpen(true); setPage(1); };
+  const handleCloseReadMore = () => setIsReadMoreOpen(false);
 
   useEffect(() => {
     setBookStatus(null);
@@ -372,69 +421,65 @@ const BookDetailsPage = ({ open, onClose, book }) => {
               </Box>
             </BookInfoSection>
 
-            <Divider sx={{ mx: 3 }} />
+            <Divider sx={{ mx: 1, my: 1 }} />
 
-            <ContentSection>
-              <Typography
-                variant="h5"
-                gutterBottom
-                fontWeight="bold"
-                sx={{ mb: 3 }}
-              >
-                About This Book
-              </Typography>
-
-              {bookStatus === "borrowed" ? (
-                <>
-                  <Typography
-                    variant="body1"
-                    paragraph
-                    sx={{ lineHeight: 1.8, fontSize: "1.1rem" }}
-                  >
-                    {book.description}
-                  </Typography>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    fontWeight="bold"
-                    sx={{ mt: 4 }}
-                  >
-                    Conclusion
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    paragraph
-                    sx={{ lineHeight: 1.8, fontSize: "1.1rem" }}
-                  >
-                    {book.conclusion}
-                  </Typography>
-                </>
-              ) : (
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 3,
-                    backgroundColor: "background.paper",
-                    borderRadius: 2,
-                    borderLeft: "4px solid",
-                    borderColor: "secondary.main",
-                    backgroundImage:
-                      "linear-gradient(to right, rgba(0,0,0,0.02), rgba(0,0,0,0.05))",
-                  }}
+            <PerfectScrollbar style={{ maxHeight: 350, minHeight: 200 }}>
+              <ContentSection>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  fontWeight="bold"
+                  sx={{ mb: 3 }}
                 >
-                  <Typography variant="body1" color="text.secondary" paragraph>
-                    To read the full story, please borrow this book. If you're
-                    interested, consider purchasing it for a more in-depth
-                    experience.
-                  </Typography>
-                </Paper>
-              )}
-            </ContentSection>
+                  About This Book
+                </Typography>
+                {bookStatus === "borrowed" ? (
+                  <>
+                    <Typography
+                      variant="body1"
+                      paragraph
+                      sx={{ lineHeight: 1.8, fontSize: "1.1rem" }}
+                    >
+                      {previewWords}
+                      {hasMorePreview ? "..." : ""}
+                    </Typography>
+                    {hasMorePreview && (
+                      <Button size="small" onClick={handleOpenReadMore} sx={{ mb: 2 }}>
+                        Read More
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 3,
+                      backgroundColor: "background.paper",
+                      borderRadius: 2,
+                      borderLeft: "4px solid",
+                      borderColor: "secondary.main",
+                      backgroundImage:
+                        "linear-gradient(to right, rgba(0,0,0,0.02), rgba(0,0,0,0.05))",
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      paragraph
+                    >
+                      To read the full story, please borrow this book. If you're
+                      interested, consider purchasing it for a more in-depth
+                      experience.
+                    </Typography>
+                  </Paper>
+                )}
+              </ContentSection>
+            </PerfectScrollbar>
 
-            <ContentSection>
-              <MetaDataGrid container spacing={2}>
+            <FooterSection>
+              <MetaDataGrid container spacing={1}>
                 <Grid item xs={12} sm={6} md={3}>
-                  <Paper elevation={0} sx={{ p: 2, height: "100%" }}>
+                  <Paper elevation={0} sx={{ p: 1, height: "50%" }}>
                     <Typography variant="subtitle2" color="text.secondary">
                       Published Year
                     </Typography>
@@ -481,7 +526,7 @@ const BookDetailsPage = ({ open, onClose, book }) => {
                   </Paper>
                 </Grid>
               </MetaDataGrid>
-            </ContentSection>
+            </FooterSection>
 
             {/* Borrow Confirmation Modal */}
             <BorrowModal
@@ -501,6 +546,96 @@ const BookDetailsPage = ({ open, onClose, book }) => {
               book={book}
               recordId={recordId}
             />
+
+            {/* Read More Modal */}
+            <MuiDialog open={isReadMoreOpen} onClose={handleCloseReadMore} maxWidth="xl" fullWidth>
+              <Box
+                sx={{
+                  p: 0,
+                  background: 'linear-gradient(135deg, #f5f7fa 0%,rgb(214, 211, 211) 100%)',
+                  borderRadius: 3,
+                  boxShadow: 6,
+                  minHeight: 650,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                  height: '80vh', 
+                }}
+              >
+                <Box
+                  sx={{
+                    px: 3,
+                    py: 2,
+                    borderBottom: '1px solid #e0e0e0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: "linear-gradient(135deg, #212121 10%, #757575 100%)",
+                    color: '#fff',
+                  }}
+                >
+                  <Typography variant="h5" fontWeight="bold">
+                    Book Content
+                  </Typography>
+                  <Button onClick={handleCloseReadMore} color="inherit" variant="outlined" sx={{ borderColor: '#fff' }}>
+                    Close
+                  </Button>
+                </Box>
+                <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+                  <PerfectScrollbar style={{ flex: 1, minHeight: 0, maxHeight: '100%' }}>
+                    <Box sx={{ px: 4, py: 3 }}>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          lineHeight: 1.8,
+                          fontSize: '1.15rem',
+                          whiteSpace: 'pre-line',
+                          color: '#222',
+                          minHeight: 300,
+                        }}
+                      >
+                        {pages[page - 1]}
+                      </Typography>
+                    </Box>
+                  </PerfectScrollbar>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    px: 3,
+                    py: 1,
+                    borderTop: '1px solid #e0e0e0',
+                    background: '#f5f7fa',
+                    borderBottomLeftRadius: 12,
+                    borderBottomRightRadius: 12,
+                  }}
+                >
+                  <Button
+                    onClick={handlePrevPage}
+                    disabled={page === 1}
+                    variant="contained"
+                    color="primary"
+                    sx={{ minWidth: 120, borderRadius: 2 }}
+                  >
+                    Previous
+                  </Button>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                    Page {page} of {pages.length}
+                  </Typography>
+                  <Button
+                    onClick={handleNextPage}
+                    disabled={page === pages.length}
+                    variant="contained"
+                    color="primary"
+                    sx={{ minWidth: 120, borderRadius: 2 }}
+                  >
+                    Next
+                  </Button>
+                </Box>
+              </Box>
+            </MuiDialog>
           </motion.div>
         )}
       </AnimatePresence>
