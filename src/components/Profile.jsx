@@ -20,6 +20,8 @@ import { styled } from "@mui/material/styles";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { updateUsers } from "../features/user_module/userActions";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import apiClient from "../utils/apiClient";
 
 const MainContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -79,25 +81,26 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const userData = localStorage.getItem("userData");
   const userInfo = userData ? JSON.parse(userData) : {};
 
   const [form, setForm] = useState({
-    firstname: userInfo.firstName || "",
-    lastname: userInfo.lastName || "",
-    email: userInfo.emailId || "",
+    firstName: userInfo.firstName || "",
+    lastName: userInfo.lastName || "",
+    emailId: userInfo.emailId || "",
     age: userInfo.age || "",
     mobileNumber: userInfo.mobileNumber || "",
-    oldpassword: "",
-    password: "",
+    oldPassword: "",
+    newPassword: "",
     confirmPassword: "",
     country: userInfo.country || "",
     state: userInfo.state || "",
     city: userInfo.city || "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -107,19 +110,19 @@ const Profile = () => {
 
   useEffect(() => {
     setForm({
-      firstname: userInfo.firstName || "",
-      lastname: userInfo.lastName || "",
-      email: userInfo.emailId || "",
+      firstName: userInfo.firstName || "",
+      lastName: userInfo.lastName || "",
+      emailId: userInfo.emailId || "",
       age: userInfo.age || "",
       mobileNumber: userInfo.mobileNumber || "",
-      oldpassword: "",
-      password: "",
+      oldPassword: "",
+      newPassword: "",
       confirmPassword: "",
       country: userInfo.country || "",
       state: userInfo.state || "",
       city: userInfo.city || "",
     });
-  }, [userInfo]);
+  }, [userData]);
 
   useEffect(() => {
     if (form.country) {
@@ -140,15 +143,15 @@ const Profile = () => {
 
   const validate = () => {
     let temp = {};
-    if (!form.firstname) temp.firstname = "First name is required";
-    if (!form.lastname) temp.lastname = "Last name is required";
-    if (!form.email) temp.email = "Email is required";
-    if (form.password || form.confirmPassword || form.oldpassword) {
-      if (!form.oldpassword || form.oldpassword.length < 8)
-        temp.oldpassword = "Old password must be at least 8 characters";
-      if (!form.password || form.password.length < 8)
-        temp.password = "New password must be at least 8 characters";
-      if (form.password !== form.confirmPassword)
+    if (!form.firstName) temp.firstName = "First name is required";
+    if (!form.lastName) temp.lastName = "Last name is required";
+    if (!form.emailId) temp.emailId = "Email is required";
+    if (form.newPassword || form.confirmPassword || form.oldPassword) {
+      if (!form.oldPassword || form.oldPassword.length < 8)
+        temp.oldPassword = "Old password must be at least 8 characters";
+      if (!form.newPassword || form.newPassword.length < 8)
+        temp.newPassword = "New password must be at least 8 characters";
+      if (form.newPassword !== form.confirmPassword)
         temp.confirmPassword = "Passwords do not match";
     }
     setErrors(temp);
@@ -185,27 +188,54 @@ const Profile = () => {
     }));
   };
 
+  const isProfileChanged = () => {
+    const fieldsToCheck = [
+      "firstName",
+      "lastName",
+      "emailId",
+      "age",
+      "mobileNumber",
+      "country",
+      "state",
+      "city"
+    ];
+    return fieldsToCheck.some(
+      (field) => form[field] !== userInfo[field]
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
     const updateData = {
-      firstname: form.firstname,
-      lastname: form.lastname,
-      email: form.email,
+      firstName: form.firstName,
+      lastName: form.lastName,
+      emailId: form.emailId,
       age: form.age,
       mobileNumber: form.mobileNumber,
       country: form.country,
       state: form.state,
       city: form.city,
     };
-    if (form.password) {
-      updateData.oldpassword = form.oldpassword;
-      updateData.password = form.password;
+    if (form.newPassword) {
+      updateData.oldPassword = form.oldPassword;
+      updateData.newPassword = form.newPassword;
     }
     try {
       await dispatch(
         updateUsers({ userId: userInfo.id, userData: updateData })
       ).unwrap();
+      if (form.newPassword) {
+        await apiClient.post(`/auth/logout`);
+        localStorage.clear();
+        navigate("/login");
+      } else {
+        if (isProfileChanged()) {
+          const updatedUserData = { ...userInfo, ...updateData };
+          localStorage.setItem("userData", JSON.stringify(updatedUserData));
+        }
+        navigate("/dashboard");
+      }
     } catch (err) {
       toast.error("Failed to update profile");
     }
@@ -233,11 +263,11 @@ const Profile = () => {
                       size="small"
                       margin="normal"
                       label="First Name"
-                      name="firstname"
-                      value={form.firstname}
+                      name="firstName"
+                      value={form.firstName}
                       onChange={handleChange}
-                      error={!!errors.firstname}
-                      helperText={errors.firstname}
+                      error={!!errors.firstName}
+                      helperText={errors.firstName}
                     />
                   </motion.div>
                 </Grid>
@@ -252,11 +282,11 @@ const Profile = () => {
                       size="small"
                       margin="normal"
                       label="Last Name"
-                      name="lastname"
-                      value={form.lastname}
+                      name="lastName"
+                      value={form.lastName}
                       onChange={handleChange}
-                      error={!!errors.lastname}
-                      helperText={errors.lastname}
+                      error={!!errors.lastName}
+                      helperText={errors.lastName}
                     />
                   </motion.div>
                 </Grid>
@@ -272,10 +302,10 @@ const Profile = () => {
                       margin="normal"
                       label="Email"
                       name="email"
-                      value={form.email}
+                      value={form.emailId}
                       onChange={handleChange}
-                      error={!!errors.email}
-                      helperText={errors.email}
+                      error={!!errors.emailId}
+                      helperText={errors.emailId}
                     />
                   </motion.div>
                 </Grid>
@@ -325,20 +355,20 @@ const Profile = () => {
                       size="small"
                       margin="normal"
                       label="Old Password"
-                      name="oldpassword"
-                      type={showPassword ? "text" : "password"}
-                      value={form.oldpassword}
+                      name="oldPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      value={form.oldPassword}
                       onChange={handleChange}
-                      error={!!errors.oldpassword}
-                      helperText={errors.oldpassword}
+                      error={!!errors.oldPassword}
+                      helperText={errors.oldPassword}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
                             <IconButton
-                              onClick={() => setShowPassword((s) => !s)}
+                              onClick={() => setShowNewPassword((s) => !s)}
                               edge="end"
                             >
-                              {showPassword ? (
+                              {showNewPassword ? (
                                 <VisibilityOff />
                               ) : (
                                 <Visibility />
@@ -361,20 +391,20 @@ const Profile = () => {
                       size="small"
                       margin="normal"
                       label="New Password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      value={form.password}
+                      name="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      value={form.newPassword}
                       onChange={handleChange}
-                      error={!!errors.password}
-                      helperText={errors.password}
+                      error={!!errors.newPassword}
+                      helperText={errors.newPassword}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
                             <IconButton
-                              onClick={() => setShowPassword((s) => !s)}
+                              onClick={() => setShowNewPassword((s) => !s)}
                               edge="end"
                             >
-                              {showPassword ? (
+                              {showNewPassword ? (
                                 <VisibilityOff />
                               ) : (
                                 <Visibility />

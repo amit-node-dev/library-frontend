@@ -585,7 +585,7 @@ const UsersTable = () => {
               rowCount={total}
               disableSelectionOnClick
               density="standard"
-              getRowId={(row) => row.id + row.firstName}
+              getRowId={(row) => row.id + row.firstName + row.emailId}
               hideFooter
               loading={loading || isLoading}
               sx={{

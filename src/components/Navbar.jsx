@@ -114,7 +114,7 @@ const Navbar = ({ onMenuToggle }) => {
   const email = userInfo.emailId || "";
   const userId = userInfo.id || "";
   const roleName = userInfo.roleName || "Guest";
-  const avatarChar = firstName?.charAt(0).toUpperCase() || "?";
+  const avatarChar = firstName?.charAt(0).toUpperCase() || "N/A";
 
   const unreadNotifications = notifications.filter(n => !n.read).length;
 
@@ -409,17 +409,6 @@ const Navbar = ({ onMenuToggle }) => {
               },
             }}
           />
-
-          {/* Notifications */}
-          <IconButton
-            color="inherit"
-            onClick={(e) => handleMenuOpen('notifications', e)}
-            sx={{ position: "relative" }}
-          >
-            <StyledBadge badgeContent={unreadNotifications} color="error">
-              <NotificationsIcon />
-            </StyledBadge>
-          </IconButton>
           
           <Popover
             open={Boolean(anchorEl.notifications)}
@@ -596,18 +585,6 @@ const Navbar = ({ onMenuToggle }) => {
                 <AccountCircle fontSize="small" sx={{ color: 'common.white' }} />
               </ListItemIcon>
               <ListItemText>My Profile</ListItemText>
-            </MenuItem>
-            
-            <MenuItem 
-              component={Link} 
-              to="/settings"
-              onClick={() => handleMenuClose('user')}
-              sx={{ '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
-            >
-              <ListItemIcon>
-                <SettingsIcon fontSize="small" sx={{ color: 'common.white' }} />
-              </ListItemIcon>
-              <ListItemText>Settings</ListItemText>
             </MenuItem>
             
             <Divider sx={{ my: 0.5, bgcolor: 'rgba(255, 255, 255, 0.1)' }} />

@@ -116,9 +116,9 @@ const AddEditUsers = () => {
   const { currentUser } = useSelector((state) => state.users);
 
   const [userData, setUserData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
+    firstName: "",
+    lastName: "",
+    emailId: "",
     oldpassword: "",
     password: "",
     confirmPassword: "",
@@ -127,16 +127,16 @@ const AddEditUsers = () => {
     country: "",
     state: "",
     city: "",
-    role: "",
+    roleId: "",
   });
 
-  const [firstnameError, setFirstnameError] = useState("");
-  const [lastnameError, setLastnameError] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [emailIdError, setEmailIdError] = useState("");
   const [oldPasswordError, setOldPasswordError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const [roleError, setRoleError] = useState("");
+  const [roleIdError, setRoleIdError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -145,11 +145,11 @@ const AddEditUsers = () => {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
 
-  const [roleList, setRoleList] = useState([]);
+  const [roleIdList, setRoleIdList] = useState([]);
 
   useEffect(() => {
     dispatch(getAllRolesList({ page: 1, pageSize: 5 })).then((response) => {
-      setRoleList(response.payload.roles);
+      setRoleIdList(response.payload.roles);
     });
   }, [dispatch]);
 
@@ -162,9 +162,9 @@ const AddEditUsers = () => {
   useEffect(() => {
     if (userId && currentUser) {
       setUserData({
-        firstname: currentUser.firstname,
-        lastname: currentUser.lastname,
-        email: currentUser.email,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        emailId: currentUser.emailId,
         age: currentUser.age,
         mobileNumber: currentUser.mobileNumber,
         oldpassword: "",
@@ -173,7 +173,7 @@ const AddEditUsers = () => {
         country: currentUser.country || "",
         state: currentUser.state || "",
         city: currentUser.city || "",
-        role: currentUser.role_id || "",
+        roleId: currentUser.roleId || "",
       });
       if (currentUser.country) {
         setStates(State.getStatesOfCountry(currentUser.country));
@@ -225,15 +225,15 @@ const AddEditUsers = () => {
   };
 
   const handleFirstNameBlur = () => {
-    setFirstnameError(userData.firstname === "" ? "Firstname is required" : "");
+    setFirstNameError(userData.firstName === "" ? "FirstName is required" : "");
   };
 
   const handleLastNameBlur = () => {
-    setLastnameError(userData.lastname === "" ? "Lastname is required" : "");
+    setLastNameError(userData.lastName === "" ? "LastName is required" : "");
   };
 
-  const handleEmailBlur = () => {
-    setEmailError(userData.email === "" ? "Email Id is required" : "");
+  const handleEmailIdBlur = () => {
+    setEmailIdError(userData.emailId === "" ? "EmailId Id is required" : "");
   };
 
   const handleOldPasswordBlur = () => {
@@ -260,8 +260,8 @@ const AddEditUsers = () => {
     }
   };
 
-  const handleRoleBlur = () => {
-    setRoleError(userData.role === "" ? "Role is required" : "");
+  const handleRoleIdBlur = () => {
+    setRoleIdError(userData.roleId === "" ? "Role is required" : "");
   };
 
   const handleSubmit = async (e) => {
@@ -269,22 +269,22 @@ const AddEditUsers = () => {
 
     handleFirstNameBlur();
     handleLastNameBlur();
-    handleEmailBlur();
+    handleEmailIdBlur();
     handleOldPasswordBlur();
     handlePasswordBlur();
     handleConfirmPasswordBlur();
-    handleRoleBlur();
+    handleRoleIdBlur();
 
-    const { firstname, lastname, email, password, confirmPassword, role } =
+    const { firstName, lastName, emailId, password, confirmPassword, roleId } =
       userData;
 
     const isValidForm =
-      firstname &&
-      lastname &&
-      email &&
+      firstName &&
+      lastName &&
+      emailId &&
       password.length >= 8 &&
       password === confirmPassword &&
-      role;
+      roleId;
 
     if (!isValidForm) {
       return;
@@ -322,9 +322,9 @@ const AddEditUsers = () => {
 
   const handleReset = () => {
     setUserData({
-      firstname: "",
-      lastname: "",
-      email: "",
+      firstName: "",
+      lastName: "",
+      emailId: "",
       oldpassword: "",
       password: "",
       confirmPassword: "",
@@ -333,15 +333,15 @@ const AddEditUsers = () => {
       country: "",
       state: "",
       city: "",
-      role: "",
+      roleId: "",
     });
-    setFirstnameError("");
-    setLastnameError("");
-    setEmailError("");
+    setFirstNameError("");
+    setLastNameError("");
+    setEmailIdError("");
     setOldPasswordError("");
     setPasswordError("");
     setConfirmPasswordError("");
-    setRoleError("");
+    setRoleIdError("");
   };
 
   const handleBack = () => {
@@ -386,12 +386,12 @@ const AddEditUsers = () => {
                           size="small"
                           margin="normal"
                           label="First Name"
-                          name="firstname"
-                          value={userData.firstname}
+                          name="firstName"
+                          value={userData.firstName}
                           onChange={handleChange}
                           onBlur={handleFirstNameBlur}
-                          error={!!firstnameError}
-                          helperText={firstnameError}
+                          error={!!firstNameError}
+                          helperText={firstNameError}
                         />
                       </motion.div>
                     </Grid>
@@ -406,12 +406,12 @@ const AddEditUsers = () => {
                           size="small"
                           margin="normal"
                           label="Last Name"
-                          name="lastname"
-                          value={userData.lastname}
+                          name="lastName"
+                          value={userData.lastName}
                           onChange={handleChange}
                           onBlur={handleLastNameBlur}
-                          error={!!lastnameError}
-                          helperText={lastnameError}
+                          error={!!lastNameError}
+                          helperText={lastNameError}
                         />
                       </motion.div>
                     </Grid>
@@ -425,30 +425,13 @@ const AddEditUsers = () => {
                           fullWidth
                           size="small"
                           margin="normal"
-                          label="Email ID"
-                          name="email"
-                          value={userData.email}
+                          label="EmailId ID"
+                          name="emailId"
+                          value={userData.emailId}
                           onChange={handleChange}
-                          onBlur={handleEmailBlur}
-                          error={!!emailError}
-                          helperText={emailError}
-                        />
-                      </motion.div>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 * 3 }}
-                      >
-                        <StyledTextField
-                          fullWidth
-                          size="small"
-                          margin="normal"
-                          label="Age"
-                          name="age"
-                          value={userData.age}
-                          onChange={handleChange}
+                          onBlur={handleEmailIdBlur}
+                          error={!!emailIdError}
+                          helperText={emailIdError}
                         />
                       </motion.div>
                     </Grid>
@@ -574,6 +557,23 @@ const AddEditUsers = () => {
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * 3 }}
+                      >
+                        <StyledTextField
+                          fullWidth
+                          size="small"
+                          margin="normal"
+                          label="Age"
+                          name="age"
+                          value={userData.age}
+                          onChange={handleChange}
+                        />
+                      </motion.div>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 * 8 }}
                       >
                         <StyledTextField
@@ -653,15 +653,15 @@ const AddEditUsers = () => {
                           size="small"
                           margin="normal"
                           label="Role"
-                          name="role"
+                          name="roleId"
                           select
-                          value={userData.role}
+                          value={userData.roleId}
                           onChange={handleChange}
-                          onBlur={handleRoleBlur}
-                          error={!!roleError}
-                          helperText={roleError}
+                          onBlur={handleRoleIdBlur}
+                          error={!!roleIdError}
+                          helperText={roleIdError}
                         >
-                          {roleList?.map((role) => (
+                          {roleIdList?.map((role) => (
                             <MenuItem key={role.id} value={role.id}>
                               {role.name}
                             </MenuItem>

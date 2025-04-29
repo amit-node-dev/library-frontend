@@ -142,7 +142,6 @@ const AddEditBooks = () => {
     isbn: "",
     publisher: "",
     publicationYear: "",
-    location: "",
     totalCopies: "",
     pointsRequired: "",
   });
@@ -156,7 +155,6 @@ const AddEditBooks = () => {
     conclusion: "",
     isbn: "",
     publisher: "",
-    location: "",
     totalCopies: "",
     pointsRequired: "",
   });
@@ -191,7 +189,6 @@ const AddEditBooks = () => {
         isbn: currentBook.isbn,
         publisher: currentBook.publisher,
         publicationYear: currentBook.publicationYear,
-        location: currentBook.location,
         totalCopies: currentBook.totalCopies,
         pointsRequired: currentBook.pointsRequired,
       });
@@ -285,7 +282,6 @@ const AddEditBooks = () => {
       isbn: "",
       publisher: "",
       publicationYear: "",
-      location: "",
       totalCopies: "",
       pointsRequired: "",
     });
@@ -298,7 +294,6 @@ const AddEditBooks = () => {
       conclusion: "",
       isbn: "",
       publisher: "",
-      location: "",
       totalCopies: "",
       pointsRequired: "",
     });
@@ -414,25 +409,6 @@ const AddEditBooks = () => {
                           onBlur={handleBlur}
                           error={!!errors.publisher}
                           helperText={errors.publisher}
-                          size="small"
-                        />
-                      </motion.div>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 * 4 }}
-                      >
-                        <StyledTextField
-                          fullWidth
-                          label="Location"
-                          name="location"
-                          value={bookData.location}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          error={!!errors.location}
-                          helperText={errors.location}
                           size="small"
                         />
                       </motion.div>

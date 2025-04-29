@@ -275,7 +275,7 @@ const BooksTable = () => {
     {
       field: "publisher",
       headerName: "Publisher",
-      width: 150,
+      width: 250,
       sortable: false,
     },
     {
@@ -293,7 +293,7 @@ const BooksTable = () => {
     {
       field: "category",
       headerName: "Category",
-      width: 200,
+      width: 250,
       sortable: false,
       renderCell: (params) => params.row.category?.name || "N/A",
     },
@@ -309,11 +309,10 @@ const BooksTable = () => {
       width: 100,
       sortable: false,
     },
-    { field: "location", headerName: "Location", width: 250, sortable: false },
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      width: 250,
       sortable: false,
       renderCell: (params) => (
         <Box display="flex" gap={1}>
